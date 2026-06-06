@@ -5,12 +5,31 @@ import './App.css'
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Home from './pages/Home';
-
+import Categories from './admin/categories';
+import AddProduct from './admin/AddProduct';
+import EditProduct from './admin/EditProduct';
+import Products from './admin/product'
 
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
-  {path:"/signup", element:<SignUp/>}
+  {path:"/signup", element:<SignUp/>},
+  {path:"/category",element:<Categories/>},
+
+  // ADMIN ROUTES
+  {
+    path: "/admin/products",
+    element: <Products />
+  },
+  {
+    path: "/admin/add-product",
+    element: <AddProduct />
+  },
+  {
+    path: "/admin/edit/:id",
+    element: <EditProduct />
+  }
+  
 
 ]);
 export default function App() {

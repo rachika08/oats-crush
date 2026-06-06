@@ -29,7 +29,7 @@ export default function Login(){
                 navigate("/");
             },1000);
         } catch (error) {
-            setMsg(err.response?.data?.message || "An error occurred" );
+            setMsg(error.response?.data?.message || "An error occurred" );
         }
     }
     return(

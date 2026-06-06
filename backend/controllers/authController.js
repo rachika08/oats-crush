@@ -9,7 +9,7 @@ export const signUpUser=async (req,res) => {
         const userExist=await User.findOne({email});
 
         if(userExist){
-            return res.status(400).json({ message: "User already exists" });
+            return res.status(409).json({ message: "User already exists" });
         }
         const hashPassword=await bcrypt.hash(password,10);
 

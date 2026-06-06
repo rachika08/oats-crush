@@ -29,7 +29,7 @@ export const createProduct=async (req,res) => {
 
 export const getProducts=async (req,res) => {
     try {
-        const products=await Product.find();
+        const products=await Product.find().populate("category");
         res.status(200).json(products);
     } catch (error) {
         return res.status(500).json({message:error.message});
@@ -39,7 +39,8 @@ export const getProducts=async (req,res) => {
 export const getProductsById=async(req,res)=>{
     try {
         let {id}=req.params;
-        const product=await Product.findById({id});
+        console.log("ID", req.params.id);
+        const product=await Product.findById(id).populate("category");
         if(!product){
             return res.status(404).json({message:"not found"});
         }

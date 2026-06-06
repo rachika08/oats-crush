@@ -1,14 +1,15 @@
 import { useState } from "react";
+import {useNavigate} from "react-router"
 import api from "../api/axios";
 
 export default function Signup() {
+  const navigate=useNavigate();
   const [form,setForm]=useState({
     name:"",
     email:"",
     password:""
   })
   const [msg,setMsg]=useState("");
-
   const handleChange=(e)=>{
     setForm({
       ...form,
@@ -21,9 +22,24 @@ export default function Signup() {
 
     try{
       const response=await api.post("/auth/signup",form);
+      alert(response.data.message);
       setMsg(response.data.message);
-    } catch(err){
-      setMsg(err.response?.data?.message || "An error occurred" );
+      // success → go to login
+      navigate("/login");
+      
+    } catch(error){
+      console.log(error);
+
+      const msg = error.response?.data?.message;
+
+      alert(msg || "An error occurred");
+
+      setMsg(msg || "An error occurred");
+
+      // if user exists → go to login page
+      if (msg === "User already exists") {
+        navigate("/login");
+      }
     }
   }
 
@@ -80,6 +96,15 @@ export default function Signup() {
             Sign Up
           </button>
         </form>
+        <p className="mt-4 text-sm">
+          Already have an account?{" "}
+          <span
+            onClick={() => navigate("/login")}
+            className="text-blue-500 cursor-pointer"
+          >
+            Login
+          </span>
+        </p>
       </div>
     </div>
   );
