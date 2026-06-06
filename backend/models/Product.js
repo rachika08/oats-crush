@@ -20,6 +20,9 @@ const productSchema=mongoose.Schema({
     stock:{
         type: Number,
         default: 0,
+    },
+    image:{
+        type:String,
     }
 },{timestamps:true});
 
