@@ -11,6 +11,7 @@ export default function AddProduct() {
         image: "",
         category: ""
     });
+    const [file, setFile] = useState(null);
     const navigate= useNavigate();
     const handleChange = (e) => {
         setForm({
@@ -21,11 +22,22 @@ export default function AddProduct() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("SUBMIT CLICKED");
-        console.log("FORM DATA:", form);
-        await api.post("/product", form);
-        navigate('/admin/products');
-    }
+
+        const formData = new FormData();
+
+        formData.append("name", form.name);
+        formData.append("price", form.price);
+        formData.append("stock", form.stock);
+        formData.append("category", form.category);
+        formData.append("description", form.description);
+
+        formData.append("image", file);
+
+        await api.post("/product", formData);
+
+        navigate("/admin/products");
+    };
+
     return (
         <div>
             <form onSubmit={handleSubmit}>
@@ -34,7 +46,11 @@ export default function AddProduct() {
                 <input name="price" placeholder="Price" onChange={handleChange} />
                 <input name="stock" placeholder="Stock" onChange={handleChange} />
                  <input name="description" placeholder="Description" onChange={handleChange} />
-                <input name="image" placeholder="Image URL" onChange={handleChange} />
+                {/* <input name="image" placeholder="Image URL" onChange={handleChange} /> */}
+                <input
+                type="file"
+                onChange={(e) => setFile(e.target.files[0])}
+                />
                 <input name="category" placeholder="Category ID" onChange={handleChange} />
 
                 <button type="submit">Create Product</button>

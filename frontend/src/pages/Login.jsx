@@ -23,7 +23,12 @@ export default function Login(){
             const res=await api.post("/auth/login",form);
             console.log(res);
             //save token
+            localStorage.setItem(
+                "user",
+                JSON.stringify(res.data.userFound)
+            );
             localStorage.setItem("token",res.data.token);
+            
             setMsg("Login successfull!");
             setTimeout(()=>{
                 navigate("/");

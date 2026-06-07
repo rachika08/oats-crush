@@ -8,18 +8,25 @@ import Home from './pages/Home';
 import Categories from './admin/categories';
 import AddProduct from './admin/AddProduct';
 import EditProduct from './admin/EditProduct';
-import Products from './admin/product'
-
+import Products from './admin/product';
+import AdminRoute from './components/AdminRoute';
+import CategoryPage from './user/Categorypage';
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
   {path:"/signup", element:<SignUp/>},
   {path:"/category",element:<Categories/>},
+  {path:"/category/:id" ,element:<CategoryPage />},
+  
 
   // ADMIN ROUTES
   {
     path: "/admin/products",
-    element: <Products />
+    element: (
+      <AdminRoute>
+        <Products />
+      </AdminRoute>
+    )
   },
   {
     path: "/admin/add-product",

@@ -38,7 +38,9 @@ export const loginUser=async(req,res)=>{
             return res.status(400).json({message:"Invalid credentials"});
         }
         const token=jwt.sign(
-            {id:userFound._id},
+            {   id:userFound._id,
+                role:userFound.role
+            },
             process.env.JWT_SECRET,
             {expiresIn:"7d"},
         );
@@ -48,6 +50,7 @@ export const loginUser=async(req,res)=>{
             userFound:{
                 id:userFound._id,
                 name:userFound.name,
+                role:userFound.role,
                 email:userFound.email,
             }
         })
@@ -58,3 +61,15 @@ export const loginUser=async(req,res)=>{
     });
 }
 }
+
+export const getUsers=async(req,res)=>{
+    try {
+        const users=await User.find({});
+        res.json(users);
+    } catch (error) {
+        return res.status(500).json({
+        message: error.message
+    });
+    }
+}
+

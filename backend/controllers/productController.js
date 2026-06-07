@@ -1,5 +1,6 @@
 import Product from "../models/Product.js";
-
+import cloudinary from "../config/cloudinary.js";
+import {uploadToCloudinary} from "../utils/uploadToCloudinary.js"
 export const createProduct=async (req,res) => {
     try {
         let {name,description,price,category,stock,image}=req.body;
@@ -10,13 +11,19 @@ export const createProduct=async (req,res) => {
                 message: "Product already exists"
             });
         }
+        if (!req.file) {
+            return res.status(400).json({ message: "Image file is required" });
+        }
+        const result = await uploadToCloudinary(req.file.buffer);
+
+        const imageUrl = result.secure_url;
         const product=await Product.create({
             name,
             description,
             price,
             category,//send category id
             stock,
-            image
+            image:imageUrl
         })
         return res.status(201).json({
             message: "Product created successfully",
