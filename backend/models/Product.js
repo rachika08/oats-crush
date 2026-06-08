@@ -23,6 +23,10 @@ const productSchema=mongoose.Schema({
     },
     image:{
         type:String,
+    },
+    featured:{
+        type:Boolean,
+        default:false
     }
 },{timestamps:true});
 

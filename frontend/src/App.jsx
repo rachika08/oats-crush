@@ -11,14 +11,18 @@ import EditProduct from './admin/EditProduct';
 import Products from './admin/product';
 import AdminRoute from './components/AdminRoute';
 import CategoryPage from './user/Categorypage';
+import Navbar from './components/Navbar';
+import CategoryProducts from "./pages/CategoryProducts";
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
   {path:"/signup", element:<SignUp/>},
   {path:"/category",element:<Categories/>},
-  {path:"/category/:id" ,element:<CategoryPage />},
+  {path:"/category/:id" ,element:<CategoryProducts />},
   
 
+  // {path:"/nav",element:<Navbar/>},
+  // {path:"/hero",element:<HeroSection/>},
   // ADMIN ROUTES
   {
     path: "/admin/products",

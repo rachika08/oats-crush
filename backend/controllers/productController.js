@@ -3,7 +3,7 @@ import cloudinary from "../config/cloudinary.js";
 import {uploadToCloudinary} from "../utils/uploadToCloudinary.js"
 export const createProduct=async (req,res) => {
     try {
-        let {name,description,price,category,stock,image}=req.body;
+        let {name,description,price,category,stock,image,featured}=req.body;
         const productExist = await Product.findOne({ name });
 
         if (productExist) {
@@ -23,7 +23,8 @@ export const createProduct=async (req,res) => {
             price,
             category,//send category id
             stock,
-            image:imageUrl
+            image:imageUrl,
+            featured
         })
         return res.status(201).json({
             message: "Product created successfully",
@@ -81,5 +82,31 @@ export const deleteProduct=async(req,res)=>{
         res.status(200).json({message:"product deleted successfully"})
     } catch (error) {
         return res.status(500).json({message:error.message});
+    }
+}
+
+export const featuredProduct=async(req,res)=>{
+    try {
+        const product=await Product.find({
+            featured:true
+        }).populate("category");
+        res.status(200).json(product);
+
+    } catch (error) {
+        return res.status(500).json({message:error.message});
+    }
+}
+
+export const getProductsByCategory=async (req,res) => {
+    try {
+        const {categoryId}=req.params;
+        const products=await Product.find({
+            category:categoryId
+        }).populate("category");
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({
+            message:error.message
+        });
     }
 }

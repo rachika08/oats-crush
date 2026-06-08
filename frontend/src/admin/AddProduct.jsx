@@ -9,7 +9,8 @@ export default function AddProduct() {
         stock: "",
         description: "",
         image: "",
-        category: ""
+        category: "",
+        featured:false
     });
     const [file, setFile] = useState(null);
     const navigate= useNavigate();
@@ -28,10 +29,12 @@ export default function AddProduct() {
         formData.append("name", form.name);
         formData.append("price", form.price);
         formData.append("stock", form.stock);
+         formData.append("description", form.description);
+         formData.append("image", file);
         formData.append("category", form.category);
-        formData.append("description", form.description);
+       formData.append("featured", form.featured);
 
-        formData.append("image", file);
+        
 
         await api.post("/product", formData);
 
@@ -52,7 +55,20 @@ export default function AddProduct() {
                 onChange={(e) => setFile(e.target.files[0])}
                 />
                 <input name="category" placeholder="Category ID" onChange={handleChange} />
+                 <div>
+                <label>Featured Product</label>
 
+                <input
+                    type="checkbox"
+                    checked={form.featured}
+                    onChange={(e) =>
+                    setForm({
+                        ...form,
+                        featured: e.target.checked,
+                    })
+                    }
+                />
+                </div>
                 <button type="submit">Create Product</button>
             </form>
         </div>
