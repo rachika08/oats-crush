@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import cartRoutes from './routes/cartRoutes.js'
 dotenv.config();
 
 app.use(express.urlencoded({extended:true}));
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/category',categoryRoutes);
 app.use('/api/product',productRoutes);
+app.use("/api/cart", cartRoutes);
 
 app.get('/',(req,res)=>{
     res.send("hi");

@@ -15,6 +15,30 @@ export default function ProductDetails() {
         fetchProduct();
     }, [id]);
 
+    const addToCart = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await api.post(
+                "/cart/add",
+                {
+                    productId: product._id,
+                    quantity: quantity
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            console.log("Cart updated:", res.data);
+            alert("Added to cart!");
+        } catch (error) {
+            console.log(error.response?.data || error.message);
+        }
+    };
+
     const fetchProduct = async () => {
         try {
             const res = await api.get(`/product/${id}`);
@@ -126,6 +150,7 @@ export default function ProductDetails() {
                     <div className="flex gap-4 mb-8">
 
                         <button
+                            onClick={addToCart}
                             className="flex-1 bg-black text-white py-3 rounded-lg"
                         >
                             Add To Cart

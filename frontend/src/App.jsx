@@ -14,6 +14,7 @@ import CategoryPage from './user/Categorypage';
 import Navbar from './components/Navbar';
 import CategoryProducts from "./pages/CategoryProducts";
 import ProductDetails from './components/home/ProductDetails';
+import CartPage from './pages/CartPage';
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
   {path:"/category",element:<Categories/>},
   {path:"/category/:id" ,element:<CategoryProducts />},
   {path:'/product/:id', element:<ProductDetails/>},
-
+  {path:"/cart" , element:<CartPage/>},
   // {path:"/nav",element:<Navbar/>},
   // {path:"/hero",element:<HeroSection/>},
   // ADMIN ROUTES
