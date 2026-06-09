@@ -24,10 +24,20 @@ const productSchema=mongoose.Schema({
     image:{
         type:String,
     },
+    additionalImages: [{
+        type: String
+    }],
     featured:{
         type:Boolean,
         default:false
-    }
+    },
+    benefits: [{
+        type: String
+    }],
+
+    ingredients: [{
+        type: String
+    }]
 },{timestamps:true});
 
 export default mongoose.model("Product",productSchema);

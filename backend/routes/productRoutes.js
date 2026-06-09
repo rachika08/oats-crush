@@ -9,7 +9,11 @@ router.get('/',getProducts);
 router.get('/featured',featuredProduct);
 router.get("/category/:categoryId",getProductsByCategory);
 router.get('/:id',getProductsById);
-router.post('/',protect,admin,upload.single("image"),createProduct);
+// router.post('/',protect,admin,upload.single("image"),createProduct);
+router.post('/',protect,admin,upload.fields([
+  { name: "image", maxCount: 1 },
+  { name: "additionalImages", maxCount: 4 }
+]),createProduct);
 router.put('/:id',protect,admin,updateProduct);
 router.delete('/:id',protect,admin,deleteProduct);
 
