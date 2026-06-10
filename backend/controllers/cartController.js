@@ -53,7 +53,7 @@ export const getCart=async (req,res) => {
 
 export const updateCartItem = async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user.id;
         const { productId, quantity } = req.body;
 
         const cart = await Cart.findOne({ user: userId });
@@ -87,7 +87,7 @@ export const updateCartItem = async (req, res) => {
 
 export const removeCartItem = async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user.id;
         const { productId } = req.params;
 
         const cart = await Cart.findOne({ user: userId });

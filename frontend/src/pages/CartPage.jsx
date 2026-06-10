@@ -49,6 +49,40 @@ export default function CartPage() {
     );
   }
 
+
+  const updateQuantity = async (productId, newQty) => {
+    try {
+      await api.put(
+        "/cart/update",
+        { productId, quantity: newQty },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+
+      fetchCart(); // refresh UI
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  const removeItem = async (productId) => {
+    try {
+      await api.delete(`/cart/remove/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      fetchCart(); // refresh UI
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
     <Navbar/>
@@ -71,20 +105,21 @@ export default function CartPage() {
           {/* LEFT - ITEMS */}
           <div className="flex-1 space-y-4">
 
-            {cartItems.map((item, index) => (
+           {cartItems.map((item, index) => (
               <div
                 key={index}
-                className="flex items-center bg-white p-4 rounded shadow"
+                className="bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row items-center gap-4"
               >
-
+                {/* Product Image */}
                 <img
                   src={item.product.image}
-                  className="w-20 h-20 object-cover rounded"
-                  alt=""
+                  alt={item.product.name}
+                  className="w-24 h-24 object-cover rounded"
                 />
 
-                <div className="ml-4 flex-1">
-                  <h2 className="font-medium">
+                {/* Product Info */}
+                <div className="flex-1 w-full">
+                  <h2 className="font-semibold text-lg">
                     {item.product.name}
                   </h2>
 
@@ -92,15 +127,44 @@ export default function CartPage() {
                     ₹{item.product.price}
                   </p>
 
-                  <p className="text-sm text-gray-500">
-                    Quantity: {item.quantity}
-                  </p>
+                  {/* Quantity Controls */}
+                  <div className="flex items-center gap-3 mt-3">
+                    <button
+                      onClick={() =>
+                        updateQuantity(item.product._id, item.quantity - 1)
+                      }
+                      className="w-8 h-8 border rounded"
+                    >
+                      -
+                    </button>
+
+                    <span className="font-medium">
+                      {item.quantity}
+                    </span>
+
+                    <button
+                      onClick={() =>
+                        updateQuantity(item.product._id, item.quantity + 1)
+                      }
+                      className="w-8 h-8 border rounded"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Remove Button */}
+                  <button
+                    onClick={() => removeItem(item.product._id)}
+                    className="text-red-500 text-sm mt-3"
+                  >
+                    Remove
+                  </button>
                 </div>
 
-                <div className="font-semibold">
+                {/* Item Total */}
+                <div className="text-lg font-semibold">
                   ₹{item.product.price * item.quantity}
                 </div>
-
               </div>
             ))}
 

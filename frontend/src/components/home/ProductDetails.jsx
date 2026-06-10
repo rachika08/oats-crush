@@ -1,20 +1,27 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import Navbar from "../Navbar";
 import Footer from "./Footer";
 
 export default function ProductDetails() {
     const { id } = useParams();
-
+    const navigate=useNavigate();
     const [product, setProduct] = useState(null);
     const [selectedImage, setSelectedImage] = useState("");
     const [quantity, setQuantity] = useState(1);
-
+    const [showViewCart, setShowViewCart] = useState(false);
+    
     useEffect(() => {
         fetchProduct();
+        
     }, [id]);
-
+    useEffect(() => {
+        if (product) {
+            fetchCartQuantity();
+        }
+    }, [product]);
     const addToCart = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -31,7 +38,7 @@ export default function ProductDetails() {
                     }
                 }
             );
-
+            setShowViewCart(true);
             console.log("Cart updated:", res.data);
             alert("Added to cart!");
         } catch (error) {
@@ -49,7 +56,31 @@ export default function ProductDetails() {
             console.log(error);
         }
     };
+    const fetchCartQuantity = async () => {
+        try {
+            const token = localStorage.getItem("token");
 
+            if (!token) return;
+
+            const res = await api.get("/cart", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const cartItem = res.data.items.find(
+                item => item.product._id === id
+            );
+
+            if (cartItem) {
+                setQuantity(cartItem.quantity);
+                setShowViewCart(true);
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
     if (!product) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -63,6 +94,8 @@ export default function ProductDetails() {
         ...(product.additionalImages || [])
     ];
 
+   
+    
     return (
         <><Navbar/>
         <div className="max-w-7xl mx-auto px-6 py-10">
@@ -197,9 +230,20 @@ export default function ProductDetails() {
                     </div>
 
                 </div>
+                            {showViewCart && (
+                <div className="fixed bottom-0 left-0 w-full bg-green-600 text-white p-4 flex justify-between items-center shadow-lg">
+                    <span>Item added to cart</span>
 
+                    <button
+                    onClick={() => navigate("/cart")}
+                    className="bg-white text-green-600 px-4 py-2 rounded"
+                    >
+                    View Cart
+                    </button>
+                </div>
+                )}  
             </div>
-
+                          
         </div>
         <Footer/>
         </>
