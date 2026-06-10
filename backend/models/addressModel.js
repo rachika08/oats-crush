@@ -49,6 +49,11 @@ const addressSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    label: {
+      type: String,
+      enum: ["Home", "Office", "Other"],
+      default: "Home"
+    }
   },
   {
     timestamps: true,

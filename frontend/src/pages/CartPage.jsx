@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios"; // your axios instance
 import Footer from "../components/home/Footer";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const navigate=useNavigate();
   // 🔥 FETCH CART
   const fetchCart = async () => {
     try {
@@ -112,6 +113,9 @@ export default function CartPage() {
               >
                 {/* Product Image */}
                 <img
+                  onClick={()=>{
+                    navigate(`/product/${item.product._id}`)
+                  }}
                   src={item.product.image}
                   alt={item.product.name}
                   className="w-24 h-24 object-cover rounded"
@@ -189,7 +193,9 @@ export default function CartPage() {
               </span>
             </div>
 
-            <button className="w-full bg-black text-white py-2 rounded">
+            <button onClick={()=>{
+              navigate('/checkout')
+            }} className="w-full bg-black text-white py-2 rounded">
               Proceed to Checkout
             </button>
 

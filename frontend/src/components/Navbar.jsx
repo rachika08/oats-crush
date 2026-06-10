@@ -92,6 +92,12 @@ const Navbar = () => {
           ) : (
             <>
               <button
+                onClick={() => navigate("/addresses")}
+              >
+                My Address
+              </button>
+
+              <button
                 onClick={() => navigate("/cart")}
               >
                 Cart
