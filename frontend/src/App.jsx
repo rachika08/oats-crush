@@ -19,6 +19,7 @@ import Checkout from './pages/Checkout';
 import Addresses from './pages/Addresses';
 import MyOrders from './pages/MyOrders';
 import OrderDetails from './pages/OrderDetails';
+import AdminDashboard from './admin/AdminDashboard'
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
   // {path:"/nav",element:<Navbar/>},
   // {path:"/hero",element:<HeroSection/>},
   // ADMIN ROUTES
+  {path:"/admin",element:<AdminRoute><AdminDashboard/></AdminRoute>},
   {
     path: "/admin/products",
     element: (

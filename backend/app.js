@@ -9,6 +9,7 @@ import productRoutes from './routes/productRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import addressRoutes from './routes/addressRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import adminOrderRoutes from './routes/adminOrderRoutes.js'
 dotenv.config();
 
 app.use(express.urlencoded({extended:true}));
@@ -21,6 +22,7 @@ app.use('/api/product',productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order",orderRoutes);
+app.use("/api/admin",adminOrderRoutes);
 
 
 app.get('/',(req,res)=>{

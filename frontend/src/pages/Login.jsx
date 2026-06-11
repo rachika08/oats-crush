@@ -31,7 +31,11 @@ export default function Login(){
             
             setMsg("Login successfull!");
             setTimeout(()=>{
-                navigate("/");
+                if (res.data.userFound.role === "admin") {
+                  navigate("/admin");
+              } else {
+                  navigate("/");
+              }
             },1000);
         } catch (error) {
             setMsg(error.response?.data?.message || "An error occurred" );
