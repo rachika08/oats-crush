@@ -17,6 +17,8 @@ import ProductDetails from './components/home/ProductDetails';
 import CartPage from './pages/CartPage';
 import Checkout from './pages/Checkout';
 import Addresses from './pages/Addresses';
+import MyOrders from './pages/MyOrders';
+import OrderDetails from './pages/OrderDetails';
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
@@ -27,6 +29,8 @@ const router = createBrowserRouter([
   {path:"/cart" , element:<CartPage/>},
   {path:"/checkout", element:<Checkout/>},
   {path:"/addresses", element:<Addresses/>},
+  {path:"/order", element:<MyOrders/>},
+  {path:"/order/:id", element:<OrderDetails/>},
   // {path:"/nav",element:<Navbar/>},
   // {path:"/hero",element:<HeroSection/>},
   // ADMIN ROUTES

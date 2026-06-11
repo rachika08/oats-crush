@@ -88,3 +88,32 @@ export const placeOrder = async (req, res) => {
         });
     }
 };
+export const getOrders=async(req,res)=>{
+    try {
+        const userId=req.user.id;
+        const orders=await Order.find({user:userId})
+        .populate("items.product").populate("address").sort({createdAt:-1});
+        
+        return res.status(200).json(orders);
+
+    } catch (error) {
+        return res.status(500).json({message:error.message});
+    }
+}
+
+export const getOrderById=async(req,res)=>{
+    try {
+        const userId=req.user.id;
+        const {id}=req.params;
+        const order=await Order.findOne({
+            user:userId,
+            _id:id,
+        }).populate("items.product").populate("address");
+        if(!order){
+            return res.status(404).json({message:"order not found"});
+        }
+        res.status(200).json(order);
+    } catch (error) {
+        return res.status(500).json({message:error.message});
+    }
+}

@@ -102,7 +102,9 @@ const Navbar = () => {
               >
                 Cart
               </button>
-
+              <button onClick={()=>navigate("/order")}>
+                My Orders
+              </button>
               <button
                 onClick={() => {
                   localStorage.removeItem("token");

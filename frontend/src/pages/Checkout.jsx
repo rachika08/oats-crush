@@ -10,7 +10,8 @@ export default function Checkout() {
     const [cart, setCart] = useState(null);
     const [loading, setLoading] = useState(true);
     const [paymentMethod, setPaymentMethod] = useState("COD");
-    const navigate=useNavigate();
+    const navigate = useNavigate();
+
     useEffect(() => {
         fetchAddresses();
         fetchCart();
@@ -49,21 +50,35 @@ export default function Checkout() {
         }, 0);
     };
 
-    const handlePlaceOrder = () => {
-        console.log({
-            addressId: selectedAddress,
-            paymentMethod
-        });
+    const handlePlaceOrder = async () => {
+        try {
+            if (!selectedAddress) {
+                alert("Please select an address");
+                return;
+            }
 
-        alert("Order API will be connected next.");
+            const res = await api.post("/order", {
+                addressId: selectedAddress,
+                paymentMethod: "COD",
+            });
+
+            navigate(`/order/${res.data.order._id}`);
+        } catch (error) {
+            alert(
+                error.response?.data?.message ||
+                    "Failed to place order"
+            );
+        }
     };
 
     if (loading) {
         return (
             <>
                 <Navbar />
-                <div className="container py-5">
-                    <h3>Loading...</h3>
+                <div className="max-w-7xl mx-auto px-4 py-10">
+                    <h3 className="text-xl font-semibold">
+                        Loading...
+                    </h3>
                 </div>
                 <Footer />
             </>
@@ -74,23 +89,29 @@ export default function Checkout() {
         <>
             <Navbar />
 
-            <div className="container py-5">
-                <h2 className="mb-4">Checkout</h2>
+            <div className="max-w-7xl mx-auto px-4 py-10">
+                <h2 className="text-3xl font-bold mb-6">
+                    Checkout
+                </h2>
 
-                <div className="row">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                     {/* Address Section */}
-                    <div className="col-md-7">
-                        <div className="card shadow-sm mb-4">
-                            <div className="card-body">
-                                <h4 className="mb-3">
+                    <div className="md:col-span-7">
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+                            <div className="p-6">
+                                <h4 className="text-xl font-semibold mb-3">
                                     Shipping Address
                                 </h4>
+
                                 <button
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                                    onClick={() => navigate("/addresses")}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+                                    onClick={() =>
+                                        navigate("/addresses")
+                                    }
                                 >
                                     Add New Address
                                 </button>
+
                                 {addresses.length === 0 ? (
                                     <p>No address found.</p>
                                 ) : (
@@ -99,9 +120,9 @@ export default function Checkout() {
                                             key={address._id}
                                             className="border rounded p-3 mb-3"
                                         >
-                                            <div className="form-check">
+                                            <div>
                                                 <input
-                                                    className="form-check-input"
+                                                    className="mr-2"
                                                     type="radio"
                                                     name="address"
                                                     value={address._id}
@@ -116,27 +137,42 @@ export default function Checkout() {
                                                     }
                                                 />
 
-                                                <label className="form-check-label">
+                                                <label>
                                                     <strong>
-                                                        {address.fullName}
+                                                        {
+                                                            address.fullName
+                                                        }
                                                     </strong>
 
                                                     <br />
 
-                                                    {address.addressLine1}
+                                                    {
+                                                        address.addressLine1
+                                                    }
 
                                                     {address.addressLine2 &&
                                                         `, ${address.addressLine2}`}
 
                                                     <br />
 
-                                                    {address.city},{" "}
-                                                    {address.state} -{" "}
-                                                    {address.pincode}
+                                                    {
+                                                        address.city
+                                                    }
+                                                    ,{" "}
+                                                    {
+                                                        address.state
+                                                    }{" "}
+                                                    -{" "}
+                                                    {
+                                                        address.pincode
+                                                    }
 
                                                     <br />
 
-                                                    Phone: {address.phone}
+                                                    Phone:{" "}
+                                                    {
+                                                        address.phone
+                                                    }
                                                 </label>
                                             </div>
                                         </div>
@@ -146,25 +182,28 @@ export default function Checkout() {
                         </div>
 
                         {/* Payment Method */}
-                        <div className="card shadow-sm">
-                            <div className="card-body">
-                                <h4 className="mb-3">
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div className="p-6">
+                                <h4 className="text-xl font-semibold mb-3">
                                     Payment Method
                                 </h4>
 
-                                <div className="form-check">
+                                <div>
                                     <input
-                                        className="form-check-input"
+                                        className="mr-2"
                                         type="radio"
                                         checked={
-                                            paymentMethod === "COD"
+                                            paymentMethod ===
+                                            "COD"
                                         }
                                         onChange={() =>
-                                            setPaymentMethod("COD")
+                                            setPaymentMethod(
+                                                "COD"
+                                            )
                                         }
                                     />
 
-                                    <label className="form-check-label">
+                                    <label>
                                         Cash On Delivery
                                     </label>
                                 </div>
@@ -173,47 +212,59 @@ export default function Checkout() {
                     </div>
 
                     {/* Order Summary */}
-                    <div className="col-md-5">
-                        <div className="card shadow-sm">
-                            <div className="card-body">
-                                <h4 className="mb-3">
+                    <div className="md:col-span-5">
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div className="p-6">
+                                <h4 className="text-xl font-semibold mb-3">
                                     Order Summary
                                 </h4>
 
                                 {cart?.items?.map((item) => (
                                     <div
                                         key={item._id}
-                                        className="d-flex justify-content-between align-items-center border-bottom py-3"
+                                        className="flex justify-between items-center border-b border-gray-200 py-3"
                                     >
                                         <div>
-                                            <h6 className="mb-1">
-                                                {item.product.name}
+                                            <h6 className="font-medium mb-1">
+                                                {
+                                                    item.product
+                                                        .name
+                                                }
                                             </h6>
 
                                             <small>
-                                                Qty: {item.quantity}
+                                                Qty:{" "}
+                                                {
+                                                    item.quantity
+                                                }
                                             </small>
                                         </div>
 
                                         <strong>
                                             ₹
-                                            {item.product.price *
+                                            {item.product
+                                                .price *
                                                 item.quantity}
                                         </strong>
                                     </div>
                                 ))}
 
-                                <div className="d-flex justify-content-between mt-4">
-                                    <h5>Total</h5>
+                                <div className="flex justify-between mt-4">
+                                    <h5 className="text-lg font-semibold">
+                                        Total
+                                    </h5>
 
-                                    <h5>
-                                        ₹{calculateTotal()}
+                                    <h5 className="text-lg font-semibold">
+                                        ₹
+                                        {calculateTotal()}
                                     </h5>
                                 </div>
 
                                 <button
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                                    onClick={handlePlaceOrder}
+                                    className="bg-green-500 text-white px-4 py-2 rounded mt-4"
+                                    onClick={
+                                        handlePlaceOrder
+                                    }
                                 >
                                     Place Order
                                 </button>

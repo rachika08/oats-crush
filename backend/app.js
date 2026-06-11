@@ -20,7 +20,7 @@ app.use('/api/category',categoryRoutes);
 app.use('/api/product',productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/address", addressRoutes);
-app.use("/api/order/",orderRoutes);
+app.use("/api/order",orderRoutes);
 
 
 app.get('/',(req,res)=>{

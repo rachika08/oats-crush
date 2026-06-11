@@ -122,33 +122,33 @@ export default function Addresses() {
         <>
             <Navbar />
 
-            <div className="container py-5">
+            <div className="max-w-7xl mx-auto px-4 py-10">
 
-                <h2 className="mb-4">
+                <h2 className="text-3xl font-bold mb-6">
                     Manage Addresses
                 </h2>
 
                 {/* Form */}
 
-                <div className="card shadow-sm mb-5">
-                    <div className="card-body">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+                    <div className="p-6">
 
-                        <h4 className="mb-4">
+                        <h4 className="text-xl font-semibold mb-4">
                             {editingId
                                 ? "Edit Address"
                                 : "Add New Address"}
                         </h4>
 
                         <form onSubmit={handleSubmit}>
-                            <div className="row">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                <div className="col-md-6 mb-3">
-                                    <label className="form-label">
+                                <div>
+                                    <label className="block mb-2 font-medium">
                                         Address Type
                                     </label>
 
                                     <select
-                                        className="form-select"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
                                         name="label"
                                         value={formData.label}
                                         onChange={handleChange}
@@ -167,14 +167,14 @@ export default function Addresses() {
                                     </select>
                                 </div>
 
-                                <div className="col-md-6 mb-3">
-                                    <label className="form-label">
+                                <div>
+                                    <label className="block mb-2 font-medium">
                                         Full Name
                                     </label>
 
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
                                         name="fullName"
                                         value={formData.fullName}
                                         onChange={handleChange}
@@ -182,14 +182,14 @@ export default function Addresses() {
                                     />
                                 </div>
 
-                                <div className="col-md-6 mb-3">
-                                    <label className="form-label">
+                                <div>
+                                    <label className="block mb-2 font-medium">
                                         Phone
                                     </label>
 
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
@@ -197,14 +197,14 @@ export default function Addresses() {
                                     />
                                 </div>
 
-                                <div className="col-md-6 mb-3">
-                                    <label className="form-label">
+                                <div>
+                                    <label className="block mb-2 font-medium">
                                         Pincode
                                     </label>
 
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
                                         name="pincode"
                                         value={formData.pincode}
                                         onChange={handleChange}
@@ -212,14 +212,14 @@ export default function Addresses() {
                                     />
                                 </div>
 
-                                <div className="col-12 mb-3">
-                                    <label className="form-label">
+                                <div className="md:col-span-2">
+                                    <label className="block mb-2 font-medium">
                                         Address Line 1
                                     </label>
 
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
                                         name="addressLine1"
                                         value={formData.addressLine1}
                                         onChange={handleChange}
@@ -227,28 +227,28 @@ export default function Addresses() {
                                     />
                                 </div>
 
-                                <div className="col-12 mb-3">
-                                    <label className="form-label">
+                                <div className="md:col-span-2">
+                                    <label className="block mb-2 font-medium">
                                         Address Line 2
                                     </label>
 
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
                                         name="addressLine2"
                                         value={formData.addressLine2}
                                         onChange={handleChange}
                                     />
                                 </div>
 
-                                <div className="col-md-6 mb-3">
-                                    <label className="form-label">
+                                <div>
+                                    <label className="block mb-2 font-medium">
                                         City
                                     </label>
 
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
                                         name="city"
                                         value={formData.city}
                                         onChange={handleChange}
@@ -256,14 +256,14 @@ export default function Addresses() {
                                     />
                                 </div>
 
-                                <div className="col-md-6 mb-3">
-                                    <label className="form-label">
+                                <div>
+                                    <label className="block mb-2 font-medium">
                                         State
                                     </label>
 
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
                                         name="state"
                                         value={formData.state}
                                         onChange={handleChange}
@@ -272,79 +272,81 @@ export default function Addresses() {
                                 </div>
                             </div>
 
-                            <button
-                                type="submit"
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
-                            >
-                                {editingId
-                                    ? "Update Address"
-                                    : "Save Address"}
-                            </button>
-
-                            {editingId && (
+                            <div className="mt-6 flex gap-3">
                                 <button
-                                    type="button"
+                                    type="submit"
                                     className="bg-blue-500 text-white px-4 py-2 rounded"
-                                    onClick={resetForm}
                                 >
-                                    Cancel
+                                    {editingId
+                                        ? "Update Address"
+                                        : "Save Address"}
                                 </button>
-                            )}
+
+                                {editingId && (
+                                    <button
+                                        type="button"
+                                        className="bg-gray-500 text-white px-4 py-2 rounded"
+                                        onClick={resetForm}
+                                    >
+                                        Cancel
+                                    </button>
+                                )}
+                            </div>
                         </form>
                     </div>
                 </div>
 
                 {/* Saved Addresses */}
 
-                <h4 className="mb-3">
+                <h4 className="text-xl font-semibold mb-4">
                     Saved Addresses
                 </h4>
 
-                <div className="row">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {addresses.length === 0 ? (
                         <p>No addresses found.</p>
                     ) : (
                         addresses.map((address) => (
                             <div
-                                className="col-md-6 mb-4"
+                                className="bg-white rounded-lg shadow-sm border border-gray-200"
                                 key={address._id}
                             >
-                                <div className="card h-100 shadow-sm">
-                                    <div className="card-body">
+                                <div className="p-6">
 
-                                        <h5>
-                                            {address.label}
-                                        </h5>
+                                    <h5 className="text-lg font-semibold mb-2">
+                                        {address.label}
+                                    </h5>
 
+                                    <p className="mb-1">
+                                        <strong>
+                                            {address.fullName}
+                                        </strong>
+                                    </p>
+
+                                    <p className="mb-1">
+                                        {address.addressLine1}
+                                    </p>
+
+                                    {address.addressLine2 && (
                                         <p className="mb-1">
-                                            <strong>
-                                                {address.fullName}
-                                            </strong>
+                                            {address.addressLine2}
                                         </p>
+                                    )}
 
-                                        <p className="mb-1">
-                                            {address.addressLine1}
-                                        </p>
+                                    <p className="mb-1">
+                                        {address.city},{" "}
+                                        {address.state}
+                                    </p>
 
-                                        {address.addressLine2 && (
-                                            <p className="mb-1">
-                                                {address.addressLine2}
-                                            </p>
-                                        )}
+                                    <p className="mb-2">
+                                        {address.pincode}
+                                    </p>
 
-                                        <p className="mb-1">
-                                            {address.city},{" "}
-                                            {address.state}
-                                        </p>
+                                    <p className="mb-4">
+                                        {address.phone}
+                                    </p>
 
-                                        <p className="mb-2">
-                                            {address.pincode}
-                                        </p>
-
-                                        <p>
-                                            {address.phone}
-                                        </p>
-
+                                    <div className="flex gap-3">
                                         <button
                                             className="bg-blue-500 text-white px-4 py-2 rounded"
                                             onClick={() =>
@@ -362,8 +364,8 @@ export default function Addresses() {
                                         >
                                             Delete
                                         </button>
-
                                     </div>
+
                                 </div>
                             </div>
                         ))
