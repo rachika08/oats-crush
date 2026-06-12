@@ -1,18 +1,18 @@
-import {useNavigate} from "react-router";
-import {useState,useEffect} from 'react-dom';
+import {useNavigate} from "react-router-dom";
+import {useState,useEffect} from 'react';
 import api from '../api/axios.js';
 import Navbar from "../components/Navbar";
 
 export default function AdminOrders() {
     const [orders,setOrders]=useState([]);
     const [loading,setLoading]=useState(true);
-
+    const navigate=useNavigate();
     useEffect(()=>{
         fetchOrder();
     },[]);
     const fetchOrder=async()=>{
         try{
-            const orders=await api.get("/admin/orders");
+            const res=await api.get("/admin/orders");
             setOrders(res.data);
         }catch(error){
             console.log(error)
@@ -30,24 +30,12 @@ export default function AdminOrders() {
                         Loading...
                     </h3>
                 </div>
-                <Footer />
+                
             </>
         );
     };
 
-    if (!orders) {
-        return (
-            <>
-                <Navbar />
-                <div className="max-w-7xl mx-auto px-4 py-10">
-                    <h3 className="text-xl font-semibold">
-                        Order not found
-                    </h3>
-                </div>
-                <Footer />
-            </>
-        );
-    }
+    
     return(
         <>
         <Navbar/>

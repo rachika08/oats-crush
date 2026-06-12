@@ -19,7 +19,8 @@ import Checkout from './pages/Checkout';
 import Addresses from './pages/Addresses';
 import MyOrders from './pages/MyOrders';
 import OrderDetails from './pages/OrderDetails';
-import AdminDashboard from './admin/AdminDashboard'
+import AdminDashboard from './admin/AdminDashboard';
+import AdminOrders from './admin/AdminOrder';
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
@@ -51,7 +52,9 @@ const router = createBrowserRouter([
   {
     path: "/admin/edit/:id",
     element: <EditProduct />
-  }
+  },
+  {
+  path:"/admin/orders",element : <AdminOrders/>}
   
 
 ]);
