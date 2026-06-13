@@ -21,6 +21,7 @@ import MyOrders from './pages/MyOrders';
 import OrderDetails from './pages/OrderDetails';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminOrders from './admin/AdminOrder';
+import AdminOrderDetails from './admin/AdminOrderDetails';
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
@@ -54,7 +55,16 @@ const router = createBrowserRouter([
     element: <EditProduct />
   },
   {
-  path:"/admin/orders",element : <AdminOrders/>}
+  path:"/admin/orders",element : <AdminRoute>
+    <AdminOrders/>
+    </AdminRoute>},
+  
+  {path:"/admin/orders/:id",
+    element:
+        <AdminRoute>
+            <AdminOrderDetails />
+        </AdminRoute>
+    }
   
 
 ]);
