@@ -51,18 +51,58 @@ export default function Checkout() {
     };
 
     const handlePlaceOrder = async () => {
+        console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
         try {
             if (!selectedAddress) {
                 alert("Please select an address");
                 return;
             }
 
-            const res = await api.post("/order", {
+            const orderRes = await api.post("/order", {
                 addressId: selectedAddress,
-                paymentMethod: "COD",
+                paymentMethod,
             });
 
-            navigate(`/order/${res.data.order._id}`);
+            const order = orderRes.data.order;
+
+            if (paymentMethod === "COD") {
+                navigate(`/order/${order._id}`);
+                return;
+            }
+
+            const paymentRes = await api.post(
+                "/payment/create-order",
+                {
+                    orderId: order._id,
+                }
+            );
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
+                amount: paymentRes.data.amount,
+
+                currency: paymentRes.data.currency,
+
+                order_id: paymentRes.data.orderId,
+
+                name: "Oats Crush",
+
+                description: "Order Payment",
+
+                handler: function (response) {
+                    console.log(response);
+                },
+
+                theme: {
+                    color: "#3399cc",
+                },
+            };
+
+            const razorpay = new window.Razorpay(options);
+
+            razorpay.open();
+
+            console.log(paymentRes.data);
         } catch (error) {
             alert(
                 error.response?.data?.message ||
@@ -205,6 +245,25 @@ export default function Checkout() {
 
                                     <label>
                                         Cash On Delivery
+                                    </label>
+                                </div>
+                                <div>
+                                    <input
+                                        className="mr-2"
+                                        type="radio"
+                                        checked={
+                                            paymentMethod ===
+                                            "RAZORPAY"
+                                        }
+                                        onChange={() =>
+                                            setPaymentMethod(
+                                                "RAZORPAY"
+                                            )
+                                        }
+                                    />
+
+                                    <label>
+                                        On-line Payment (RAZORPAY)
                                     </label>
                                 </div>
                             </div>
