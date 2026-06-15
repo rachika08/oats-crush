@@ -8,7 +8,7 @@ export const addAddress = async (req, res) => {
       user: userId,
       ...req.body,
     });
-
+    console.log(address);
     res.status(201).json(address);
   } catch (error) {
     return res.status(500).json({
