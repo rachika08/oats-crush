@@ -59,10 +59,15 @@ export default function Checkout() {
 
             const res = await api.post("/order", {
                 addressId: selectedAddress,
-                paymentMethod: "COD",
+                paymentMethod,
             });
-
-            navigate(`/order/${res.data.order._id}`);
+            if (paymentMethod === "COD") {
+                navigate(`/order/${res.data.order._id}`);
+            } else {
+                // Razorpay flow will go here later
+                alert("Open Razorpay Checkout");
+            }
+            // navigate(`/order/${res.data.order._id}`);
         } catch (error) {
             alert(
                 error.response?.data?.message ||
@@ -206,6 +211,16 @@ export default function Checkout() {
                                     <label>
                                         Cash On Delivery
                                     </label>
+                                </div>
+                                <div>
+                                    <input
+                                        className="mr-2"
+                                        type="radio"
+                                        value="RAZORPAY"
+                                        checked={paymentMethod === "RAZORPAY"}
+                                        onChange={() => setPaymentMethod("RAZORPAY")}
+                                    />
+                                    <label>Pay Online (Razorpay)</label>
                                 </div>
                             </div>
                         </div>
