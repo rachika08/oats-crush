@@ -51,23 +51,71 @@ export default function Checkout() {
     };
 
     const handlePlaceOrder = async () => {
+        console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
         try {
             if (!selectedAddress) {
                 alert("Please select an address");
                 return;
             }
 
-            const res = await api.post("/order", {
+            const orderRes = await api.post("/order", {
                 addressId: selectedAddress,
                 paymentMethod,
             });
+
+            const order = orderRes.data.order;
+
             if (paymentMethod === "COD") {
-                navigate(`/order/${res.data.order._id}`);
-            } else {
-                // Razorpay flow will go here later
-                alert("Open Razorpay Checkout");
+                navigate(`/order/${order._id}`);
+                return;
             }
-            // navigate(`/order/${res.data.order._id}`);
+
+            const paymentRes = await api.post(
+                "/payment/create-order",
+                {
+                    orderId: order._id,
+                }
+            );
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
+                amount: paymentRes.data.amount,
+
+                currency: paymentRes.data.currency,
+
+                order_id: paymentRes.data.orderId,
+
+                name: "Oats Crush",
+
+                description: "Order Payment",
+
+                handler: async function (response) {
+                    console.log(response);
+                    try {
+                        const res = await api.post("/payment/verify", {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                        });
+
+                        console.log("Payment Verified:", res.data);
+
+                        navigate(`/order/${order._id}`);
+                    } catch (error) {
+                        console.log("Verification failed", error);
+                    }
+                },
+
+                theme: {
+                    color: "#3399cc",
+                },
+            };
+
+            const razorpay = new window.Razorpay(options);
+
+            razorpay.open();
+
+            console.log(paymentRes.data);
         } catch (error) {
             alert(
                 error.response?.data?.message ||
@@ -221,6 +269,8 @@ export default function Checkout() {
                                         onChange={() => setPaymentMethod("RAZORPAY")}
                                     />
                                     <label>Pay Online (Razorpay)</label>
+
+
                                 </div>
                             </div>
                         </div>

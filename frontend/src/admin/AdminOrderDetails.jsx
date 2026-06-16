@@ -172,6 +172,14 @@ export default function AdminOrderDetails() {
                         <strong>Payment Status:</strong>{" "}
                         {order.paymentStatus}
                     </p>
+                    <p className="mb-2">
+                        <strong>Razorpay Payment Id:</strong>{" "}
+                        {order.razorpayPaymentId}
+                    </p>
+                    <p className="mb-2">
+                        <strong>Paid at:</strong>{" "}
+                        {new Date(order.paidAt).toLocaleString()}
+                    </p>
 
                     <p>
                         <strong>Current Status:</strong>{" "}
