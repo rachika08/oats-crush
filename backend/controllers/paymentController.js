@@ -46,58 +46,138 @@ export const createRazorpayOrder = async (req, res) => {
 };
 
 
+// export const verifyPayment = async (req, res) => {
+//     try {
+//         const {
+//             razorpay_order_id,
+//             razorpay_payment_id,
+//             razorpay_signature
+//         } = req.body;
+
+//         if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+//             return res.status(400).json({
+//                 message: "Missing payment details"
+//             });
+//         }
+
+//         // Step 1: Create expected signature
+//         const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+//         const expectedSignature = crypto
+//             .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+//             .update(body)
+//             .digest("hex");
+
+//         // Step 2: Compare signatures
+//         if (expectedSignature !== razorpay_signature) {
+//             return res.status(400).json({
+//                 message: "Invalid signature. Payment verification failed."
+//             });
+//         }
+
+//         // Step 3: Find order in DB
+//         const order = await Order.findOne({
+//             razorpayOrderId: razorpay_order_id
+//         });
+
+//         if (!order) {
+//             return res.status(404).json({
+//                 message: "Order not found"
+//             });
+//         }
+
+//         // Step 4: Mark as paid
+//         order.paymentStatus = "Paid";
+//         await order.save();
+
+//         return res.status(200).json({
+//             message: "Payment verified successfully",
+//             order
+//         });
+
+//     } catch (error) {
+//         return res.status(500).json({
+//             message: error.message
+//         });
+//     }
+// };
+
+
 export const verifyPayment = async (req, res) => {
     try {
         const {
             razorpay_order_id,
             razorpay_payment_id,
-            razorpay_signature
+            razorpay_signature,
         } = req.body;
 
-        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+        if (
+            !razorpay_order_id ||
+            !razorpay_payment_id ||
+            !razorpay_signature
+        ) {
             return res.status(400).json({
-                message: "Missing payment details"
+                message: "Missing payment details",
             });
         }
 
-        // Step 1: Create expected signature
-        const body = razorpay_order_id + "|" + razorpay_payment_id;
-
-        const expectedSignature = crypto
-            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-            .update(body)
+        const generatedSignature = crypto
+            .createHmac(
+                "sha256",
+                process.env.RAZORPAY_KEY_SECRET
+            )
+            .update(
+                `${razorpay_order_id}|${razorpay_payment_id}`
+            )
             .digest("hex");
 
-        // Step 2: Compare signatures
-        if (expectedSignature !== razorpay_signature) {
+        if (
+            generatedSignature !==
+            razorpay_signature
+        ) {
             return res.status(400).json({
-                message: "Invalid signature. Payment verification failed."
+                message: "Payment verification failed",
             });
         }
 
-        // Step 3: Find order in DB
         const order = await Order.findOne({
-            razorpayOrderId: razorpay_order_id
+            razorpayOrderId: razorpay_order_id,
+            user: req.user.id,
         });
 
         if (!order) {
             return res.status(404).json({
-                message: "Order not found"
+                message: "Order not found",
             });
         }
 
-        // Step 4: Mark as paid
+        if (order.paymentMethod !== "RAZORPAY") {
+            return res.status(400).json({
+                message: "Invalid payment method",
+            });
+        }
+
+        if (order.paymentStatus === "Paid") {
+            return res.status(200).json({
+                message: "Payment already verified",
+                order,
+            });
+        }
+
         order.paymentStatus = "Paid";
+        order.razorpayPaymentId =
+            razorpay_payment_id;
+        order.paidAt = new Date();
+
         await order.save();
 
         return res.status(200).json({
             message: "Payment verified successfully",
-            order
+            order,
         });
-
     } catch (error) {
         return res.status(500).json({
-            message: error.message
+            message: error.message,
         });
     }
 };

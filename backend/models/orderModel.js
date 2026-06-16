@@ -50,9 +50,8 @@ const orderSchema = new mongoose.Schema(
       enum: ["Pending", "Paid", "Failed"],
       default: "Pending",
     },
-    razorpayOrderId: {
-        type: String
-    },
+    
+
     orderStatus: {
       type: String,
       enum: [
@@ -63,6 +62,16 @@ const orderSchema = new mongoose.Schema(
         "Cancelled",
       ],
       default: "Pending",
+    },
+    razorpayOrderId: {
+        type: String
+    },
+    razorpayPaymentId: {
+        type: String,
+    },
+
+    paidAt: {
+        type: Date,
     },
     
   },
