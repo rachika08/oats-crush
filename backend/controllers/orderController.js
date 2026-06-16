@@ -62,10 +62,7 @@ export const placeOrder = async (req, res) => {
             address: addressId,
             totalAmount,
             paymentMethod,
-            paymentStatus:
-                paymentMethod === "COD"
-                    ? "Pending"
-                    : "Pending",
+            paymentStatus:"Pending",
             orderStatus: "Pending"
         });
 
@@ -117,3 +114,63 @@ export const getOrderById=async(req,res)=>{
         return res.status(500).json({message:error.message});
     }
 }
+
+export const cancelOrder = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const order = await Order.findOne({
+            _id: id,
+            user: req.user.id,
+        });
+
+        if (!order) {
+            return res.status(404).json({
+                message: "Order not found",
+            });
+        }
+
+        // ❌ Block if already progressed
+        if (order.orderStatus !== "Pending") {
+            return res.status(400).json({
+                message:
+                    "Only pending orders can be cancelled",
+            });
+        }
+
+        // 🔁 Restore stock
+        for (const item of order.items) {
+            await Product.findByIdAndUpdate(
+                item.product,
+                {
+                    $inc: {
+                        stock: item.quantity,
+                    },
+                }
+            );
+        }
+
+        // 🧾 Update order
+        order.orderStatus = "Cancelled";
+        order.cancelledAt = new Date();
+
+        // 💳 If Razorpay and not paid yet
+        if (
+            order.paymentMethod === "RAZORPAY" &&
+            order.paymentStatus === "Pending"
+        ) {
+            order.paymentStatus = "Failed";
+        }
+
+        await order.save();
+
+        return res.status(200).json({
+            message: "Order cancelled successfully",
+            order,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+};

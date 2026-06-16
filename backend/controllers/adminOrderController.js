@@ -1,5 +1,6 @@
 import express from 'express';
 import Order from "../models/orderModel.js";
+import Product from '../models/Product.js';
 
 export const getAllOrders = async (req, res) => {
     try {
@@ -48,9 +49,9 @@ export const getOrderByIdAdmin = async (req, res) => {
     }
 };
 
+
 export const updateOrderStatus = async (req, res) => {
     try {
-
         const { id } = req.params;
         const { orderStatus } = req.body;
 
@@ -59,12 +60,12 @@ export const updateOrderStatus = async (req, res) => {
             "Processing",
             "Shipped",
             "Delivered",
-            "Cancelled"
+            "Cancelled",
         ];
 
         if (!allowedStatuses.includes(orderStatus)) {
             return res.status(400).json({
-                message: "Invalid order status"
+                message: "Invalid order status",
             });
         }
 
@@ -72,24 +73,102 @@ export const updateOrderStatus = async (req, res) => {
 
         if (!order) {
             return res.status(404).json({
-                message: "Order not found"
+                message: "Order not found",
             });
         }
 
-        order.orderStatus = orderStatus;
+        // If already cancelled, block further changes
+        if (order.orderStatus === "Cancelled") {
+            return res.status(400).json({
+                message:
+                    "Cannot update a cancelled order",
+            });
+        }
+
+        // ⭐ HANDLE CANCELLATION LOGIC
+        if (orderStatus === "Cancelled") {
+            // Restore stock only once
+            for (const item of order.items) {
+                await Product.findByIdAndUpdate(
+                    item.product,
+                    {
+                        $inc: {
+                            stock: item.quantity,
+                        },
+                    }
+                );
+            }
+
+            order.orderStatus = "Cancelled";
+
+            // If Razorpay and still unpaid
+            if (
+                order.paymentMethod === "RAZORPAY" &&
+                order.paymentStatus === "Pending"
+            ) {
+                order.paymentStatus = "Failed";
+            }
+        } else {
+            // Normal status update flow
+            order.orderStatus = orderStatus;
+        }
 
         await order.save();
 
         return res.status(200).json({
             message: "Order status updated",
-            order
+            order,
         });
-
     } catch (error) {
-
         return res.status(500).json({
-            message: error.message
+            message: error.message,
         });
-
     }
 };
+
+
+// export const updateOrderStatus = async (req, res) => {
+//     try {
+
+//         const { id } = req.params;
+//         const { orderStatus } = req.body;
+
+//         const allowedStatuses = [
+//             "Pending",
+//             "Processing",
+//             "Shipped",
+//             "Delivered",
+//             "Cancelled"
+//         ];
+
+//         if (!allowedStatuses.includes(orderStatus)) {
+//             return res.status(400).json({
+//                 message: "Invalid order status"
+//             });
+//         }
+
+//         const order = await Order.findById(id);
+
+//         if (!order) {
+//             return res.status(404).json({
+//                 message: "Order not found"
+//             });
+//         }
+
+//         order.orderStatus = orderStatus;
+
+//         await order.save();
+
+//         return res.status(200).json({
+//             message: "Order status updated",
+//             order
+//         });
+
+//     } catch (error) {
+
+//         return res.status(500).json({
+//             message: error.message
+//         });
+
+//     }
+// };
