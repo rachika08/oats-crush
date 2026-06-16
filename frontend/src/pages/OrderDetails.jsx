@@ -56,6 +56,22 @@ export default function OrderDetails() {
             </>
         );
     }
+    const handleCancel = async () => {
+        try {
+            await api.put(
+                `/order/${order._id}/cancel`
+            );
+
+            alert("Order cancelled successfully");
+
+            fetchOrder(); // refresh UI
+        } catch (err) {
+            alert(
+                err.response?.data?.message ||
+                    "Cancel failed"
+            );
+        }
+    };
 
     return (
         <>
@@ -95,7 +111,14 @@ export default function OrderDetails() {
                             <strong>Total:</strong> ₹
                             {order.totalAmount}
                         </p>
-
+                        {order.orderStatus === "Pending" && (
+                            <button
+                                onClick={handleCancel}
+                                style={{ background: "red", color: "white" }}
+                            >
+                                Cancel Order
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -175,6 +198,7 @@ export default function OrderDetails() {
                             </div>
 
                         ))}
+
 
                     </div>
                 </div>
