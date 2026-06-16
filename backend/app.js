@@ -3,6 +3,7 @@ const app=express();
 import connectDB from './config/mongo.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cleanupPendingOrders from "./jobs/cleanupPendingOrders.js";
 import authRoutes from './routes/authRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
@@ -32,6 +33,7 @@ app.get('/',(req,res)=>{
 })
 
 connectDB();
+cleanupPendingOrders();
 
 app.listen(process.env.PORT,()=>{
     console.log("server listening");

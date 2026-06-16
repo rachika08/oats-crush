@@ -73,6 +73,9 @@ const orderSchema = new mongoose.Schema(
     paidAt: {
         type: Date,
     },
+    cancelledAt: {
+        type: Date,
+    },
     
   },
   {
