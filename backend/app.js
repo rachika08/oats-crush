@@ -1,8 +1,11 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 const app=express();
 import connectDB from './config/mongo.js';
 import cors from 'cors';
-import dotenv from 'dotenv';
+
+// import "./utils/sendEmail.js";
 import cleanupPendingOrders from "./jobs/cleanupPendingOrders.js";
 import authRoutes from './routes/authRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
@@ -12,7 +15,7 @@ import addressRoutes from './routes/addressRoutes.js';
 import paymentRoutes from "./routes/paymentRoutes.js";
 import orderRoutes from './routes/orderRoutes.js';
 import adminOrderRoutes from './routes/adminOrderRoutes.js'
-dotenv.config();
+
 
 app.use(express.urlencoded({extended:true}));
 app.use(cors());

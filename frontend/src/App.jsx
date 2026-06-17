@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import './App.css'
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import VerifyEmail from './pages/VerifyEmail';
 import Home from './pages/Home';
 import Categories from './admin/categories';
 import AddProduct from './admin/AddProduct';
@@ -34,8 +35,7 @@ const router = createBrowserRouter([
   {path:"/addresses", element:<Addresses/>},
   {path:"/order", element:<MyOrders/>},
   {path:"/order/:id", element:<OrderDetails/>},
-  // {path:"/nav",element:<Navbar/>},
-  // {path:"/hero",element:<HeroSection/>},
+  {path: "/verify-email/:token",element: <VerifyEmail />},
   // ADMIN ROUTES
   {path:"/admin",element:<AdminRoute><AdminDashboard/></AdminRoute>},
   {
