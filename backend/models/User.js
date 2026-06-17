@@ -30,7 +30,7 @@ const userSchema=mongoose.Schema({
     verificationToken: String,
     verificationTokenExpires: Date,
 },{
-    timesStamps:true
+    timestamps: true,
 });
 
 export default mongoose.model('User',userSchema);
