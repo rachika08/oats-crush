@@ -1,4 +1,5 @@
-// import { useEffect, useState } from "react";
+
+// import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
 // import api from "../api/axios";
 
@@ -8,12 +9,17 @@
 //         price: "",
 //         stock: "",
 //         description: "",
-//         image: "",
 //         category: "",
-//         featured:false
+//         featured: false,
+//         benefits: "",
+//         ingredients: ""
 //     });
-//     const [file, setFile] = useState(null);
-//     const navigate= useNavigate();
+
+//     const [mainImage, setMainImage] = useState(null);
+//     const [additionalImages, setAdditionalImages] = useState([]);
+
+//     const navigate = useNavigate();
+
 //     const handleChange = (e) => {
 //         setForm({
 //             ...form,
@@ -29,52 +35,145 @@
 //         formData.append("name", form.name);
 //         formData.append("price", form.price);
 //         formData.append("stock", form.stock);
-//          formData.append("description", form.description);
-//          formData.append("image", file);
+//         formData.append("description", form.description);
 //         formData.append("category", form.category);
-//        formData.append("featured", form.featured);
+//         formData.append("featured", form.featured);
 
-        
+//         // Convert comma-separated text into arrays
+//         const benefitsArray = form.benefits
+//             .split(",")
+//             .map(item => item.trim())
+//             .filter(item => item);
 
+//         const ingredientsArray = form.ingredients
+//             .split(",")
+//             .map(item => item.trim())
+//             .filter(item => item);
+
+//         formData.append(
+//             "benefits",
+//             JSON.stringify(benefitsArray)
+//         );
+
+//         formData.append(
+//             "ingredients",
+//             JSON.stringify(ingredientsArray)
+//         );
+
+//         // Main image
+//         formData.append("image", mainImage);
+
+//         // Additional images
+//         additionalImages.forEach((image) => {
+//             formData.append("additionalImages", image);
+//         });
+//         for (let [key, value] of formData.entries()) {
+//             console.log(key, value);
+//         }
 //         await api.post("/product", formData);
-
+//         alert("Product created successfully");
 //         navigate("/admin/products");
 //     };
 
 //     return (
 //         <div>
 //             <form onSubmit={handleSubmit}>
-//                 <input name="name" placeholder="Name" onChange={handleChange} />
-               
-//                 <input name="price" placeholder="Price" onChange={handleChange} />
-//                 <input name="stock" placeholder="Stock" onChange={handleChange} />
-//                  <input name="description" placeholder="Description" onChange={handleChange} />
-//                 {/* <input name="image" placeholder="Image URL" onChange={handleChange} /> */}
-//                 <input
-//                 type="file"
-//                 onChange={(e) => setFile(e.target.files[0])}
-//                 />
-//                 <input name="category" placeholder="Category ID" onChange={handleChange} />
-//                  <div>
-//                 <label>Featured Product</label>
 
 //                 <input
-//                     type="checkbox"
-//                     checked={form.featured}
-//                     onChange={(e) =>
-//                     setForm({
-//                         ...form,
-//                         featured: e.target.checked,
-//                     })
-//                     }
+//                     name="name"
+//                     placeholder="Name"
+//                     value={form.name}
+//                     onChange={handleChange}
 //                 />
+
+//                 <input
+//                     name="price"
+//                     placeholder="Price"
+//                     value={form.price}
+//                     onChange={handleChange}
+//                 />
+
+//                 <input
+//                     name="stock"
+//                     placeholder="Stock"
+//                     value={form.stock}
+//                     onChange={handleChange}
+//                 />
+
+//                 <input
+//                     name="description"
+//                     placeholder="Description"
+//                     value={form.description}
+//                     onChange={handleChange}
+//                 />
+
+//                 <input
+//                     name="category"
+//                     placeholder="Category ID"
+//                     value={form.category}
+//                     onChange={handleChange}
+//                 />
+
+//                 <input
+//                     name="benefits"
+//                     placeholder="Benefits (comma separated)"
+//                     value={form.benefits}
+//                     onChange={handleChange}
+//                 />
+
+//                 <input
+//                     name="ingredients"
+//                     placeholder="Ingredients (comma separated)"
+//                     value={form.ingredients}
+//                     onChange={handleChange}
+//                 />
+
+//                 <div>
+//                     <label>Main Image</label>
+//                     <input
+//                         type="file"
+//                         onChange={(e) =>
+//                             setMainImage(e.target.files[0])
+//                         }
+//                     />
 //                 </div>
-//                 <button type="submit">Create Product</button>
+
+//                 <div>
+//                     <label>Additional Images</label>
+//                     <input
+//                         type="file"
+//                         multiple
+//                         onChange={(e) =>
+//                             setAdditionalImages(
+//                                 Array.from(e.target.files)
+//                             )
+//                         }
+//                     />
+//                 </div>
+
+//                 <div>
+//                     <label>Featured Product</label>
+
+//                     <input
+//                         type="checkbox"
+//                         checked={form.featured}
+//                         onChange={(e) =>
+//                             setForm({
+//                                 ...form,
+//                                 featured: e.target.checked
+//                             })
+//                         }
+//                     />
+//                 </div>
+
+//                 <button type="submit">
+//                     Create Product
+//                 </button>
+
 //             </form>
 //         </div>
-//     )
+//     );
 // }
-
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -116,7 +215,6 @@ export default function AddProduct() {
         formData.append("category", form.category);
         formData.append("featured", form.featured);
 
-        // Convert comma-separated text into arrays
         const benefitsArray = form.benefits
             .split(",")
             .map(item => item.trim())
@@ -137,117 +235,141 @@ export default function AddProduct() {
             JSON.stringify(ingredientsArray)
         );
 
-        // Main image
         formData.append("image", mainImage);
 
-        // Additional images
         additionalImages.forEach((image) => {
             formData.append("additionalImages", image);
         });
+
         for (let [key, value] of formData.entries()) {
             console.log(key, value);
         }
+
         await api.post("/product", formData);
         alert("Product created successfully");
         navigate("/admin/products");
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <div className="min-h-screen bg-gray-100 py-10 px-4">
+            <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8">
+                <h2 className="text-2xl font-bold mb-6 text-center">
+                    Add Product
+                </h2>
 
-                <input
-                    name="name"
-                    placeholder="Name"
-                    value={form.name}
-                    onChange={handleChange}
-                />
-
-                <input
-                    name="price"
-                    placeholder="Price"
-                    value={form.price}
-                    onChange={handleChange}
-                />
-
-                <input
-                    name="stock"
-                    placeholder="Stock"
-                    value={form.stock}
-                    onChange={handleChange}
-                />
-
-                <input
-                    name="description"
-                    placeholder="Description"
-                    value={form.description}
-                    onChange={handleChange}
-                />
-
-                <input
-                    name="category"
-                    placeholder="Category ID"
-                    value={form.category}
-                    onChange={handleChange}
-                />
-
-                <input
-                    name="benefits"
-                    placeholder="Benefits (comma separated)"
-                    value={form.benefits}
-                    onChange={handleChange}
-                />
-
-                <input
-                    name="ingredients"
-                    placeholder="Ingredients (comma separated)"
-                    value={form.ingredients}
-                    onChange={handleChange}
-                />
-
-                <div>
-                    <label>Main Image</label>
-                    <input
-                        type="file"
-                        onChange={(e) =>
-                            setMainImage(e.target.files[0])
-                        }
-                    />
-                </div>
-
-                <div>
-                    <label>Additional Images</label>
-                    <input
-                        type="file"
-                        multiple
-                        onChange={(e) =>
-                            setAdditionalImages(
-                                Array.from(e.target.files)
-                            )
-                        }
-                    />
-                </div>
-
-                <div>
-                    <label>Featured Product</label>
+                <form onSubmit={handleSubmit} className="space-y-4">
 
                     <input
-                        type="checkbox"
-                        checked={form.featured}
-                        onChange={(e) =>
-                            setForm({
-                                ...form,
-                                featured: e.target.checked
-                            })
-                        }
+                        name="name"
+                        placeholder="Name"
+                        value={form.name}
+                        onChange={handleChange}
+                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                </div>
 
-                <button type="submit">
-                    Create Product
-                </button>
+                    <input
+                        name="price"
+                        placeholder="Price"
+                        value={form.price}
+                        onChange={handleChange}
+                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-            </form>
+                    <input
+                        name="stock"
+                        placeholder="Stock"
+                        value={form.stock}
+                        onChange={handleChange}
+                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    <input
+                        name="description"
+                        placeholder="Description"
+                        value={form.description}
+                        onChange={handleChange}
+                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    <input
+                        name="category"
+                        placeholder="Category ID"
+                        value={form.category}
+                        onChange={handleChange}
+                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    <input
+                        name="benefits"
+                        placeholder="Benefits (comma separated)"
+                        value={form.benefits}
+                        onChange={handleChange}
+                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    <input
+                        name="ingredients"
+                        placeholder="Ingredients (comma separated)"
+                        value={form.ingredients}
+                        onChange={handleChange}
+                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2">
+                            Main Image
+                        </label>
+                        <input
+                            type="file"
+                            onChange={(e) =>
+                                setMainImage(e.target.files[0])
+                            }
+                            className="w-full border rounded-lg px-3 py-2"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2">
+                            Additional Images
+                        </label>
+                        <input
+                            type="file"
+                            multiple
+                            onChange={(e) =>
+                                setAdditionalImages(
+                                    Array.from(e.target.files)
+                                )
+                            }
+                            className="w-full border rounded-lg px-3 py-2"
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="checkbox"
+                            checked={form.featured}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    featured: e.target.checked
+                                })
+                            }
+                            className="h-4 w-4"
+                        />
+                        <label className="text-sm font-medium">
+                            Featured Product
+                        </label>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
+                    >
+                        Create Product
+                    </button>
+
+                </form>
+            </div>
         </div>
     );
 }

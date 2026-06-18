@@ -12,7 +12,7 @@ router.get('/:id',getProductsById);
 // router.post('/',protect,admin,upload.single("image"),createProduct);
 router.post('/',protect,admin,upload.fields([
   { name: "image", maxCount: 1 },
-  { name: "additionalImages", maxCount: 4 }
+  { name: "additionalImages", maxCount: 6 }
 ]),createProduct);
 router.put('/:id',protect,admin,updateProduct);
 router.delete('/:id',protect,admin,deleteProduct);
