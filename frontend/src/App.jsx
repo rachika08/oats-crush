@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import VerifyEmail from './pages/VerifyEmail';
 import Home from './pages/Home';
+import AllProducts from "./pages/AllProducts";
 import Categories from './admin/categories';
 import AddProduct from './admin/AddProduct';
 import EditProduct from './admin/EditProduct';
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
   {path:"/order", element:<MyOrders/>},
   {path:"/order/:id", element:<OrderDetails/>},
   {path: "/verify-email/:token",element: <VerifyEmail />},
+  {path: "/products",element: <AllProducts />},
   // ADMIN ROUTES
   {path:"/admin",element:<AdminRoute><AdminDashboard/></AdminRoute>},
   {

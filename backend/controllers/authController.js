@@ -74,7 +74,7 @@ export const loginUser=async(req,res)=>{
         if(!userFound){
             return res.status(400).json({message:"user not found"});
         }
-        if (!userFound.isVerified) {
+        if (!userFound.isVerified && !userFound.role=="admin") {
             return res.status(403).json({
                 message:
                     "Please verify your email before logging in"

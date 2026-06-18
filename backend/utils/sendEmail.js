@@ -1,49 +1,23 @@
-// import nodemailer from "nodemailer";
 
+import { Resend } from "resend";
 
-import nodemailer from "nodemailer";
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (to, subject, html) => {
-    console.log("EMAIL_USER =", process.env.EMAIL_USER);
-    console.log("EMAIL_PASS =", process.env.EMAIL_PASS ? "Loaded" : "Missing");
-
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
-        tls: {
-            rejectUnauthorized: false,
-        },
-    });
-
-    await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+    console.log("Sending email via Resend HTTP API...");
+    
+    const { data, error } = await resend.emails.send({
+        from: "onboarding@resend.dev",
         to,
         subject,
         html,
     });
+
+    if (error) {
+        console.error("Resend error:", error);
+        throw new Error(error.message);
+    }
+
+    console.log("Email sent successfully:", data.id);
 };
-// export const sendEmail = async (to, subject, html) => {
 
-//     console.log("EMAIL_USER =", process.env.EMAIL_USER);
-//     console.log("EMAIL_PASS =", process.env.EMAIL_PASS ? "Loaded" : "Missing");
-
-//     const transporter = nodemailer.createTransport({
-//         service: "gmail",
-//         auth: {
-//             user: process.env.EMAIL_USER,
-//             pass: process.env.EMAIL_PASS,
-//         },
-//     });
-
-//     await transporter.sendMail({
-//         from: process.env.EMAIL_USER,
-//         to,
-//         subject,
-//         html,
-//     });
-// };
