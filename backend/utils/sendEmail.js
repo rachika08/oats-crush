@@ -1,26 +1,21 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (to, subject, html) => {
-    console.log("EMAIL_USER =", process.env.EMAIL_USER);
-    console.log("EMAIL_PASS =", process.env.RESEND_API_KEY ? "Loaded" : "Missing");
-
-    const transporter = nodemailer.createTransport({
-        host: "smtp.resend.com",
-        port: 465,
-        secure: true,                  // true for port 465
-        auth: {
-            user: "resend",            // must be literally "resend"
-            pass: process.env.RESEND_API_KEY,
-        },
-    });
-
-    await transporter.verify();
-    console.log("SMTP connection successful");
-
-    await transporter.sendMail({
-        from: "onboarding@resend.dev", // use this until you verify your domain
+    console.log("Sending email via Resend HTTP API...");
+    
+    const { data, error } = await resend.emails.send({
+        from: "onboarding@resend.dev",
         to,
         subject,
         html,
     });
+
+    if (error) {
+        console.error("Resend error:", error);
+        throw new Error(error.message);
+    }
+
+    console.log("Email sent successfully:", data.id);
 };
