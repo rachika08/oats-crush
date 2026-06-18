@@ -16,7 +16,8 @@ export const sendEmail = async (to, subject, html) => {
             rejectUnauthorized: false,
         },
     });
-
+    await transporter.verify();
+    console.log("SMTP connection successful");
     await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to,
