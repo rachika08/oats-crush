@@ -53,9 +53,10 @@ const Footer = () => {
 
             <ul className="space-y-2 text-gray-400">
               <li> <Link to="/contact">Contact us</Link></li>
-              <li><Link to="/faq">FAQ</Link></li>
+              <li><Link to="/terms">Terms of Services</Link></li>
               <li><Link to="/shippingpolicy">Shipping Policy</Link></li>
               <li><Link to="/returnpolicy">Return Policy</Link></li>
+              <li><Link to="/privacypolicy">Privacy Policy</Link></li>
             </ul>
           </div>
 
