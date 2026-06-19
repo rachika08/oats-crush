@@ -26,6 +26,7 @@ import AdminOrders from './admin/AdminOrder';
 import AdminOrderDetails from './admin/AdminOrderDetails';
 import ReturnPolicy from './pages/RefundPolicy';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import ShippingPolicy from './pages/ShippingPolicy';
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
   {path: "/products",element: <AllProducts />},
   {path:"/returnpolicy",element:<ReturnPolicy/>},
   {path:"/privacypolicy",element:<PrivacyPolicy/>},
+  {path:"/shippingpolicy",element:<ShippingPolicy/>},
   // ADMIN ROUTES
   {path:"/admin",element:<AdminRoute><AdminDashboard/></AdminRoute>},
   {
