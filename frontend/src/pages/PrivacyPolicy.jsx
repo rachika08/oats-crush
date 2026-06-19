@@ -226,7 +226,7 @@ const PrivacyPolicy = () => {
                     <li>
                         Contacting us directly at{" "}
                         <a
-                            href="mailto:contact@oatscrush.com"
+                            href="mailto:contact@oatscrush.co.in"
                             className="text-blue-600 hover:underline"
                         >
                             contact@oatscrush.co.in
@@ -361,7 +361,7 @@ const PrivacyPolicy = () => {
                 <p className="mt-2">
                     📧{" "}
                     <a
-                        href="mailto:contact@oatscrush.com"
+                        href="mailto:contact@oatscrush.co.in"
                         className="text-blue-600 hover:underline"
                     >
                         contact@oatscrush.co.in
@@ -427,7 +427,7 @@ const PrivacyPolicy = () => {
                 <p className="mt-4">
                     📧{" "}
                     <a
-                        href="mailto:contact@oatscrush.com"
+                        href="mailto:contact@oatscrush.co.in"
                         className="text-blue-600 hover:underline"
                     >
                         contact@oatscrush.co.in

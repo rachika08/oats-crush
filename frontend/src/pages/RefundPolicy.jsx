@@ -34,7 +34,8 @@ export default function ReturnPolicy() {
                         </p>
 
                         <p className="font-medium mt-2">
-                            📧 contact@oatscrush.co.in
+                            <a href="mailto:contact@oatscrush.co.in" className="text-blue-600 hover:underline">
+                             contact@oatscrush.co.in</a>
                         </p>
 
                         <p className="mt-4">
@@ -88,7 +89,7 @@ export default function ReturnPolicy() {
                         </p>
 
                         <p className="font-medium mt-2">
-                            📧 contact@oatscrush.co.in
+                           <a href="mailto:contact@oatscrush.co.in" className="text-blue-600 hover:underline"> contact@oatscrush.co.in</a>
                         </p>
                     </section>
 
