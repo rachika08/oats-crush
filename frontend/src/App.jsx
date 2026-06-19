@@ -24,6 +24,11 @@ import OrderDetails from './pages/OrderDetails';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminOrders from './admin/AdminOrder';
 import AdminOrderDetails from './admin/AdminOrderDetails';
+import ReturnPolicy from './pages/RefundPolicy';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import ShippingPolicy from './pages/ShippingPolicy';
+import TermsOfService from './pages/TermsOfService';
+import Contact from './pages/Contact';
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
@@ -38,6 +43,11 @@ const router = createBrowserRouter([
   {path:"/order/:id", element:<OrderDetails/>},
   {path: "/verify-email/:token",element: <VerifyEmail />},
   {path: "/products",element: <AllProducts />},
+  {path:"/returnpolicy",element:<ReturnPolicy/>},
+  {path:"/privacypolicy",element:<PrivacyPolicy/>},
+  {path:"/shippingpolicy",element:<ShippingPolicy/>},
+  {path:"/terms",element:<TermsOfService/>},
+  {path:"/contact",element:<Contact/>},
   // ADMIN ROUTES
   {path:"/admin",element:<AdminRoute><AdminDashboard/></AdminRoute>},
   {
