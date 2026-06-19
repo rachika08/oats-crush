@@ -7,7 +7,7 @@ const PrivacyPolicy = () => {
         <Navbar/>
     
         <div className="max-w-5xl mx-auto px-6 py-10 text-gray-800">
-            <h1 className="text-4xl font-bold mb-2">Privacy Policy</h1>
+            <h1 className="text-4xl font-bold mb-2 text-center">Privacy Policy</h1>
             <p className="mb-8 text-gray-600">
                 <strong>Last updated:</strong> 26/05/2026
             </p>
