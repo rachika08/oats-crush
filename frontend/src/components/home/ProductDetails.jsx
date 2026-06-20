@@ -25,7 +25,11 @@ export default function ProductDetails() {
     const addToCart = async () => {
         try {
             const token = localStorage.getItem("token");
-
+            if(!token){
+                alert("Please login to add items to your cart");
+                navigate("/login");
+                return;
+            }
             const res = await api.post(
                 "/cart/add",
                 {
