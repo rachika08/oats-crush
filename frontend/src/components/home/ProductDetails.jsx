@@ -50,6 +50,35 @@ export default function ProductDetails() {
         }
     };
 
+    const buyNow = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if(!token){
+                alert("Please login to add items to your cart");
+                navigate("/login");
+                return;
+            }
+            const res = await api.post(
+                "/cart/add",
+                {
+                    productId: product._id,
+                    quantity: quantity
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            
+            console.log("Cart updated:", res.data);
+            
+            navigate("/cart")
+        } catch (error) {
+            console.log(error.response?.data || error.message);
+        }
+    };
+
     const fetchProduct = async () => {
         try {
             const res = await api.get(`/product/${id}`);
@@ -194,6 +223,7 @@ export default function ProductDetails() {
                         </button>
 
                         <button
+                            onClick={buyNow}
                             className="flex-1 border border-black py-3 rounded-lg"
                         >
                             Buy Now
