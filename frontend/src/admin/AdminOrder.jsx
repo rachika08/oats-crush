@@ -13,6 +13,7 @@ export default function AdminOrders() {
     const fetchOrder=async()=>{
         try{
             const res=await api.get("/admin/orders");
+            console.log(res);
             setOrders(res.data);
         }catch(error){
             console.log(error)
@@ -73,7 +74,7 @@ export default function AdminOrders() {
                                     <strong>
                                         Customer Name:
                                     </strong>{" "}
-                                    {order.user.name}
+                                    {order.user?.name || "Deleted User"}
                                 </div>
 
                                 <div className="mb-3">
