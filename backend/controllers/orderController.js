@@ -174,3 +174,69 @@ export const cancelOrder = async (req, res) => {
         });
     }
 };
+
+// export const buyNow = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         const {
+//             productId,
+//             quantity,
+//             addressId,
+//             paymentMethod
+//         } = req.body;
+
+//         const product = await Product.findById(productId);
+
+//         if (!product) {
+//             return res.status(404).json({
+//                 message: "Product not found"
+//             });
+//         }
+
+//         if (product.stock < quantity) {
+//             return res.status(400).json({
+//                 message: "Product out of stock"
+//             });
+//         }
+
+//         const address = await Address.findOne({
+//             _id: addressId,
+//             user: userId
+//         });
+
+//         if (!address) {
+//             return res.status(404).json({
+//                 message: "Address not found"
+//             });
+//         }
+
+//         const order = await Order.create({
+//             user: userId,
+//             items: [
+//                 {
+//                     product: product._id,
+//                     quantity,
+//                     price: product.price
+//                 }
+//             ],
+//             address: addressId,
+//             totalAmount: product.price * quantity,
+//             paymentMethod,
+//             paymentStatus: "Pending",
+//             orderStatus: "Pending"
+//         });
+
+//         product.stock -= quantity;
+//         await product.save();
+
+//         res.status(201).json({
+//             message: "Order placed successfully",
+//             order
+//         });
+
+//     } catch (error) {
+//         res.status(500).json({
+//             message: error.message
+//         });
+//     }
+// };

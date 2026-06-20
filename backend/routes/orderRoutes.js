@@ -5,6 +5,7 @@ import { protect } from "../midleware/protect.js";
 const router=express.Router();
 
 router.post('/',protect,placeOrder);
+// router.post("/buy-now",protect,buyNow);
 router.get('/',protect,getOrders);
 router.get('/:id',protect,getOrderById);
 router.put( "/:id/cancel",protect,cancelOrder);
