@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingBag, User, Menu, X } from "lucide-react";
-import api from "../api/axios"; // adjust path
+import { Search, ShoppingBag, User, Menu, X, ChevronDown } from "lucide-react";
+import api from "../api/axios"; 
 
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
@@ -47,11 +47,17 @@ const Navbar = () => {
           {/* Category Dropdown */}
           <div className="relative">
             <button
-              className="flex items-center gap-1 hover:text-brand-orange transition"
-              onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-            >
-              Categories
-            </button>
+  className="flex items-center gap-1 hover:text-brand-orange transition cursor-pointer"
+  onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+>
+  Categories
+  <ChevronDown
+    size={14}
+    className={`transition-transform duration-200 ${
+      isCategoryOpen ? "rotate-180" : ""
+    }`}
+  />
+</button>
 
             {isCategoryOpen && (
               <div className="absolute top-8 left-0 bg-white border rounded-xl shadow-md min-w-[200px] py-2 z-50">
@@ -84,12 +90,12 @@ const Navbar = () => {
 
         {/* Right Section */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <button className="hidden sm:flex" aria-label="Search">
+          <button className="hidden sm:flex cursor-pointer" aria-label="Search">
             <Search size={20} />
           </button>
 
           <button
-            className="flex"
+            className="flex cursor-pointer"
             aria-label="Cart"
             onClick={() => navigate("/cart")}
           >
@@ -98,14 +104,14 @@ const Navbar = () => {
 
           {!token ? (
             <button
-              className="hidden sm:flex"
+              className="hidden sm:flex cursor-pointer"
               aria-label="Account"
               onClick={() => navigate("/login")}
             >
               <User size={20} />
             </button>
           ) : (
-            <div className="relative hidden sm:block">
+            <div className="relative hidden sm:block cursor-pointer">
               <button
                 aria-label="Account"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -114,9 +120,9 @@ const Navbar = () => {
               </button>
 
               {isMobileMenuOpen && (
-                <div className="absolute top-8 right-0 bg-white border rounded-xl shadow-md min-w-[180px] py-2 z-50 text-sm">
+                <div className="absolute top-8 right-0 bg-white border rounded-xl shadow-md min-w-[180px] py-2 z-50 text-sm cursor-pointer">
                   <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
                       navigate("/addresses");
                       setIsMobileMenuOpen(false);
@@ -125,7 +131,7 @@ const Navbar = () => {
                     My Addresses
                   </button>
                   <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
                       navigate("/order");
                       setIsMobileMenuOpen(false);
@@ -134,7 +140,7 @@ const Navbar = () => {
                     My Orders
                   </button>
                   <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
                     onClick={() => {
                       localStorage.removeItem("token");
                       navigate("/login");
@@ -150,7 +156,7 @@ const Navbar = () => {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden flex"
+            className="md:hidden flex cursor-pointer"
             aria-label="Menu"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -189,7 +195,7 @@ const Navbar = () => {
           {!token ? (
             <>
               <button
-                className="py-2 text-left"
+                className="py-2 text-left cursor-pointer"
                 onClick={() => {
                   navigate("/login");
                   setIsMobileMenuOpen(false);
@@ -198,7 +204,7 @@ const Navbar = () => {
                 Login
               </button>
               <button
-                className="py-2 text-left"
+                className="py-2 text-left cursor-pointer"
                 onClick={() => {
                   navigate("/signup");
                   setIsMobileMenuOpen(false);
@@ -210,7 +216,7 @@ const Navbar = () => {
           ) : (
             <>
               <button
-                className="py-2 text-left"
+                className="py-2 text-left cursor-pointer"
                 onClick={() => {
                   navigate("/addresses");
                   setIsMobileMenuOpen(false);
@@ -219,7 +225,7 @@ const Navbar = () => {
                 My Addresses
               </button>
               <button
-                className="py-2 text-left"
+                className="py-2 text-left cursor-pointer"
                 onClick={() => {
                   navigate("/order");
                   setIsMobileMenuOpen(false);
@@ -228,7 +234,7 @@ const Navbar = () => {
                 My Orders
               </button>
               <button
-                className="py-2 text-left text-red-600"
+                className="py-2 text-left text-red-600 cursor-pointer"
                 onClick={() => {
                   localStorage.removeItem("token");
                   navigate("/login");

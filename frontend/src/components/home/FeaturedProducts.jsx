@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import { Bell } from "lucide-react";
 
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState([]);
@@ -65,7 +66,7 @@ const FeaturedProducts = () => {
 
           <button
             onClick={() => navigate("/products")}
-            className="hidden sm:flex items-center gap-2 border border-brand-orange text-brand-orange rounded-full px-5 py-2 font-heading text-lg font-medium shadow-md hover:bg-brand-orange hover:-translate-y-1 hover:text-white transition flex-shrink-0"
+            className="hidden sm:flex items-center gap-2 border border-brand-orange text-brand-orange rounded-full px-5 py-2 font-heading text-lg font-medium shadow-md hover:bg-brand-orange hover:-translate-y-1 hover:text-white transition flex-shrink-0 cursor-pointer"
           >
             VIEW ALL PRODUCTS
             <span aria-hidden="true">→</span>
@@ -80,25 +81,27 @@ const FeaturedProducts = () => {
           <div className="relative">
             {/* Custom nav arrows, large circular orange, overlapping the row */}
             <button
-              className="cravings-prev hidden sm:flex absolute -left-5 top-[38%] z-10 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center shadow-md hover:bg-black transition"
+              className="cravings-prev hidden sm:flex absolute -left-5 top-[38%] z-10 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center shadow-md hover:bg-black transition cursor-pointer"
               aria-label="Previous"
             >
               ‹
             </button>
             <button
-              className="cravings-next hidden sm:flex absolute -right-5 top-[38%] z-10 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center shadow-md hover:bg-black transition"
+              className="cravings-next hidden sm:flex absolute -right-5 top-[38%] z-10 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center shadow-md hover:bg-black transition cursor-pointer"
               aria-label="Next"
             >
               ›
             </button>
 
             <Swiper
-              modules={[Navigation]}
+              modules={[Navigation, Pagination]}
               navigation={{
                 prevEl: ".cravings-prev",
                 nextEl: ".cravings-next",
               }}
+              pagination={{ clickable: true }}
               spaceBetween={20}
+              className="cravings-swiper !pb-10 sm:!pb-0"
               breakpoints={{
                 320: { slidesPerView: 1.1 },
                 640: { slidesPerView: 2 },
@@ -153,16 +156,16 @@ const FeaturedProducts = () => {
                           className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${
                             isSoldOut
                               ? "bg-gray-500 text-white cursor-not-allowed"
-                              : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md"
+                              : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
                           }`}
                         >
                           {isSoldOut ? (
-  <>
-    NOTIFY WHEN BACK <Bell size={14} />
-  </>
-) : (
-  "ADD TO CART"
-)}
+                            <>
+                              NOTIFY WHEN BACK <Bell size={14} />
+                            </>
+                          ) : (
+                            "ADD TO CART"
+                          )}
                         </button>
                       </div>
                     </div>
@@ -172,16 +175,6 @@ const FeaturedProducts = () => {
             </Swiper>
           </div>
         )}
-
-        <div className="flex sm:hidden justify-center mt-8">
-          <button
-            onClick={() => navigate("/products")}
-            className="flex items-center gap-2 border border-brand-orange text-brand-orange rounded-full px-5 py-2 font-body text-sm font-medium hover:bg-brand-orange hover:text-white transition"
-          >
-            View All Products
-            <span aria-hidden="true">→</span>
-          </button>
-        </div>
       </div>
     </section>
   );

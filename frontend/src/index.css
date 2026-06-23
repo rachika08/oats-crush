@@ -50,3 +50,25 @@ h6,
 .marquee-wrapper:hover .marquee-track {
   animation-play-state: paused;
 }
+
+/* ---------- Swiper pagination dots (Crush Your Cravings) ---------- */
+.cravings-swiper .swiper-pagination-bullet {
+  background-color: var(--color-brand-orange) !important;
+  opacity: 0.3;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  transition: width 0.25s ease, opacity 0.25s ease;
+}
+
+.cravings-swiper .swiper-pagination-bullet-active {
+  opacity: 1;
+  width: 22px;
+}
+
+/* Pagination is mobile-only; fully hide the layer at sm and above */
+@media (min-width: 640px) {
+  .cravings-swiper .swiper-pagination {
+    display: none !important;
+  }
+}
