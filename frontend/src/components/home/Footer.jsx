@@ -1,87 +1,145 @@
-import {
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
-  FaTwitter,
-} from "react-icons/fa";
+import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+    <footer className="bg-white text-black">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Top divider */}
+        <div className="border-t border-gray-200" />
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-
-          {/* Brand */}
-          <div>
-            <h2 className="text-2xl font-bold mb-4">
-              Oats Crush
-            </h2>
-
-            <p className="text-gray-400">
-              Premium products crafted for quality, performance, and trust.
-            </p>
-          </div>
-
+        {/* Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 py-10 gap-10">
           {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">
-              Quick Links
+          <div className="md:border-r border-gray-200 md:pr-10">
+            <h3 className="font-heading text-brand-orange text-lg tracking-wide mb-4">
+              QUICK LINKS
             </h3>
 
-            <ul className="space-y-2 text-gray-400">
+            <ul className="space-y-3 font-body text-sm">
               <li>
-                <Link to="/">Home</Link>
+                <Link to="/" className="hover:text-brand-orange transition">
+                  Home
+                </Link>
               </li>
-
               <li>
-                <Link to="/products">Products</Link>
+                <Link
+                  to="/products"
+                  className="hover:text-brand-orange transition"
+                >
+                  Products
+                </Link>
               </li>
-
               <li>
-                <Link to="/">Categories</Link>
+                <Link
+                  to="/contact"
+                  className="hover:text-brand-orange transition"
+                >
+                  About Us
+                </Link>
               </li>
             </ul>
           </div>
 
           {/* Support */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">
-              Support
+          <div className="md:border-r border-gray-200 md:pr-10">
+            <h3 className="font-heading text-brand-orange text-lg tracking-wide mb-4">
+              SUPPORT
             </h3>
 
-            <ul className="space-y-2 text-gray-400">
-              <li> <Link to="/contact">Contact us</Link></li>
-              <li><Link to="/terms">Terms of Services</Link></li>
-              <li><Link to="/shippingpolicy">Shipping Policy</Link></li>
-              <li><Link to="/returnpolicy">Return Policy</Link></li>
-              <li><Link to="/privacypolicy">Privacy Policy</Link></li>
+            <ul className="space-y-3 font-body text-sm">
+              <li>
+                <Link
+                  to="/contact"
+                  className="hover:text-brand-orange transition"
+                >
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/terms"
+                  className="hover:text-brand-orange transition"
+                >
+                  Terms of Services
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/shippingpolicy"
+                  className="hover:text-brand-orange transition"
+                >
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/returnpolicy"
+                  className="hover:text-brand-orange transition"
+                >
+                  Return Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/privacypolicy"
+                  className="hover:text-brand-orange transition"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Connect */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">
-              Connect With Us
-            </h3>
+            <p className="font-body text-sm mb-2">Connect With Us</p>
 
-            <div className="flex gap-4">
-              <FaFacebook className="cursor-pointer hover:scale-110 transition" />
-              <FaInstagram className="cursor-pointer hover:scale-110 transition" />
-              <FaLinkedin className="cursor-pointer hover:scale-110 transition" />
-              
-            </div>
+            <a
+              href="mailto:dm@oatscrush.co.in"
+              className="font-heading text-brand-orange text-2xl sm:text-2xl break-all hover:translate-y-1 transition"
+            >
+              DM@OATSCRUSH.CO.IN
+            </a>
           </div>
-
         </div>
 
-        {/* Bottom Footer */}
-        <div className="border-t border-gray-800 mt-10 pt-6 text-center text-gray-500 text-sm">
-          © {new Date().getFullYear()} Your Brand. All rights reserved.
-        </div>
+        {/* Bottom divider */}
+        <div className="border-t border-gray-200" />
 
+        {/* Bottom strip */}
+        <div className="flex items-center justify-between py-5 font-body text-sm">
+          <p>© {new Date().getFullYear()} Oats Crush. All Rights Reserved.</p>
+
+          <div className="flex gap-3">
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-brand-orange hover:-translate-y-1 transition"
+            >
+              <FaInstagram size={25} />
+            </a>
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-brand-orange hover:-translate-y-1 transition"
+            >
+              <FaLinkedin size={25} />
+            </a>
+          </div>
+        </div>
       </div>
+
+      {/* Full-bleed logo wordmark */}
+      <img
+        src="/src/assets/images/oats-crush-logo2.png"
+        alt="Oats Crush"
+        className="w-full select-none pointer-events-none"
+      />
     </footer>
   );
 };
