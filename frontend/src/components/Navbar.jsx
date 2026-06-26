@@ -35,7 +35,7 @@ const Navbar = () => {
           className="font-heading text-2xl cursor-pointer select-none leading-none"
           onClick={() => navigate("/")}
         >
-          <img src="/images/oats-crush-logo.jpeg" className="w-23 h-15"/>
+          <img src="/images/oats-crush-logo.jpeg" className="w-23 h-15" alt="logo"/>
         </div>
 
         {/* Desktop Nav Links */}
