@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../api/axios"; // adjust path if needed
-import ProductCard from "../components/ProductCard"; // adjust path if needed
+import api from "../api/axios";
+import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
+
 const CategoryProducts = () => {
   const { id } = useParams();
 
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // Load cached products for this category instantly
+  const [products, setProducts] = useState(() => {
+    const cached = localStorage.getItem(`category-${id}`);
+    return cached ? JSON.parse(cached) : [];
+  });
+
+  const [loading, setLoading] = useState(
+    !localStorage.getItem(`category-${id}`)
+  );
 
   useEffect(() => {
     fetchProductsByCategory();
@@ -16,13 +24,19 @@ const CategoryProducts = () => {
 
   const fetchProductsByCategory = async () => {
     try {
-      setLoading(true);
+      if (products.length === 0) {
+        setLoading(true);
+      }
 
-      const res = await api.get(
-        `/product/category/${id}`
-      );
+      const res = await api.get(`/product/category/${id}`);
 
       setProducts(res.data);
+
+      // Save products for this category
+      localStorage.setItem(
+        `category-${id}`,
+        JSON.stringify(res.data)
+      );
     } catch (error) {
       console.log(error);
     } finally {
@@ -30,47 +44,46 @@ const CategoryProducts = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <h2 className="text-xl font-semibold">
-          Loading products...
-        </h2>
-      </div>
-    );
-  }
-
   return (
     <>
-    <Navbar/>
-    <div className="max-w-7xl mx-auto px-6 py-10">
+      <Navbar />
 
-      {/* Category Name */}
-      <h1 className="text-3xl font-bold mb-8">
-        {products.length > 0
-          ? products[0].category?.name
-          : "Category"}
-      </h1>
+      <div className="max-w-7xl mx-auto px-6 py-10">
 
-      {/* No Products */}
-      {products.length === 0 ? (
-        <div className="text-center py-20">
-          <h2 className="text-xl font-semibold">
-            No products found in this category
-          </h2>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-    <Footer/>
+        {/* Loading text while refreshing */}
+        {loading && (
+          <p className="text-gray-500 mb-4">
+            Refreshing products...
+          </p>
+        )}
+
+        {/* Category Name */}
+        <h1 className="text-3xl font-bold mb-8">
+          {products.length > 0
+            ? products[0].category?.name
+            : "Category"}
+        </h1>
+
+        {/* No Products */}
+        {products.length === 0 && !loading ? (
+          <div className="text-center py-20">
+            <h2 className="text-xl font-semibold">
+              No products found in this category
+            </h2>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <Footer />
     </>
   );
 };

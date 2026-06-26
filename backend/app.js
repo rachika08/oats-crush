@@ -13,7 +13,8 @@ import cartRoutes from './routes/cartRoutes.js';
 import addressRoutes from './routes/addressRoutes.js';
 import paymentRoutes from "./routes/paymentRoutes.js";
 import orderRoutes from './routes/orderRoutes.js';
-import adminOrderRoutes from './routes/adminOrderRoutes.js'
+import adminOrderRoutes from './routes/adminOrderRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
 
 
 app.use(express.urlencoded({extended:true}));
@@ -28,6 +29,7 @@ app.use("/api/address", addressRoutes);
 app.use("/api/order",orderRoutes);
 app.use("/api/payment",paymentRoutes);
 app.use("/api/admin",adminOrderRoutes);
+app.use("/api/reviews",reviewRoutes);
 
 
 app.get('/',(req,res)=>{
