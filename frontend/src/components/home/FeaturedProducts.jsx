@@ -115,7 +115,7 @@ const FeaturedProducts = () => {
                   <SwiperSlide key={product._id}>
                     <div
                       onClick={() => navigate(`/product/${product._id}`)}
-                      className="bg-white border border-gray-200 rounded-2xl overflow-hidden cursor-pointer transition"
+                      className="bg-white border border-gray-200 rounded-2xl overflow-hidden cursor-pointer transition shadow-md hover:-translate-y-1"
                     >
                       <div className="relative aspect-square m-3 rounded-xl overflow-hidden">
                         {isSoldOut && (
@@ -133,16 +133,16 @@ const FeaturedProducts = () => {
                       </div>
 
                       <div className="px-4 pb-4">
-                        <h3 className="font-heading text-base sm:text-lg mb-1 uppercase">
+                        <h3 className="font-heading text-xl sm:text-2xl mb-1 uppercase">
                           {product.name}
                         </h3>
 
-                        <p className="font-body text-xs text-gray-500 mb-3">
+                        <p className="font-body text-sm text-gray-500 mb-3">
                           {product.benefits?.slice(0, 2).join(" • ") ||
                             product.category?.name}
                         </p>
 
-                        <p className="font-body font-semibold mb-3">
+                        <p className="font-heading mb-3">
                           ₹{product.price}.00
                         </p>
 

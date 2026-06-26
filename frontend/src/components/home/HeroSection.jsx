@@ -53,7 +53,7 @@ const HeroSection = () => {
 
         <button
           onClick={() => navigate("/products")}
-          className="bg-white text-black font-heading font-medium px-8 py-3 rounded-full hover:bg-brand-orange hover:text-white transition"
+          className="bg-white text-black font-heading font-medium px-8 py-3 rounded-full hover:bg-brand-orange hover:text-white transition shadow-md hover:-translate-y-1 cursor-pointer"
         >
           SHOP NOW
         </button>
