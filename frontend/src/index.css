@@ -1,1 +1,74 @@
 @import "tailwindcss";
+
+@theme {
+  /* Brand */
+  --color-brand-orange: #f66f1e;
+
+  /* Flavour card palettes */
+  --color-flavour-coffee-bg: #e8c9a8;
+  --color-flavour-coffee-text: #4a2c17;
+  --color-flavour-rasmalai-bg: #f7d4d9;
+  --color-flavour-rasmalai-text: #8b2e3c;
+  --color-flavour-savoury-bg: #d9e4c8;
+  --color-flavour-savoury-text: #3f4a2e;
+
+  /* Fonts */
+  --font-heading: "Monomaniac One", sans-serif;
+  --font-body: "Poppins", sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* ---------- Marquee (promo bar + info bar) ---------- */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll var(--marquee-duration, 25s) linear infinite;
+}
+
+.marquee-wrapper:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ---------- Swiper pagination dots (Crush Your Cravings) ---------- */
+.cravings-swiper .swiper-pagination-bullet {
+  background-color: var(--color-brand-orange) !important;
+  opacity: 0.3;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  transition: width 0.25s ease, opacity 0.25s ease;
+}
+
+.cravings-swiper .swiper-pagination-bullet-active {
+  opacity: 1;
+  width: 22px;
+}
+
+/* Pagination is mobile-only; fully hide the layer at sm and above */
+@media (min-width: 640px) {
+  .cravings-swiper .swiper-pagination {
+    display: none !important;
+  }
+}
