@@ -5,7 +5,7 @@ const HowToCrushSection = () => {
         {/* Left - pre-made checkered graphic image */}
         <div>
           <img
-            src="/src/assets/images/how-to-crush-it.png"
+            src="/images/how-to-crush-it.png"
             alt="How To Crush It — One mix, total freedom"
             className="w-full h-full object-cover"
           />

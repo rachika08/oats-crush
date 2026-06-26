@@ -5,7 +5,7 @@ const flavours = [
     id: "coffee",
     name: "COFFEE",
     description: "No refined sugar • Rich coffee flavor",
-    image: "/src/assets/images/coffee.png",
+    image: "/images/coffee.png",
     bg: "bg-flavour-coffee-bg",
     text: "text-flavour-coffee-text",
     hoverBg: "hover:bg-flavour-coffee-text",
@@ -14,7 +14,7 @@ const flavours = [
     id: "rasmalai",
     name: "RASMALAI",
     description: "30g protein • Real oats",
-    image: "/src/assets/images/rasmalai.png",
+    image: "/images/rasmalai.png",
     bg: "bg-flavour-rasmalai-bg",
     text: "text-flavour-rasmalai-text",
     hoverBg: "hover:bg-flavour-rasmalai-text",
@@ -23,7 +23,7 @@ const flavours = [
     id: "savoury",
     name: "SAVOURY",
     description: "Protein, the savoury way",
-    image: "/src/assets/images/oat-milk.png",
+    image: "/images/oat-milk.png",
     bg: "bg-flavour-savoury-bg",
     text: "text-flavour-savoury-text",
     hoverBg: "hover:bg-flavour-savoury-text",
@@ -52,13 +52,13 @@ const FlavoursSection = () => {
           land.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 ">
           {flavours.map((flavour) => (
             <div
               key={flavour.id}
-              className={`${flavour.bg} rounded-2xl p-5 text-left flex flex-col`}
+              className={`${flavour.bg} rounded-2xl p-5 text-left flex flex-col shadow-md hover:-translate-y-1`}
             >
-              <div className="relative rounded-xl overflow-hidden mb-4 aspect-square bg-black/5">
+              <div className="relative rounded-xl overflow-hidden mb-4 aspect-square bg-black/5 ">
                 <span className="absolute top-3 left-3 bg-black/70 text-white text-xs font-body px-3 py-1 rounded-full">
                   Dropping soon
                 </span>
@@ -81,7 +81,7 @@ const FlavoursSection = () => {
 
               <button
   onClick={() => handleNotify(flavour.id)}
-  className={`mt-auto bg-white rounded-full py-2.5 flex items-center justify-center gap-2 font-heading text-base font-medium transition-all duration-200 hover:!text-white hover:-translate-y-1 shadow-md ${flavour.text} ${flavour.hoverBg}`}
+  className={`mt-auto bg-white rounded-full py-2.5 flex items-center justify-center gap-2 font-heading text-base font-medium transition-all duration-200 hover:!text-white hover:-translate-y-1 shadow-md cursor-pointer ${flavour.text} ${flavour.hoverBg}`}
 >
   NOTIFY ME
   <Bell size={14} />

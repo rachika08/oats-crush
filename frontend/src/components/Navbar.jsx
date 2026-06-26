@@ -35,7 +35,9 @@ const Navbar = () => {
           className="font-heading text-2xl cursor-pointer select-none leading-none"
           onClick={() => navigate("/")}
         >
-          <img src="/images/oats-crush-logo.jpeg" className="w-23 h-15" alt="logo"/>
+
+          <img src="/images/oats-crush-logo.jpeg" className="w-23 h-15"/>
+
         </div>
 
         {/* Desktop Nav Links */}
@@ -90,12 +92,12 @@ const Navbar = () => {
 
         {/* Right Section */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <button className="hidden sm:flex cursor-pointer" aria-label="Search">
+          <button className="hidden sm:flex cursor-pointer hover:text-brand-orange" aria-label="Search">
             <Search size={20} />
           </button>
 
           <button
-            className="flex cursor-pointer"
+            className="flex cursor-pointer hover:text-brand-orange"
             aria-label="Cart"
             onClick={() => navigate("/cart")}
           >
@@ -104,14 +106,14 @@ const Navbar = () => {
 
           {!token ? (
             <button
-              className="hidden sm:flex cursor-pointer"
+              className="hidden sm:flex cursor-pointer hover:text-brand-orange"
               aria-label="Account"
               onClick={() => navigate("/login")}
             >
               <User size={20} />
             </button>
           ) : (
-            <div className="relative hidden sm:block cursor-pointer">
+            <div className="relative hidden sm:block cursor-pointer hover:text-brand-orange">
               <button
                 aria-label="Account"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -122,7 +124,7 @@ const Navbar = () => {
               {isMobileMenuOpen && (
                 <div className="absolute top-8 right-0 bg-white border rounded-xl shadow-md min-w-[180px] py-2 z-50 text-sm cursor-pointer">
                   <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange"
                     onClick={() => {
                       navigate("/addresses");
                       setIsMobileMenuOpen(false);
@@ -131,7 +133,7 @@ const Navbar = () => {
                     My Addresses
                   </button>
                   <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange"
                     onClick={() => {
                       navigate("/order");
                       setIsMobileMenuOpen(false);
@@ -140,7 +142,7 @@ const Navbar = () => {
                     My Orders
                   </button>
                   <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer hover:text-brand-orange"
                     onClick={() => {
                       localStorage.removeItem("token");
                       navigate("/login");

@@ -10,21 +10,21 @@ import "swiper/css/effect-coverflow";
 const reviews = [
   {
     id: 1,
-    videoThumbnail: "/src/assets/images/coffee.png",
+    videoThumbnail: "/images/coffee.png",
     productName: "RASMALAI OATS SHAKE",
     price: 120,
     productId: "",
   },
   {
     id: 2,
-    videoThumbnail: "/src/assets/images/oat-milk.png",
+    videoThumbnail: "/images/oat-milk.png",
     productName: "COFFEE OATS SHAKE",
     price: 120,
     productId: "",
   },
   {
     id: 3,
-    videoThumbnail: "/src/assets/images/rasmalai.png",
+    videoThumbnail: "/images/rasmalai.png",
     productName: "MIDNIGHT LATTE",
     price: 140,
     productId: "",
@@ -55,7 +55,7 @@ const ReviewsCarousel = () => {
         <div className="relative max-w-3xl mx-auto">
           {/* Prev arrow */}
           <button
-            className="reviews-prev hidden sm:flex absolute -left-2 sm:-left-6 md:-left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center shadow-md hover:bg-black transition cursor-pointer"
+            className="reviews-prev hidden sm:flex absolute -left-2 sm:-left-6 md:-left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-brand-orange text-white text-4xl items-center justify-center shadow-md hover:-translate-x-1 transition cursor-pointer"
             aria-label="Previous review"
           >
             ‹
@@ -63,7 +63,7 @@ const ReviewsCarousel = () => {
 
           {/* Next arrow */}
           <button
-            className="reviews-next hidden sm:flex absolute -right-2 sm:-right-6 md:-right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center shadow-md hover:bg-black transition cursor-pointer"
+            className="reviews-next hidden sm:flex absolute -right-2 sm:-right-6 md:-right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-brand-orange text-white text-4xl items-center justify-center shadow-md hover:-translate-x-1 transition cursor-pointer"
             aria-label="Next review"
           >
             ›
@@ -81,12 +81,12 @@ const ReviewsCarousel = () => {
               nextEl: ".reviews-next",
             }}
             coverflowEffect={{
-              rotate: 0,
-              stretch: 0,
-              depth: 150,
-              modifier: 1.5,
-              slideShadows: false,
-            }}
+  rotate: 0,
+  stretch: -40,
+  depth: 150,
+  modifier: 1.5,
+  slideShadows: false,
+}}
             onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
             className="reviews-swiper !py-6"
           >
@@ -148,9 +148,9 @@ const ReviewsCarousel = () => {
 
           <button
             onClick={handleAddToCart}
-            className="w-full bg-black text-white rounded-full py-3 font-body text-base font-medium hover:bg-brand-orange transition cursor-pointer"
+            className="w-full bg-black text-white rounded-full py-3 font-heading text-base font-medium hover:bg-brand-orange transition cursor-pointer shadow-md hover:-translate-y-1"
           >
-            Add To Cart
+            ADD TO CART
           </button>
         </div>
       </div>

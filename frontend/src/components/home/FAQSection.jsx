@@ -35,7 +35,7 @@ const FAQSection = () => {
         {/* Left image */}
         <div className="rounded-3xl overflow-hidden aspect-[4/5]">
           <img
-            src="/src/assets/images/coffee.png"
+            src="/images/coffee.png"
             alt="Oats Crush Coffee"
             className="w-full h-full object-cover"
           />

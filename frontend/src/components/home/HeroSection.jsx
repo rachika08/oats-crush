@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 // Placeholder paths — swap these with your real banner images.
 const heroBanners = [
-  "/src/assets/images/banner1.png",
-  "/src/assets/images/banner2.png",
-  "/src/assets/images/banner3.png",
-  "/src/assets/images/banner4.jpg",
-  "/src/assets/images/banner5.png",
+  "/images/banner1.png",
+  "/images/banner2.png",
+  "/images/banner3.png",
+  "/images/banner4.jpg",
+  "/images/banner5.png",
 ];
 
 const HERO_ROTATE_MS = 2000;
@@ -53,7 +53,7 @@ const HeroSection = () => {
 
         <button
           onClick={() => navigate("/products")}
-          className="bg-white text-black font-heading font-medium px-8 py-3 rounded-full hover:bg-brand-orange hover:text-white transition"
+          className="bg-white text-black font-heading font-medium px-8 py-3 rounded-full hover:bg-brand-orange hover:text-white transition shadow-md hover:-translate-y-1 cursor-pointer"
         >
           SHOP NOW
         </button>

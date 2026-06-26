@@ -10,25 +10,25 @@ const blogs = [
     id: 1,
     title: "BLOG #1",
     info: "blog info",
-    image: "/src/assets/images/banner1.png",
+    image: "/images/banner1.png",
   },
   {
     id: 2,
     title: "BLOG #2",
     info: "blog info",
-    image: "/src/assets/images/banner2.png",
+    image: "/images/banner2.png",
   },
   {
     id: 3,
     title: "BLOG #3",
     info: "blog info",
-    image: "/src/assets/images/banner3.png",
+    image: "/images/banner3.png",
   },
   {
     id: 4,
     title: "BLOG #4",
     info: "blog info",
-    image: "/src/assets/images/banner4.jpg",
+    image: "/images/banner4.jpg",
   },
 ];
 
