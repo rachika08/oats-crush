@@ -2,25 +2,25 @@
 // finalized SVG files (protein/muscle motif, zero-sugar, vegan, flavours).
 const benefits = [
   {
-    icon: "/src/assets/icons/icon-protein.svg",
+    icon: "/images/icon-protein.svg",
     title: "PACKED WITH PROTEIN",
     description:
       "More protein than two eggs, in a bottle you can crush on the go. No shaker. No fuss.",
   },
   {
-    icon: "/src/assets/icons/icon-zero-sugar.svg",
+    icon: "/images/icon-zero-sugar.svg",
     title: "ZERO REFINED SUGAR",
     description:
       "Sweet without the crash. We use natural sweetness from oats and monk fruit.",
   },
   {
-    icon: "/src/assets/icons/icon-vegan.svg",
+    icon: "/images/icon-vegan.svg",
     title: "ACTUALLY VEGAN-FRIENDLY",
     description:
       "Plant-based, lactose-free, and certified for the lifestyle — not just the label.",
   },
   {
-    icon: "/src/assets/icons/icon-flavours.svg",
+    icon: "/images/icon-flavours.svg",
     title: "FLAVORS THAT HIT DIFFERENT",
     description: "Coffee, Rasmalai, Savoury — you name it, we've got it.",
   },
@@ -54,7 +54,7 @@ const BenefitsSection = () => {
       {/* Right half — product callout on deep red */}
       <div className="relative overflow-hidden">
   <img
-    src="/src/assets/images/brew-chew.jpeg"
+    src="/images/brew-chew.jpeg"
     alt="Brew Less, Chew More — Oats Crush Coffee"
     className="w-full h-full object-cover"
   />

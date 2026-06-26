@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 // Placeholder paths — swap these with your real banner images.
 const heroBanners = [
-  "/src/assets/images/banner1.png",
-  "/src/assets/images/banner2.png",
-  "/src/assets/images/banner3.png",
-  "/src/assets/images/banner4.jpg",
-  "/src/assets/images/banner5.png",
+  "/images/banner1.png",
+  "/images/banner2.png",
+  "/images/banner3.png",
+  "/images/banner4.jpg",
+  "/images/banner5.png",
 ];
 
 const HERO_ROTATE_MS = 2000;

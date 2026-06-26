@@ -10,21 +10,21 @@ import "swiper/css/effect-coverflow";
 const reviews = [
   {
     id: 1,
-    videoThumbnail: "/src/assets/images/coffee.png",
+    videoThumbnail: "/images/coffee.png",
     productName: "RASMALAI OATS SHAKE",
     price: 120,
     productId: "",
   },
   {
     id: 2,
-    videoThumbnail: "/src/assets/images/oat-milk.png",
+    videoThumbnail: "/images/oat-milk.png",
     productName: "COFFEE OATS SHAKE",
     price: 120,
     productId: "",
   },
   {
     id: 3,
-    videoThumbnail: "/src/assets/images/rasmalai.png",
+    videoThumbnail: "/images/rasmalai.png",
     productName: "MIDNIGHT LATTE",
     price: 140,
     productId: "",
