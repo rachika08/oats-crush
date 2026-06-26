@@ -9,7 +9,11 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const FeaturedProducts = () => {
+const FeaturedProducts = ({
+  excludeProductId,
+  heading = "CRUSH YOUR CRAVINGS",
+  subheading = "Pick your flavour. Same protein punch, different vibe."
+}) => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
@@ -19,10 +23,14 @@ const FeaturedProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await api.get("/product/featured");
-
+      const res=await api.get("/product");
       const allProducts = res.data.products || res.data;
-      setProducts(allProducts);
+
+    const filteredProducts = allProducts.filter(
+      (product) => product._id !== excludeProductId
+    );
+
+    setProducts(filteredProducts);
     } catch (error) {
       console.log(error);
     }
@@ -57,10 +65,10 @@ const FeaturedProducts = () => {
         <div className="flex items-end justify-between mb-8 sm:mb-10">
           <div>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-[56px] mb-2">
-              CRUSH YOUR CRAVINGS
+              {heading}
             </h2>
             <p className="font-body text-gray-600 text-sm sm:text-base">
-              Pick your flavour. Same protein punch, different vibe.
+              {subheading}
             </p>
           </div>
 

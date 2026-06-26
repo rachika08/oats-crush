@@ -28,7 +28,8 @@ const Navbar = () => {
   const token = localStorage.getItem("token");
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-6 py-15">
+    // <header className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-6 py-15">
+    <header className="absolute top-0 left-0 right-0 z-20 px-4 sm:px-6 py-4">
       <nav className="max-w-7xl mx-auto flex items-center justify-between bg-white rounded-full px-8 sm:px-10 py-1.5 shadow-sm">
         {/* Logo */}
         <div
