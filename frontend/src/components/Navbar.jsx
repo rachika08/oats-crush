@@ -28,8 +28,7 @@ const Navbar = () => {
   const token = localStorage.getItem("token");
 
   return (
-    // <header className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-6 py-15">
-    <header className="absolute top-0 left-0 right-0 z-20 px-4 sm:px-6 py-4">
+    <header className="absolute top-0 left-0 right-0 z-20 px-4 sm:px-6 py-15">
       <nav className="max-w-7xl mx-auto flex items-center justify-between bg-white rounded-full px-8 sm:px-10 py-1.5 shadow-sm">
         {/* Logo */}
         <div
@@ -109,7 +108,7 @@ const Navbar = () => {
             <button
               className="hidden sm:flex cursor-pointer hover:text-brand-orange"
               aria-label="Account"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/signup")}
             >
               <User size={20} />
             </button>
@@ -146,7 +145,7 @@ const Navbar = () => {
                     className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer hover:text-brand-orange"
                     onClick={() => {
                       localStorage.removeItem("token");
-                      navigate("/login");
+                      navigate("/");
                       setIsMobileMenuOpen(false);
                     }}
                   >
@@ -240,7 +239,7 @@ const Navbar = () => {
                 className="py-2 text-left text-red-600 cursor-pointer"
                 onClick={() => {
                   localStorage.removeItem("token");
-                  navigate("/login");
+                  navigate("/");
                   setIsMobileMenuOpen(false);
                 }}
               >

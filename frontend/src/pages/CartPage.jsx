@@ -143,7 +143,7 @@ export default function CartPage() {
     <>
       <Navbar />
 
-      <div className="w-full min-h-screen bg-gray-50 p-6">
+      <div className="w-full min-h-screen bg-gray-50 px-6 pt-28 sm:pt-32 pb-6">
         <h1 className="text-2xl font-semibold mb-2">My Cart</h1>
 
         {loading && (

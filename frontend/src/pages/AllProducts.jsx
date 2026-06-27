@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import InfoBar from "../components/home/InfoBar";
 
-const PRODUCTS_PER_PAGE = 3;
+const PRODUCTS_PER_PAGE = 6;
 
 const FilterDropdown = ({ label, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
