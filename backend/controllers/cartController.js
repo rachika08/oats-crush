@@ -1,32 +1,81 @@
 import Cart from "../models/cartModel.js";
 
 // ADD TO CART
+// export const addToCart = async (req, res) => {
+//     try {
+//         const userId = req.user.id; // from auth middleware
+//         const { productId, quantity } = req.body;
+//         const { productId, quantity, pack } = req.body;
+
+//         let cart = await Cart.findOne({ user: userId });
+//         console.log("user ",req.user);
+//         // if cart doesn't exist → create new
+//         if (!cart) {
+//             cart = await Cart.create({
+//                 user: userId,
+//                 items: [{ product: productId, quantity }]
+//             });
+//             return res.status(201).json(cart);
+//         }
+
+//         // check if product already exists in cart
+//         const itemIndex = cart.items.findIndex(
+//             item => item.product.toString() === productId
+//         );
+
+//         if (itemIndex > -1) {
+//             // update quantity
+//             cart.items[itemIndex].quantity = quantity;
+//         } else {
+//             cart.items.push({ product: productId, quantity });
+//         }
+
+//         await cart.save();
+//         res.status(200).json(cart);
+
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
+
 export const addToCart = async (req, res) => {
     try {
-        const userId = req.user.id; // from auth middleware
-        const { productId, quantity } = req.body;
+        const userId = req.user.id;
+        const { productId, quantity, pack } = req.body;
 
         let cart = await Cart.findOne({ user: userId });
-        console.log("user ",req.user);
+
         // if cart doesn't exist → create new
         if (!cart) {
             cart = await Cart.create({
                 user: userId,
-                items: [{ product: productId, quantity }]
+                items: [
+                    {
+                        product: productId,
+                        quantity,
+                        pack
+                    }
+                ]
             });
+
             return res.status(201).json(cart);
         }
 
-        // check if product already exists in cart
-        const itemIndex = cart.items.findIndex(
-            item => item.product.toString() === productId
+        // check if same product + same pack exists
+        const itemIndex = cart.items.findIndex(item =>
+            item.product.toString() === productId &&
+            item.pack?.label === pack?.label
         );
 
         if (itemIndex > -1) {
             // update quantity
             cart.items[itemIndex].quantity = quantity;
         } else {
-            cart.items.push({ product: productId, quantity });
+            cart.items.push({
+                product: productId,
+                quantity,
+                pack
+            });
         }
 
         await cart.save();
@@ -37,19 +86,19 @@ export const addToCart = async (req, res) => {
     }
 };
 
-export const getCart=async (req,res) => {
-    try {
-        const userId=req.user.id;
+// export const getCart=async (req,res) => {
+//     try {
+//         const userId=req.user.id;
         
-        const cart=await Cart.findOne({user:userId}).populate("items.product");
-        if(!cart){
-            return res.status(200).json({user:userId,items:[]});
-        };
-        res.status(200).json(cart);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+//         const cart=await Cart.findOne({user:userId}).populate("items.product");
+//         if(!cart){
+//             return res.status(200).json({user:userId,items:[]});
+//         };
+//         res.status(200).json(cart);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// }
 
 export const updateCartItem = async (req, res) => {
     try {
@@ -102,6 +151,72 @@ export const removeCartItem = async (req, res) => {
 
         await cart.save();
         res.status(200).json(cart);
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getCart = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const cart = await Cart.findOne({ user: userId })
+            .populate("items.product");
+
+        if (!cart) {
+            return res.status(200).json({ user: userId, items: [] });
+        }
+
+        // 🔥 ENRICH CART ITEMS
+        // const enrichedItems = cart.items.map(item => {
+        //     const packUnits = item.pack?.units || 1;
+
+        //     return {
+        //         ...item._doc,
+
+        //         // total units user is buying
+        //         totalUnits: item.quantity * packUnits,
+
+        //         // subtotal price
+        //         subtotal: item.quantity * (item.pack.price ),
+
+        //         // safety fallback
+        //         pack: item.pack || {
+        //             label: "Pack of 1",
+        //             units: 1,
+        //             price: item.pack.price
+        //         }
+        //     };
+        // });
+        const enrichedItems = cart.items.map(item => {
+            const pack = item.pack || {
+                label: "Pack of 1",
+                units: 1,
+                price: item.product.price || 0
+            };
+
+            const unitPrice = Number(pack.price) || 0;
+            const quantity = Number(item.quantity) || 0;
+
+            return {
+                ...item._doc,
+                pack,
+                subtotal: unitPrice * quantity,
+                totalUnits: quantity * (pack.units || 1)
+            };
+        });
+        console.log(enrichedItems);
+        const totalPrice = enrichedItems.reduce(
+            (sum, item) => sum + (Number(item.subtotal) || 0),
+            0
+        );
+
+        res.status(200).json({
+            user: userId,
+            items: enrichedItems,
+            totalPrice
+        });
 
     } catch (error) {
         res.status(500).json({ message: error.message });

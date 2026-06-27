@@ -22,7 +22,7 @@ const faqs = [
   },
 ];
 
-const FAQSection = () => {
+const FAQSection = ({ faqs = [],image }) => {
   const [openId, setOpenId] = useState(null);
 
   const toggleFaq = (id) => {
@@ -35,7 +35,7 @@ const FAQSection = () => {
         {/* Left image */}
         <div className="rounded-3xl overflow-hidden aspect-[4/5]">
           <img
-            src="/images/coffee.png"
+            src={image}
             alt="Oats Crush Coffee"
             className="w-full h-full object-cover"
           />

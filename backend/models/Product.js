@@ -9,10 +9,22 @@ const productSchema=mongoose.Schema({
         type:String,
         required:true,
     },
-    price:{
-        type:Number,
-        required:true,
-    },
+    packSizes: [
+        {
+            label: {
+                type: String,
+                required: true
+            },
+            units: {
+                type: Number,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            }
+        }
+    ],
     category:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Category',
@@ -37,7 +49,29 @@ const productSchema=mongoose.Schema({
 
     ingredients: [{
         type: String
-    }]
+    }],
+    faqs: [
+        {
+            question: { type: String, default: "" },
+            answer: { type: String, default: "" },
+        },
+    ],
+    howToEnjoy: [
+        {
+            title: {
+                type: String,
+                required: true,
+            },
+            description: {
+                type: String,
+                required: true,
+            },
+            icon: {
+                type: String, // stores icon name
+                required: true,
+            },
+        },
+    ],
 },{timestamps:true});
 
 export default mongoose.model("Product",productSchema);

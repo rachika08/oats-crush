@@ -44,7 +44,7 @@ export default function Products() {
                     {products.map((p) => (
                         <tr key={p._id} className="border-t">
                             <td>{p.name}</td>
-                            <td>{p.price}</td>
+                            {p.packSizes?.find(pack => pack.units === 1)?.price ?? "-"}
                             <td>{p.stock}</td>
                             <td>{p.category?.name}</td>
 
