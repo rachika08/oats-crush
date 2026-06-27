@@ -43,17 +43,56 @@ export default function ProductDetails() {
     const [selectedPack, setSelectedPack] = useState(null);
     const token = localStorage.getItem("token");
 
-    useEffect(() => {
-        fetchProduct();
-        fetchReviews();
+    // useEffect(() => {
+    //     fetchProduct();
+    //     fetchReviews();
 
-    }, [id]);
-    useEffect(() => {
-        if (product) {
-            fetchCartQuantity();
-        }
-    }, [product]);
+    // }, [id]);
+    // useEffect(() => {
+    //     if (product) {
+    //         fetchCartQuantity();
+    //     }
+    // }, [product]);
     
+    // Replace your three separate useEffects and fetch functions with this:
+
+    useEffect(() => {
+        const loadAll = async () => {
+            try {
+                const token = localStorage.getItem("token");
+
+                const requests = [
+                    api.get(`/product/${id}`),
+                    api.get(`/reviews/${id}`),
+                    token ? api.get("/cart", { headers: { Authorization: `Bearer ${token}` } }) : Promise.resolve(null)
+                ];
+
+                const [productRes, reviewsRes, cartRes] = await Promise.all(requests);
+
+                // Product
+                setProduct(productRes.data);
+                setSelectedImage(productRes.data.image);
+                setSelectedPack(productRes.data.packSizes?.[0]);
+
+                // Reviews
+                setReviews(reviewsRes.data);
+
+                // Cart
+                if (cartRes) {
+                    const cartItem = cartRes.data.items.find(item => item.product._id === id);
+                    if (cartItem) {
+                        setQuantity(cartItem.quantity);
+                        setShowViewCart(true);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        loadAll();
+    }, [id]);
+
     const addToCart = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -121,57 +160,97 @@ export default function ProductDetails() {
         }
     };
 
-    const fetchProduct = async () => {
-        try {
-            const res = await api.get(`/product/${id}`);
-            console.log(res);
-            setProduct(res.data);
-            setSelectedImage(res.data.image);
-            setSelectedPack(res.data.packSizes?.[0]);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const fetchReviews = async () => {
-        try {
-            const res = await api.get(`/reviews/${id}`);
-            setReviews(res.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const fetchCartQuantity = async () => {
-        try {
-            const token = localStorage.getItem("token");
+    // const fetchProduct = async () => {
+    //     try {
+    //         const res = await api.get(`/product/${id}`);
+    //         console.log(res);
+    //         setProduct(res.data);
+    //         setSelectedImage(res.data.image);
+    //         setSelectedPack(res.data.packSizes?.[0]);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+    // const fetchReviews = async () => {
+    //     try {
+    //         const res = await api.get(`/reviews/${id}`);
+    //         setReviews(res.data);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+    // const fetchCartQuantity = async () => {
+    //     try {
+    //         const token = localStorage.getItem("token");
 
-            if (!token) return;
+    //         if (!token) return;
 
-            const res = await api.get("/cart", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+    //         const res = await api.get("/cart", {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`
+    //             }
+    //         });
 
-            const cartItem = res.data.items.find(
-                item => item.product._id === id
-            );
+    //         const cartItem = res.data.items.find(
+    //             item => item.product._id === id
+    //         );
 
-            if (cartItem) {
-                setQuantity(cartItem.quantity);
-                setShowViewCart(true);
-            }
+    //         if (cartItem) {
+    //             setQuantity(cartItem.quantity);
+    //             setShowViewCart(true);
+    //         }
 
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+    // if (!product) {
+    //     return (
+    //         <div className="flex justify-center items-center h-screen">
+    //             Loading...
+    //         </div>
+    //     );
+    // }
+
     if (!product) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                Loading...
+    return (
+        <>
+            <Navbar />
+            <div className="max-w-7xl mx-auto px-6 py-10 animate-pulse">
+                <div className="grid md:grid-cols-2 gap-12">
+                    {/* Left: image skeleton */}
+                    <div>
+                        <div className="bg-gray-200 rounded-xl h-[500px] w-full mb-4" />
+                        <div className="flex gap-3">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="bg-gray-200 rounded-lg w-20 h-20" />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Right: text skeleton */}
+                    <div className="space-y-4">
+                        <div className="bg-gray-200 h-4 w-24 rounded" />
+                        <div className="bg-gray-200 h-10 w-3/4 rounded" />
+                        <div className="bg-gray-200 h-8 w-32 rounded" />
+                        <div className="bg-gray-200 h-4 w-full rounded" />
+                        <div className="bg-gray-200 h-4 w-5/6 rounded" />
+                        <div className="bg-gray-200 h-4 w-4/6 rounded" />
+                        <div className="flex gap-3 mt-4">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="bg-gray-200 h-10 w-24 rounded-full" />
+                            ))}
+                        </div>
+                        <div className="flex gap-4 mt-6">
+                            <div className="bg-gray-200 h-12 flex-1 rounded-lg" />
+                            <div className="bg-gray-200 h-12 flex-1 rounded-lg" />
+                        </div>
+                    </div>
+                </div>
             </div>
-        );
-    }
+        </>
+    );
+}
 
     const allImages = [
         product.image,
