@@ -9,10 +9,6 @@ const productSchema=mongoose.Schema({
         type:String,
         required:true,
     },
-    // price:{
-    //     type:Number,
-    //     required:true,
-    // },
     packSizes: [
         {
             label: {
@@ -53,7 +49,13 @@ const productSchema=mongoose.Schema({
 
     ingredients: [{
         type: String
-    }]
+    }],
+    faqs: [
+        {
+            question: { type: String, default: "" },
+            answer: { type: String, default: "" },
+        },
+    ],
 },{timestamps:true});
 
 export default mongoose.model("Product",productSchema);

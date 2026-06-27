@@ -649,7 +649,7 @@ export default function ProductDetails() {
                 heading="EXPLORE SIMILAR PRODUCTS"
                 subheading="Discover more delicious options you'll love."
             />
-            <FAQSection />
+            <FAQSection faqs={product.faqs} image={product.image}/>
             <Footer />
         </>
     );

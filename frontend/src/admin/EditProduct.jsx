@@ -11,7 +11,8 @@ export default function EditProduct() {
     stock: "",
     description: "",
     image: "",
-    category: ""
+    category: "",
+    faqs: [],
   });
   const [packSizes, setPackSizes] = useState([]);
   // GET product
@@ -32,7 +33,8 @@ export default function EditProduct() {
           stock: data.stock || "",
           description: data.description || "",
           image: data.image || "",
-          category: data.category?._id || data.category || ""
+          category: data.category?._id || data.category || "",
+          faqs: data.faqs || [],
       });
 
       setPackSizes(
@@ -78,6 +80,11 @@ export default function EditProduct() {
       );
   };
 
+  const removeFaq = (index) => {
+    const updated = form.faqs.filter((_, i) => i !== index);
+    setForm({ ...form, faqs: updated });
+  };
+
   // update
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,70 +98,6 @@ export default function EditProduct() {
 
   };
 
-  // return (
-  //   <form onSubmit={handleSubmit}>
-  //     <input name="name" value={form.name} onChange={handleChange} placeholder="Name" />
-
-  //     {/* <input name="price" value={form.price} onChange={handleChange} placeholder="Price" /> */}
-  //     <h3>Pack Sizes</h3>
-
-  //     {packSizes.map((pack, index) => (
-  //         <div key={index} style={{
-  //             border: "1px solid gray",
-  //             padding: "10px",
-  //             marginBottom: "10px"
-  //         }}>
-
-  //             <input
-  //                 placeholder="Label"
-  //                 value={pack.label}
-  //                 onChange={(e) =>
-  //                     updatePack(index, "label", e.target.value)
-  //                 }
-  //             />
-
-  //             <input
-  //                 type="number"
-  //                 placeholder="Units"
-  //                 value={pack.units}
-  //                 onChange={(e) =>
-  //                     updatePack(index, "units", e.target.value)
-  //                 }
-  //             />
-
-  //             <input
-  //                 type="number"
-  //                 placeholder="Price"
-  //                 value={pack.price}
-  //                 onChange={(e) =>
-  //                     updatePack(index, "price", e.target.value)
-  //                 }
-  //             />
-
-  //             {packSizes.length > 1 && (
-  //                 <button
-  //                     type="button"
-  //                     onClick={() => removePack(index)}
-  //                 >
-  //                     Remove
-  //                 </button>
-  //             )}
-  //         </div>
-  //     ))}
-
-  //     <button type="button" onClick={addPack}>
-  //         Add Pack
-  //     </button>
-
-  //     <input name="stock" value={form.stock} onChange={handleChange} placeholder="Stock" />
-
-  //     <input name="image" value={form.image} onChange={handleChange} placeholder="Image URL" />
-
-  //     <input name="category" value={form.category} onChange={handleChange} placeholder="Category ID" />
-
-  //     <button type="submit">Update Product</button>
-  //   </form>
-  // );
   return (
   <div className="max-w-3xl mx-auto p-6">
     <div className="bg-white shadow-lg rounded-xl p-8">
@@ -283,7 +226,68 @@ export default function EditProduct() {
             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
+        <div className="mt-6">
+  <h3 className="font-bold mb-2">FAQs</h3>
 
+  {form.faqs.map((faq, index) => (
+    <div key={index} className="mb-4 border p-3 rounded-lg">
+      
+      {/* Question */}
+      <input
+        type="text"
+        placeholder="Question"
+        value={faq.question}
+        onChange={(e) => {
+          const updated = [...form.faqs];
+          updated[index].question = e.target.value;
+          setForm({ ...form, faqs: updated });
+        }}
+        className="border p-2 w-full mb-2"
+      />
+
+      {/* Answer */}
+      <input
+        type="text"
+        placeholder="Answer"
+        value={faq.answer}
+        onChange={(e) => {
+          const updated = [...form.faqs];
+          updated[index].answer = e.target.value;
+          setForm({ ...form, faqs: updated });
+        }}
+        className="border p-2 w-full"
+      />
+
+      {/* Remove button */}
+      {form.faqs.length > 1 && (
+        <button
+          type="button"
+          onClick={() => removeFaq(index)}
+          className="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+        >
+          Remove FAQ
+        </button>
+      )}
+    </div>
+  ))}
+
+  {/* Add FAQ button */}
+  <button
+    type="button"
+    onClick={() =>
+      setForm({
+        ...form,
+        faqs: [
+          ...form.faqs,
+          { question: "", answer: "" }
+        ],
+      })
+    }
+    className="bg-black text-white px-3 py-2 mt-2 rounded"
+  >
+    + Add FAQ
+  </button>
+</div>
         {/* Submit */}
         <button
           type="submit"
