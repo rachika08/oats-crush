@@ -53,34 +53,7 @@ export default function ProductDetails() {
             fetchCartQuantity();
         }
     }, [product]);
-    // const addToCart = async () => {
-    //     try {
-    //         const token = localStorage.getItem("token");
-    //         if (!token) {
-    //             alert("Please login to add items to your cart");
-    //             navigate("/login");
-    //             return;
-    //         }
-    //         const res = await api.post(
-    //             "/cart/add",
-    //             {
-    //                 productId: product._id,
-    //                 // quantity: quantity
-    //                 quantity: quantity * selectedPack
-    //             },
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`
-    //                 }
-    //             }
-    //         );
-    //         setShowViewCart(true);
-    //         console.log("Cart updated:", res.data);
-    //         alert("Added to cart!");
-    //     } catch (error) {
-    //         console.log(error.response?.data || error.message);
-    //     }
-    // };
+    
     const addToCart = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -122,19 +95,7 @@ export default function ProductDetails() {
                 navigate("/login");
                 return;
             }
-            // const res = await api.post(
-            //     "/cart/add",
-            //     {
-            //         productId: product._id,
-            //         // quantity: quantity
-            //         quantity: quantity * selectedPack
-            //     },
-            //     {
-            //         headers: {
-            //             Authorization: `Bearer ${token}`
-            //         }
-            //     }
-            // );
+            
             const res = await api.post(
                 "/cart/add",
                 {
