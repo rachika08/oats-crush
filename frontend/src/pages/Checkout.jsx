@@ -42,11 +42,18 @@ export default function Checkout() {
         }
     };
 
+    // const calculateTotal = () => {
+    //     if (!cart) return 0;
+
+    //     return cart.items.reduce((total, item) => {
+    //         return total + item.product.price * item.quantity;
+    //     }, 0);
+    // };
     const calculateTotal = () => {
         if (!cart) return 0;
-
         return cart.items.reduce((total, item) => {
-            return total + item.product.price * item.quantity;
+            const packPrice = item.pack?.price || 0;
+            return total + packPrice * item.quantity;
         }, 0);
     };
 
@@ -284,7 +291,7 @@ export default function Checkout() {
                                     Order Summary
                                 </h4>
 
-                                {cart?.items?.map((item) => (
+                                {/* {cart?.items?.map((item) => (
                                     <div
                                         key={item._id}
                                         className="flex justify-between items-center border-b border-gray-200 py-3"
@@ -310,6 +317,30 @@ export default function Checkout() {
                                             {item.product
                                                 .price *
                                                 item.quantity}
+                                        </strong>
+                                    </div>
+                                ))} */}
+
+                                {cart?.items?.map((item) => (
+                                    <div
+                                        key={item._id}
+                                        className="flex justify-between items-center border-b border-gray-200 py-3"
+                                    >
+                                        <div>
+                                            <h6 className="font-medium mb-1">
+                                                {item.product.name}
+                                            </h6>
+                                            <small>Qty: {item.quantity}</small>
+                                            {item.pack?.label && (
+                                                <small className="block text-gray-500">
+                                                    {item.pack.label}
+                                                </small>
+                                            )}
+                                        </div>
+
+                                        {/* ✅ use pack.price instead of product.price */}
+                                        <strong>
+                                            ₹{(item.pack?.price || 0) * item.quantity}
                                         </strong>
                                     </div>
                                 ))}

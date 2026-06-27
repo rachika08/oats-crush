@@ -1,53 +1,23 @@
 import Product from "../models/Product.js";
 import cloudinary from "../config/cloudinary.js";
 import {uploadToCloudinary} from "../utils/uploadToCloudinary.js"
-// export const createProduct=async (req,res) => {
-//     try {
-//         let {name,description,price,category,stock,image,featured}=req.body;
-//         const productExist = await Product.findOne({ name });
 
-//         if (productExist) {
-//             return res.status(400).json({
-//                 message: "Product already exists"
-//             });
-//         }
-//         if (!req.file) {
-//             return res.status(400).json({ message: "Image file is required" });
-//         }
-//         const result = await uploadToCloudinary(req.file.buffer);
-
-//         const imageUrl = result.secure_url;
-//         const product=await Product.create({
-//             name,
-//             description,
-//             price,
-//             category,//send category id
-//             stock,
-//             image:imageUrl,
-//             featured
-//         })
-//         return res.status(201).json({
-//             message: "Product created successfully",
-//             product
-//         });
-//     } catch (error) {
-//         return res.status(500).json({message:error.message})
-//     }
-// }
 
 export const createProduct = async (req, res) => {
     try {
         const {
             name,
             description,
-            price,
+            // price,
             category,
             stock,
             featured,
             benefits,
-            ingredients
+            ingredients,
+            faqs,
+            howToEnjoy,
         } = req.body;
-
+        const packSizes = JSON.parse(req.body.packSizes);
         const productExist = await Product.findOne({ name });
 
         if (productExist) {
@@ -98,14 +68,17 @@ export const createProduct = async (req, res) => {
         const product = await Product.create({
             name,
             description,
-            price,
+            // price,
+            packSizes,
             category,
             stock,
             image: imageUrl,
             additionalImages,
             featured: featuredValue,
             benefits: benefitsArray,
-            ingredients: ingredientsArray
+            ingredients: ingredientsArray,
+            faqs,
+            howToEnjoy,
         });
 
         return res.status(201).json({
