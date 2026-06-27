@@ -1,13 +1,15 @@
+import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 
 export default function TermsOfService() {
     const sections = [
         {
-            title: "1. Online Store Terms",
+            id: "online-store-terms",
+            title: "Online Store Terms",
             content: (
                 <>
-                    <p>By agreeing to these Terms of Service, you represent and warrant that:</p>
+                    <p className="font-semibold">By agreeing to these Terms of Service, you represent and warrant that:</p>
                     <ul className="list-disc pl-6 mt-2">
                         <li>You are at least 18 years of age or the age of majority in your jurisdiction;</li>
                         <li>You possess the legal authority and capacity to enter into binding agreements;</li>
@@ -18,7 +20,7 @@ export default function TermsOfService() {
                         You may not use our products or services for any unlawful or unauthorized purpose. You shall not violate any applicable laws, regulations, or third-party rights while using our website or services.
                     </p>
 
-                    <p className="mt-4">You must not transmit:</p>
+                    <p className="mt-4 font-semibold">You must not transmit:</p>
                     <ul className="list-disc pl-6 mt-2">
                         <li>Worms</li>
                         <li>Malware</li>
@@ -35,14 +37,15 @@ export default function TermsOfService() {
             ),
         },
         {
-            title: "2. General Conditions",
+            id: "general-conditions",
+            title: "General Conditions",
             content: (
                 <>
                     <p>
                         We reserve the right to refuse service to anyone for any reason at any time without assigning any reason.
                     </p>
 
-                    <p className="mt-4">
+                    <p className="mt-4 font-semibold">
                         You understand that your content (excluding payment information) may be transferred unencrypted and involve:
                     </p>
 
@@ -55,7 +58,7 @@ export default function TermsOfService() {
                         Payment information and sensitive financial data are encrypted and processed through secure third-party payment gateways.
                     </p>
 
-                    <p className="mt-4">You agree not to:</p>
+                    <p className="mt-4 font-semibold">You agree not to:</p>
 
                     <ul className="list-disc pl-6 mt-2">
                         <li>Reproduce</li>
@@ -73,7 +76,8 @@ export default function TermsOfService() {
             ),
         },
         {
-            title: "3. Accuracy, Completeness & Timeliness of Information",
+            id: "accuracy-completeness-timeliness",
+            title: "Accuracy, Completeness & Timeliness of Information",
             content: (
                 <>
                     <p>
@@ -92,12 +96,13 @@ export default function TermsOfService() {
             ),
         },
         {
-            title: "4. Modifications to Products, Services & Pricing",
+            id: "modifications-products-pricing",
+            title: "Modifications to Products, Services & Pricing",
             content: (
                 <>
                     <p>Prices for products are subject to change without prior notice.</p>
 
-                    <p className="mt-4">We reserve the right to:</p>
+                    <p className="mt-4 font-semibold">We reserve the right to:</p>
                     <ul className="list-disc pl-6 mt-2">
                         <li>Modify</li>
                         <li>Suspend</li>
@@ -105,7 +110,7 @@ export default function TermsOfService() {
                         <li>Withdraw any product or service at any time without liability</li>
                     </ul>
 
-                    <p className="mt-4">We shall not be liable to you or any third party for:</p>
+                    <p className="mt-4 font-semibold">We shall not be liable to you or any third party for:</p>
                     <ul className="list-disc pl-6 mt-2">
                         <li>Price changes</li>
                         <li>Product discontinuation</li>
@@ -117,7 +122,8 @@ export default function TermsOfService() {
             ),
         },
         {
-            title: "5. Products & Services",
+            id: "products-services",
+            title: "Products & Services",
             content: (
                 <>
                     <p>
@@ -132,7 +138,7 @@ export default function TermsOfService() {
                         We strive to display product images, packaging, colors, and descriptions as accurately as possible. However, we do not guarantee that your device display will accurately reflect actual product appearance.
                     </p>
 
-                    <p className="mt-4">We reserve the right to:</p>
+                    <p className="mt-4 font-semibold">We reserve the right to:</p>
                     <ul className="list-disc pl-6 mt-2">
                         <li>Limit sales geographically</li>
                         <li>Restrict quantities</li>
@@ -144,7 +150,7 @@ export default function TermsOfService() {
                         All product descriptions and pricing are subject to change without notice.
                     </p>
 
-                    <p className="mt-4">We do not warrant that:</p>
+                    <p className="mt-4 font-semibold">We do not warrant that:</p>
                     <ul className="list-disc pl-6 mt-2">
                         <li>Product quality will meet expectations</li>
                         <li>Errors will be corrected</li>
@@ -154,12 +160,13 @@ export default function TermsOfService() {
             ),
         },
         {
-            title: "6. Billing & Account Information",
+            id: "billing-account-information",
+            title: "Billing & Account Information",
             content: (
                 <>
                     <p>We reserve the right to refuse or cancel any order placed with us.</p>
 
-                    <p className="mt-4">Restrictions may apply to:</p>
+                    <p className="mt-4 font-semibold">Restrictions may apply to:</p>
                     <ul className="list-disc pl-6 mt-2">
                         <li>Quantities purchased</li>
                         <li>Multiple orders under the same account</li>
@@ -168,7 +175,7 @@ export default function TermsOfService() {
                         <li>Payment method</li>
                     </ul>
 
-                    <p className="mt-4">
+                    <p className="mt-4 font-semibold">
                         In the event of cancellation or modification, we may attempt to notify you through:
                     </p>
 
@@ -185,62 +192,74 @@ export default function TermsOfService() {
             ),
         },
         {
-            title: "7. Third-Party Tools",
+            id: "third-party-tools",
+            title: "Third-Party Tools",
             content:
                 "We may provide access to third-party tools and services over which we exercise no control. Such tools are provided 'as is' and 'as available' without warranties or representations of any kind. Your use of third-party tools shall be entirely at your own risk and discretion.",
         },
         {
-            title: "8. Third-Party Links",
+            id: "third-party-links",
+            title: "Third-Party Links",
             content:
                 "Our website may contain links to third-party websites or services that are not owned or controlled by Oats Crush. We are not responsible for examining content accuracy, evaluating third-party practices, or any damages arising from third-party transactions. Users are advised to carefully review the terms and policies of third-party websites.",
         },
         {
-            title: "9. User Comments & Submissions",
+            id: "user-comments-submissions",
+            title: "User Comments & Submissions",
             content:
                 "Any suggestions, feedback, reviews, comments, or submissions sent to Oats Crush may be used by us without restriction. We may edit, reproduce, publish, distribute, or use such content in any medium. You agree that your submissions shall not violate third-party rights, contain unlawful or defamatory content, contain malware, or mislead users. We reserve the right to remove objectionable content at our discretion.",
         },
         {
-            title: "10. Personal Information",
+            id: "personal-information",
+            title: "Personal Information",
             content:
                 "Your submission of personal information through the website is governed by our Privacy Policy. By using our services, you consent to the collection and processing of personal information in accordance with applicable laws.",
         },
         {
-            title: "11. Errors, Inaccuracies & Omissions",
+            id: "errors-inaccuracies-omissions",
+            title: "Errors, Inaccuracies & Omissions",
             content:
                 "Occasionally there may be information containing typographical errors, inaccuracies, or omissions relating to products, pricing, promotions, shipping charges, transit times, or availability. We reserve the right to correct errors, update information, or cancel orders without prior notice.",
         },
         {
-            title: "12. Prohibited Uses",
+            id: "prohibited-uses",
+            title: "Prohibited Uses",
             content:
                 "You are prohibited from using the website for unlawful purposes, to violate laws, to infringe intellectual property rights, to harass or discriminate, to spread malware, to collect personal information unlawfully, or to spam, phish, scrape, crawl, or exploit website data. Violation may result in immediate termination of access.",
         },
         {
-            title: "13. Disclaimer of Warranties & Limitation of Liability",
+            id: "disclaimer-warranties-liability",
+            title: "Disclaimer of Warranties & Limitation of Liability",
             content:
                 "All products and services are provided on an 'as is' and 'as available' basis without warranties of any kind. We do not guarantee uninterrupted service, error-free functionality, or complete accuracy of information. To the maximum extent permitted by law, Oats Crush and its affiliates shall not be liable for any direct, indirect, incidental, punitive, consequential damages, loss of profits, or loss of data arising from use of our services.",
         },
         {
-            title: "14. Indemnification",
+            id: "indemnification",
+            title: "Indemnification",
             content:
                 "You agree to indemnify, defend, and hold harmless Oats Crush and its affiliates, directors, officers, employees, agents, and service providers from any claims, liabilities, damages, costs, or legal expenses arising from breach of these Terms, violation of laws, misuse of services, or infringement of third-party rights.",
         },
         {
-            title: "15. Severability",
+            id: "severability",
+            title: "Severability",
             content:
                 "If any provision of these Terms is found unlawful or unenforceable, such provision shall nevertheless be enforceable to the maximum extent permitted by law, and remaining provisions shall remain valid and enforceable.",
         },
         {
-            title: "16. Termination",
+            id: "termination",
+            title: "Termination",
             content:
                 "These Terms remain effective unless terminated by either party. We reserve the right to terminate or suspend access to our Services without notice if you breach these Terms, engage in fraudulent activity, or misuse our Platform. Obligations and liabilities incurred prior to termination shall survive termination.",
         },
         {
-            title: "17. Entire Agreement",
+            id: "entire-agreement",
+            title: "Entire Agreement",
             content:
                 "These Terms of Service, together with all policies posted on our website, constitute the entire agreement between you and Oats Crush and supersede all prior communications or agreements.",
         },
         {
-            title: "18. Governing Law & Jurisdiction",
+            id: "governing-law-jurisdiction",
+            title: "Governing Law & Jurisdiction",
             content: (
                 <>
                     <p>
@@ -261,12 +280,14 @@ export default function TermsOfService() {
             ),
         },
         {
-            title: "19. Changes to Terms of Service",
+            id: "changes-to-terms",
+            title: "Changes to Terms of Service",
             content:
                 "We reserve the right to update, modify, or replace any part of these Terms at our sole discretion. Users are responsible for periodically reviewing this page for changes. Continued use of the website following updates constitutes acceptance of revised Terms.",
         },
         {
-            title: "20. Grievance Officer",
+            id: "grievance-officer",
+            title: "Grievance Officer",
             content: (
                 <>
                     <p>
@@ -275,7 +296,7 @@ export default function TermsOfService() {
 
                     <a
                         href="mailto:contact@oatscrush.co.in"
-                        className="text-blue-600 hover:underline mt-2 inline-block"
+                        className="text-brand-orange hover:underline mt-2 inline-block"
                     >
                         contact@oatscrush.co.in
                     </a>
@@ -287,14 +308,15 @@ export default function TermsOfService() {
             ),
         },
         {
-            title: "21. Contact Information",
+            id: "contact-information",
+            title: "Contact Information",
             content: (
                 <>
                     <p>For any questions regarding these Terms of Service, you may contact us at:</p>
 
                     <a
                         href="mailto:contact@oatscrush.co.in"
-                        className="text-blue-600 hover:underline mt-2 inline-block"
+                        className="text-brand-orange hover:underline mt-2 inline-block"
                     >
                         contact@oatscrush.co.in
                     </a>
@@ -309,35 +331,128 @@ export default function TermsOfService() {
         },
     ];
 
+    const [activeId, setActiveId] = useState(sections[0].id);
+    const sectionRefs = useRef({});
+    const isClickScrolling = useRef(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (isClickScrolling.current) return;
+                const visible = entries.filter((entry) => entry.isIntersecting);
+
+                if (visible.length > 0) {
+                    const topMost = visible.reduce((a, b) =>
+                        a.boundingClientRect.top < b.boundingClientRect.top ? a : b
+                    );
+                    setActiveId(topMost.target.id);
+                }
+            },
+            {
+                rootMargin: "-140px 0px -70% 0px",
+                threshold: 0,
+            }
+        );
+
+        sections.forEach((section) => {
+            const el = sectionRefs.current[section.id];
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, []);
+
+    const handleSidebarClick = (id) => {
+        setActiveId(id);
+        isClickScrolling.current = true;
+
+        const el = sectionRefs.current[id];
+        if (el) {
+            const top = el.getBoundingClientRect().top + window.scrollY - 120;
+            window.scrollTo({ top, behavior: "smooth" });
+        }
+        window.clearTimeout(handleSidebarClick._t);
+        handleSidebarClick._t = window.setTimeout(() => {
+            isClickScrolling.current = false;
+        }, 700);
+    };
+
     return (
         <>
             <Navbar />
 
-            <div className="max-w-5xl mx-auto px-6 py-10 text-gray-800">
-                <h1 className="text-4xl font-bold text-center mb-4">
-                    Terms of Service
-                </h1>
+            {/* Hero band */}
+            <div className="bg-brand-orange px-6 sm:px-10 pt-40 sm:pt-48 pb-12 sm:pb-16">
+                <div className="max-w-7xl mx-auto text-center">
+                    <h1 className="font-heading text-white text-4xl sm:text-5xl md:text-6xl">
+                        TERMS OF SERVICE
+                    </h1>
+                    <p className="font-body text-white/80 text-sm sm:text-base mt-3">
+                        Last updated in June, 2026
+                    </p>
+                </div>
+            </div>
 
-                <p className="mb-8 text-gray-600 text-center">
-                    Last Updated: June 2026
-                </p>
+            {/* Sidebar + content */}
+            <div className="max-w-7xl mx-auto px-6 sm:px-10 py-12 sm:py-16">
+                <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-10 md:gap-24">
+                    {/* Sidebar */}
+                    <aside className="hidden md:block">
+                        <div className="sticky top-32">
+                            <h2 className="font-heading text-sm tracking-wide text-black mb-4 mt-1.5">
+    SECTIONS
+</h2>
 
-                <div className="space-y-8">
-                    {sections.map((section, index) => (
-                        <div key={index}>
-                            <h2 className="text-2xl font-semibold mb-3">
-                                SECTION {section.title}
-                            </h2>
+                            <nav className="space-y-3">
+                                {sections.map((section) => {
+                                    const isActive = activeId === section.id;
 
-                            <div className="leading-relaxed">
-                                {typeof section.content === "string" ? (
-                                    <p>{section.content}</p>
-                                ) : (
-                                    section.content
-                                )}
-                            </div>
+                                    return (
+                                        <button
+                                            key={section.id}
+                                            onClick={() => handleSidebarClick(section.id)}
+                                            className={`group relative block w-full text-left font-body text-sm cursor-pointer ${
+                                                isActive
+                                                    ? "font-semibold text-brand-orange"
+                                                    : "text-black hover:text-black"
+                                            }`}
+                                        >
+                                            <span className="relative">
+                                                {section.title}
+                                                {!isActive && (
+                                                    <span className="absolute left-0 -bottom-0.5 h-[1.5px] w-full bg-brand-orange scale-x-0 origin-left transition-transform duration-300 ease-out group-hover:scale-x-100" />
+                                                )}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </nav>
                         </div>
-                    ))}
+                    </aside>
+
+                    {/* Content */}
+                    <div className="space-y-14">
+                        {sections.map((section, index) => (
+                            <section
+                                key={section.id}
+                                id={section.id}
+                                ref={(el) => (sectionRefs.current[section.id] = el)}
+                                className="scroll-mt-32"
+                            >
+                                <h2 className="font-heading text-2xl sm:text-3xl mb-4">
+                                    {index + 1}. {section.title.toUpperCase()}
+                                </h2>
+
+                                <div className="font-body text-sm sm:text-base text-black leading-relaxed">
+                                    {typeof section.content === "string" ? (
+                                        <p>{section.content}</p>
+                                    ) : (
+                                        section.content
+                                    )}
+                                </div>
+                            </section>
+                        ))}
+                    </div>
                 </div>
             </div>
 
