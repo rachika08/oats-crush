@@ -22,7 +22,8 @@ export default function ProductDetails() {
     const [rating, setRating] = useState(5);
     const [comments, setComments] = useState("");
 
-    const [selectedPack, setSelectedPack] = useState(1);
+    // const [selectedPack, setSelectedPack] = useState(1);
+    const [selectedPack, setSelectedPack] = useState(null);
     const token = localStorage.getItem("token");
 
     useEffect(() => {
@@ -35,6 +36,34 @@ export default function ProductDetails() {
             fetchCartQuantity();
         }
     }, [product]);
+    // const addToCart = async () => {
+    //     try {
+    //         const token = localStorage.getItem("token");
+    //         if (!token) {
+    //             alert("Please login to add items to your cart");
+    //             navigate("/login");
+    //             return;
+    //         }
+    //         const res = await api.post(
+    //             "/cart/add",
+    //             {
+    //                 productId: product._id,
+    //                 // quantity: quantity
+    //                 quantity: quantity * selectedPack
+    //             },
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`
+    //                 }
+    //             }
+    //         );
+    //         setShowViewCart(true);
+    //         console.log("Cart updated:", res.data);
+    //         alert("Added to cart!");
+    //     } catch (error) {
+    //         console.log(error.response?.data || error.message);
+    //     }
+    // };
     const addToCart = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -43,12 +72,17 @@ export default function ProductDetails() {
                 navigate("/login");
                 return;
             }
+
             const res = await api.post(
                 "/cart/add",
                 {
                     productId: product._id,
-                    // quantity: quantity
-                    quantity: quantity * selectedPack
+                    quantity: quantity,
+                    pack: {
+                        label: selectedPack.label,
+                        units: selectedPack.units,
+                        price: selectedPack.price
+                    }
                 },
                 {
                     headers: {
@@ -56,14 +90,13 @@ export default function ProductDetails() {
                     }
                 }
             );
+
             setShowViewCart(true);
-            console.log("Cart updated:", res.data);
             alert("Added to cart!");
         } catch (error) {
             console.log(error.response?.data || error.message);
         }
     };
-
     const buyNow = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -72,12 +105,29 @@ export default function ProductDetails() {
                 navigate("/login");
                 return;
             }
+            // const res = await api.post(
+            //     "/cart/add",
+            //     {
+            //         productId: product._id,
+            //         // quantity: quantity
+            //         quantity: quantity * selectedPack
+            //     },
+            //     {
+            //         headers: {
+            //             Authorization: `Bearer ${token}`
+            //         }
+            //     }
+            // );
             const res = await api.post(
                 "/cart/add",
                 {
                     productId: product._id,
-                    // quantity: quantity
-                    quantity: quantity * selectedPack
+                    quantity: quantity,
+                    pack: {
+                        label: selectedPack.label,
+                        units: selectedPack.units,
+                        price: selectedPack.price
+                    }
                 },
                 {
                     headers: {
@@ -85,7 +135,6 @@ export default function ProductDetails() {
                     }
                 }
             );
-
             console.log("Cart updated:", res.data);
 
             navigate("/cart")
@@ -100,6 +149,7 @@ export default function ProductDetails() {
 
             setProduct(res.data);
             setSelectedImage(res.data.image);
+            setSelectedPack(res.data.packSizes?.[0]);
         } catch (error) {
             console.log(error);
         }
@@ -254,7 +304,8 @@ export default function ProductDetails() {
                         </h1>
 
                         <p className="text-3xl font-semibold mb-6">
-                            ₹{product.price}
+                            {/* ₹{product.price} */}
+                            ₹{selectedPack?.price || product.packSizes?.[0]?.price}
                         </p>
 
                         <p className="text-gray-600 mb-8">
@@ -278,7 +329,7 @@ export default function ProductDetails() {
                             </h3>
 
                             <div className="flex gap-3">
-                                {[1, 3, 5, 6].map((pack) => (
+                                {/* {[1, 3, 5, 6].map((pack) => (
                                     <button
                                         key={pack}
                                         onClick={() => setSelectedPack(pack)}
@@ -289,7 +340,58 @@ export default function ProductDetails() {
                                     >
                                         Pack of {pack}
                                     </button>
-                                ))}
+                                ))} */}
+                                {/* {product.packSizes?.map((pack) => (
+                                    <button
+                                        key={pack._id}
+                                        onClick={() => setSelectedPack(pack)}
+                                        className={`px-5 py-2 rounded-full border transition ${
+                                            selectedPack?.units === pack.units
+                                                ? "bg-black text-white"
+                                                : "hover:bg-black hover:text-white"
+                                        }`}
+                                    >
+                                        {pack.label}
+                                    </button>
+                                ))} */}
+                                {/* Add this above the pack buttons */}
+{(() => {
+    // base unit price = smallest pack's price per unit
+    const baseUnitPrice = product.packSizes?.[0]?.price / product.packSizes?.[0]?.units;
+
+    return (
+        <div className="flex gap-3 flex-wrap">
+            {product.packSizes?.map((pack) => {
+                const fullPrice = baseUnitPrice * pack.units;
+                const savings = Math.round(((fullPrice - pack.price) / fullPrice) * 100);
+                const hasSavings = savings > 0;
+
+                return (
+                    <button
+                        key={pack._id}
+                        onClick={() => setSelectedPack(pack)}
+                        className={`flex flex-col items-center px-5 py-2 rounded-full border transition ${
+                            selectedPack?.units === pack.units
+                                ? "bg-black text-white"
+                                : "hover:bg-black hover:text-white"
+                        }`}
+                    >
+                        <span>{pack.label}</span>
+                        {hasSavings && (
+                            <span className={`text-xs font-semibold mt-0.5 ${
+                                selectedPack?.units === pack.units
+                                    ? "text-green-300"
+                                    : "text-green-600"
+                            }`}>
+                                Save {savings}%
+                            </span>
+                        )}
+                    </button>
+                );
+            })}
+        </div>
+    );
+})()}
                             </div>
                         </div>
                         {/* Quantity */}

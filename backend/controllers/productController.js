@@ -40,14 +40,14 @@ export const createProduct = async (req, res) => {
         const {
             name,
             description,
-            price,
+            // price,
             category,
             stock,
             featured,
             benefits,
             ingredients
         } = req.body;
-
+        const packSizes = JSON.parse(req.body.packSizes);
         const productExist = await Product.findOne({ name });
 
         if (productExist) {
@@ -98,7 +98,8 @@ export const createProduct = async (req, res) => {
         const product = await Product.create({
             name,
             description,
-            price,
+            // price,
+            packSizes,
             category,
             stock,
             image: imageUrl,

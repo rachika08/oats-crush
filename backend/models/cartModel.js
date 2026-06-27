@@ -16,7 +16,12 @@ const cartSchema = new mongoose.Schema({
             quantity: {
                 type: Number,
                 default: 1
-            }
+            },
+            pack: {
+                label: { type: String },
+                units: { type: Number },
+                price: { type: Number }
+            } 
         }
     ]
 }, { timestamps: true });

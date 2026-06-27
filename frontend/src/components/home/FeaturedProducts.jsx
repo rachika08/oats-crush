@@ -151,7 +151,7 @@ const FeaturedProducts = ({
                         </p>
 
                         <p className="font-heading mb-3">
-                          ₹{product.price}.00
+                          ₹{product.packSizes?.find(p => p.units === 1)?.price || "N/A"}
                         </p>
 
                         <button

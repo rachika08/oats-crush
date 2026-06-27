@@ -9,10 +9,26 @@ const productSchema=mongoose.Schema({
         type:String,
         required:true,
     },
-    price:{
-        type:Number,
-        required:true,
-    },
+    // price:{
+    //     type:Number,
+    //     required:true,
+    // },
+    packSizes: [
+        {
+            label: {
+                type: String,
+                required: true
+            },
+            units: {
+                type: Number,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            }
+        }
+    ],
     category:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Category',
