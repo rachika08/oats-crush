@@ -15,6 +15,7 @@ export const createProduct = async (req, res) => {
             benefits,
             ingredients,
             faqs,
+            howToEnjoy,
         } = req.body;
         const packSizes = JSON.parse(req.body.packSizes);
         const productExist = await Product.findOne({ name });
@@ -76,7 +77,8 @@ export const createProduct = async (req, res) => {
             featured: featuredValue,
             benefits: benefitsArray,
             ingredients: ingredientsArray,
-            faqs
+            faqs,
+            howToEnjoy,
         });
 
         return res.status(201).json({

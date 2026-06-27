@@ -15,6 +15,7 @@ export default function EditProduct() {
     faqs: [],
   });
   const [packSizes, setPackSizes] = useState([]);
+  const [howToEnjoy, setHowToEnjoy] = useState([]);
   // GET product
   useEffect(() => {
     api.get(`/product/${id}`).then((res) => {
@@ -46,6 +47,7 @@ export default function EditProduct() {
               }
           ]
       );
+      setHowToEnjoy(data.howToEnjoy || []);
     });
   }, [id]);
 
@@ -84,14 +86,24 @@ export default function EditProduct() {
     const updated = form.faqs.filter((_, i) => i !== index);
     setForm({ ...form, faqs: updated });
   };
-
+  const addMethod = () => {
+    setHowToEnjoy([
+      ...howToEnjoy,
+      {
+        title: "",
+        description: "",
+        icon: "glass",
+      },
+    ]);
+  };
   // update
   const handleSubmit = async (e) => {
     e.preventDefault();
     // await api.put(`/product/${id}`, form);
     await api.put(`/product/${id}`, {
         ...form,
-        packSizes
+        packSizes,
+        howToEnjoy
     });
     alert("Product updated successfully");
     navigate('/admin/products');
@@ -227,67 +239,125 @@ export default function EditProduct() {
           />
         </div>
         <div className="mt-6">
-  <h3 className="font-bold mb-2">FAQs</h3>
+         <h3 className="font-bold mb-2">FAQs</h3>
 
-  {form.faqs.map((faq, index) => (
-    <div key={index} className="mb-4 border p-3 rounded-lg">
-      
-      {/* Question */}
-      <input
-        type="text"
-        placeholder="Question"
-        value={faq.question}
-        onChange={(e) => {
-          const updated = [...form.faqs];
-          updated[index].question = e.target.value;
-          setForm({ ...form, faqs: updated });
-        }}
-        className="border p-2 w-full mb-2"
-      />
+          {form.faqs.map((faq, index) => (
+            <div key={index} className="mb-4 border p-3 rounded-lg">
+              
+              {/* Question */}
+              <input
+                type="text"
+                placeholder="Question"
+                value={faq.question}
+                onChange={(e) => {
+                  const updated = [...form.faqs];
+                  updated[index].question = e.target.value;
+                  setForm({ ...form, faqs: updated });
+                }}
+                className="border p-2 w-full mb-2"
+              />
 
-      {/* Answer */}
-      <input
-        type="text"
-        placeholder="Answer"
-        value={faq.answer}
-        onChange={(e) => {
-          const updated = [...form.faqs];
-          updated[index].answer = e.target.value;
-          setForm({ ...form, faqs: updated });
-        }}
-        className="border p-2 w-full"
-      />
+              {/* Answer */}
+              <input
+                type="text"
+                placeholder="Answer"
+                value={faq.answer}
+                onChange={(e) => {
+                  const updated = [...form.faqs];
+                  updated[index].answer = e.target.value;
+                  setForm({ ...form, faqs: updated });
+                }}
+                className="border p-2 w-full"
+              />
 
-      {/* Remove button */}
-      {form.faqs.length > 1 && (
+              {/* Remove button */}
+              {form.faqs.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeFaq(index)}
+                  className="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                >
+                  Remove FAQ
+                </button>
+              )}
+            </div>
+          ))}
+
+          {/* Add FAQ button */}
+          <button
+            type="button"
+            onClick={() =>
+              setForm({
+                ...form,
+                faqs: [
+                  ...form.faqs,
+                  { question: "", answer: "" }
+                ],
+              })
+            }
+            className="bg-black text-white px-3 py-2 mt-2 rounded"
+          >
+            + Add FAQ
+          </button>
+        </div>
+        <h3 className="text-xl font-bold mt-6 mb-4">
+          How To Enjoy
+        </h3>
+
+        {howToEnjoy.map((method, index) => (
+          <div key={index} className="border p-4 rounded mb-4">
+
+            <input
+              type="text"
+              placeholder="Method Title"
+              value={method.title}
+              onChange={(e) => {
+                const updated = [...howToEnjoy];
+                updated[index].title = e.target.value;
+                setHowToEnjoy(updated);
+              }}
+              className="w-full border p-2 mb-3"
+            />
+
+            <textarea
+              placeholder="Instructions"
+              value={method.description}
+              onChange={(e) => {
+                const updated = [...howToEnjoy];
+                updated[index].description = e.target.value;
+                setHowToEnjoy(updated);
+              }}
+              className="w-full border p-2 mb-3"
+            />
+
+            <select
+              value={method.icon}
+              onChange={(e) => {
+                const updated = [...howToEnjoy];
+                updated[index].icon = e.target.value;
+                setHowToEnjoy(updated);
+              }}
+              className="w-full border p-2"
+            >
+              <option value="moon">Moon</option>
+              <option value="glass">Glass</option>
+              <option value="snowflake">Snowflake</option>
+              <option value="coffee">Coffee</option>
+              <option value="blender">Blender</option>
+              <option value="bowl">Bowl</option>
+              <option value="icecream">Ice Cream</option>
+            </select>
+
+          </div>
+        ))}
+
         <button
           type="button"
-          onClick={() => removeFaq(index)}
-          className="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+          onClick={addMethod}
+          className="bg-black text-white px-4 py-2 rounded"
         >
-          Remove FAQ
+          Add Method
         </button>
-      )}
-    </div>
-  ))}
-
-  {/* Add FAQ button */}
-  <button
-    type="button"
-    onClick={() =>
-      setForm({
-        ...form,
-        faqs: [
-          ...form.faqs,
-          { question: "", answer: "" }
-        ],
-      })
-    }
-    className="bg-black text-white px-3 py-2 mt-2 rounded"
-  >
-    + Add FAQ
-  </button>
-</div>
         {/* Submit */}
         <button
           type="submit"

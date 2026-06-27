@@ -56,6 +56,22 @@ const productSchema=mongoose.Schema({
             answer: { type: String, default: "" },
         },
     ],
+    howToEnjoy: [
+        {
+            title: {
+                type: String,
+                required: true,
+            },
+            description: {
+                type: String,
+                required: true,
+            },
+            icon: {
+                type: String, // stores icon name
+                required: true,
+            },
+        },
+    ],
 },{timestamps:true});
 
 export default mongoose.model("Product",productSchema);

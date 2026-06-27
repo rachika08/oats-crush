@@ -7,7 +7,24 @@ import Navbar from "../Navbar";
 import Footer from "./Footer";
 import FAQSection from "./FAQSection";
 import FeaturedProducts from "./FeaturedProducts";
+import {
+ 
+  Moon,
+  GlassWater,
+  Snowflake,
+  Coffee,
+  IceCreamCone,
+  Soup
+} from "lucide-react";
 
+const iconMap = {
+  moon: Moon,
+  glass: GlassWater,
+  snowflake: Snowflake,
+  coffee: Coffee,
+  bowl: Soup,
+  icecream: IceCreamCone,
+};
 export default function ProductDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -146,7 +163,7 @@ export default function ProductDetails() {
     const fetchProduct = async () => {
         try {
             const res = await api.get(`/product/${id}`);
-
+            console.log(res);
             setProduct(res.data);
             setSelectedImage(res.data.image);
             setSelectedPack(res.data.packSizes?.[0]);
@@ -329,31 +346,8 @@ export default function ProductDetails() {
                             </h3>
 
                             <div className="flex gap-3">
-                                {/* {[1, 3, 5, 6].map((pack) => (
-                                    <button
-                                        key={pack}
-                                        onClick={() => setSelectedPack(pack)}
-                                        className={`px-5 py-2 rounded-full border transition ${selectedPack === pack
-                                                ? "bg-black text-white"
-                                                : "hover:bg-black hover:text-white"
-                                            }`}
-                                    >
-                                        Pack of {pack}
-                                    </button>
-                                ))} */}
-                                {/* {product.packSizes?.map((pack) => (
-                                    <button
-                                        key={pack._id}
-                                        onClick={() => setSelectedPack(pack)}
-                                        className={`px-5 py-2 rounded-full border transition ${
-                                            selectedPack?.units === pack.units
-                                                ? "bg-black text-white"
-                                                : "hover:bg-black hover:text-white"
-                                        }`}
-                                    >
-                                        {pack.label}
-                                    </button>
-                                ))} */}
+                                
+                                
                                 {/* Add this above the pack buttons */}
 {(() => {
     // base unit price = smallest pack's price per unit
@@ -496,6 +490,38 @@ export default function ProductDetails() {
                 </div>
 
             </div>
+            {product.howToEnjoy?.length > 0 && (
+  <section className="my-16">
+    <h2 className="text-3xl font-heading mb-8">
+      How To Enjoy
+    </h2>
+
+    <div className="grid md:grid-cols-3 gap-6">
+      {product.howToEnjoy.map((item, index) => {
+        const Icon = iconMap[item.icon];
+
+        return (
+          <div
+            key={index}
+            className="border rounded-xl p-6 text-center"
+          >
+            {Icon && (
+              <Icon className="w-10 h-10 mx-auto mb-4" />
+            )}
+
+            <h3 className="font-bold text-lg mb-2">
+              {item.title}
+            </h3>
+
+            <p className="text-gray-600">
+              {item.description}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+)}
             <div className="mt-16 border-t pt-10">
                 <h2 className="text-3xl font-bold mb-8">
                     Customer Reviews
