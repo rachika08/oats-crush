@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Star } from "lucide-react";
+import { Star, Truck, RotateCcw, Lock } from "lucide-react";
 import api from "../../api/axios";
 import Navbar from "../Navbar";
 import Footer from "./Footer";
@@ -41,6 +41,7 @@ export default function ProductDetails() {
 
     // const [selectedPack, setSelectedPack] = useState(1);
     const [selectedPack, setSelectedPack] = useState(null);
+    const [showFullDescription, setShowFullDescription] = useState(false);
     const token = localStorage.getItem("token");
 
     useEffect(() => {
@@ -238,217 +239,258 @@ export default function ProductDetails() {
 
     return (
         <><Navbar />
-            <div className="max-w-7xl mx-auto px-6 py-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 pb-10">
 
-                <div className="grid md:grid-cols-2 gap-12">
+                <div className="grid md:grid-cols-2 gap-8 md:gap-12">
 
                     {/* LEFT SIDE - IMAGES */}
-                    <div>
-
-                        <div className="border rounded-xl overflow-hidden">
-                            <img
-                                src={selectedImage}
-                                alt={product.name}
-                                className="w-full h-[500px] object-cover"
-                            />
-                        </div>
-
-                        <div className="flex gap-3 mt-4">
+                    <div className="flex gap-3 sm:gap-4">
+                        <div className="flex flex-col gap-3 w-16 sm:w-20 flex-shrink-0">
                             {allImages.map((img, index) => (
-                                <img
+                                <button
                                     key={index}
-                                    src={img}
-                                    alt={`thumbnail-${index}`}
                                     onClick={() => setSelectedImage(img)}
-                                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer border-2 ${selectedImage === img
-                                            ? "border-black"
-                                            : "border-gray-200"
-                                        }`}
-                                />
+                                    className={`aspect-square rounded-lg sm:rounded-xl overflow-hidden border-2 transition cursor-pointer ${
+                                        selectedImage === img
+                                            ? "border-brand-orange"
+                                            : "border-gray-200 hover:border-gray-300"
+                                    }`}
+                                >
+                                    <img
+                                        src={img}
+                                        alt={`thumbnail-${index}`}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </button>
                             ))}
                         </div>
 
+                        <div className="flex-1 rounded-2xl overflow-hidden aspect-square">
+                            <img
+                                src={selectedImage}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                     </div>
 
                     {/* RIGHT SIDE - PRODUCT INFO */}
                     <div>
 
-                        <p className="text-sm text-gray-500 mb-2">
-                            {product.category?.name}
-                        </p>
+                        {product.isNewLaunch && (
+                            <span className="inline-block bg-brand-orange text-white font-body text-xs font-semibold px-4 py-1.5 rounded-full mb-4">
+                                New Launch
+                            </span>
+                        )}
 
-                        <h1 className="text-4xl font-bold mb-4">
+                        <h1 className="font-heading text-3xl sm:text-4xl leading-tight mb-3 uppercase">
                             {product.name}
                         </h1>
 
-                        <p className="text-3xl font-semibold mb-6">
-                            {/* ₹{product.price} */}
-                            ₹{selectedPack?.price || product.packSizes?.[0]?.price}
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="flex text-brand-orange">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                        key={star}
+                                        size={16}
+                                        className={
+                                            star <= Math.round(averageRating)
+                                                ? "fill-brand-orange text-brand-orange"
+                                                : "fill-gray-200 text-gray-200"
+                                        }
+                                    />
+                                ))}
+                            </div>
+                            <span className="font-body text-sm font-semibold">
+                                {averageRating}
+                            </span>
+                            <span className="font-body text-sm text-gray-500">
+                                ({reviews.length >= 1000
+                                    ? `${(reviews.length / 1000).toFixed(1)}k`
+                                    : reviews.length}{" "}
+                                reviews)
+                            </span>
+                        </div>
+
+                        <p
+                            className={`font-body text-sm text-gray-600 mb-6 ${
+                                showFullDescription ? "" : "line-clamp-3"
+                            }`}
+                        >
+                            {product.description}
+                            {!showFullDescription && (
+                                <>
+                                    {"... "}
+                                    <button
+                                        onClick={() => setShowFullDescription(true)}
+                                        className="text-brand-orange underline cursor-pointer font-medium"
+                                    >
+                                        Read More
+                                    </button>
+                                </>
+                            )}
                         </p>
 
-                        <p className="text-gray-600 mb-8">
-                            {product.description}
-                        </p>
-                        <div className="flex">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <Star
-                                    key={star}
-                                    size={24}
-                                    className={`${star <= Math.round(averageRating)
-                                            ? "fill-yellow-400 text-yellow-400"
-                                            : "text-gray-300"
-                                        }`}
-                                />
-                            ))}
-                        </div>
+                        {/* Pack size selector */}
                         <div className="mb-6">
-                            <h3 className="font-semibold mb-3">
-                                Select Your Pack Size
+                            <h3 className="font-body text-xs font-semibold text-gray-500 tracking-wide mb-3">
+                                SELECT YOUR PACK SIZE
                             </h3>
 
-                            <div className="flex gap-3">
-                                
-                                
-                                {/* Add this above the pack buttons */}
-{(() => {
-    // base unit price = smallest pack's price per unit
-    const baseUnitPrice = product.packSizes?.[0]?.price / product.packSizes?.[0]?.units;
+                            <div className="flex gap-3 flex-wrap">
+                                {(() => {
+                                    const baseUnitPrice =
+                                        product.packSizes?.[0]?.price /
+                                        product.packSizes?.[0]?.units;
 
-    return (
-        <div className="flex gap-3 flex-wrap">
-            {product.packSizes?.map((pack) => {
-                const fullPrice = baseUnitPrice * pack.units;
-                const savings = Math.round(((fullPrice - pack.price) / fullPrice) * 100);
-                const hasSavings = savings > 0;
+                                    return product.packSizes?.map((pack) => {
+                                        const fullPrice = baseUnitPrice * pack.units;
+                                        const savings = Math.round(
+                                            ((fullPrice - pack.price) / fullPrice) * 100
+                                        );
+                                        const hasSavings = savings > 0;
+                                        const isActive =
+                                            selectedPack?.units === pack.units;
 
-                return (
-                    <button
-                        key={pack._id}
-                        onClick={() => setSelectedPack(pack)}
-                        className={`flex flex-col items-center px-5 py-2 rounded-full border transition ${
-                            selectedPack?.units === pack.units
-                                ? "bg-black text-white"
-                                : "hover:bg-black hover:text-white"
-                        }`}
-                    >
-                        <span>{pack.label}</span>
-                        {hasSavings && (
-                            <span className={`text-xs font-semibold mt-0.5 ${
-                                selectedPack?.units === pack.units
-                                    ? "text-green-300"
-                                    : "text-green-600"
-                            }`}>
-                                Save {savings}%
-                            </span>
-                        )}
-                    </button>
-                );
-            })}
-        </div>
-    );
-})()}
+                                        return (
+                                            <div key={pack._id} className="relative">
+                                                <button
+                                                    onClick={() => setSelectedPack(pack)}
+                                                    className={`font-body text-sm font-medium px-5 py-2 rounded-full border-2 transition cursor-pointer ${
+                                                        isActive
+                                                            ? "bg-brand-orange border-brand-orange text-white"
+                                                            : "bg-white border-gray-200 text-black hover:border-brand-orange"
+                                                    }`}
+                                                >
+                                                    {pack.label}
+                                                </button>
+
+                                                {hasSavings && (
+                                                    <span
+                                                        className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                                                            isActive
+                                                                ? "bg-white text-brand-orange border-brand-orange"
+                                                                : "bg-white text-gray-500 border-gray-200"
+                                                        }`}
+                                                    >
+                                                        Save {savings}%
+                                                    </span>
+                                                )}
+                                            </div>
+                                        );
+                                    });
+                                })()}
                             </div>
                         </div>
-                        {/* Quantity */}
-                        <div className="flex items-center gap-4 mb-6">
 
+                        {/* Price */}
+                        <div className="flex items-baseline gap-2 mb-1">
+                            <span className="font-heading text-3xl">
+                                ₹{selectedPack?.price}.00
+                            </span>
+                            {selectedPack && selectedPack.units > 1 && (
+                                <span className="font-body text-sm text-gray-400">
+                                    ₹{(selectedPack.price / selectedPack.units).toFixed(0)}/pouch
+                                </span>
+                            )}
+                        </div>
+
+                        <p className="font-body text-xs text-gray-400 mb-6">
+                            Incl. of all taxes &amp; shipping
+                        </p>
+
+                        {/* Quantity stepper */}
+                        <div className="flex items-center border-2 border-gray-200 rounded-full w-fit mb-6">
                             <button
                                 onClick={() =>
-                                    setQuantity((prev) =>
-                                        prev > 1 ? prev - 1 : 1
-                                    )
+                                    setQuantity((prev) => (prev > 1 ? prev - 1 : 1))
                                 }
-                                className="px-4 py-2 border rounded"
+                                className="w-10 h-10 flex items-center justify-center font-body text-lg cursor-pointer"
+                                aria-label="Decrease quantity"
                             >
-                                -
+                                −
                             </button>
 
-                            {/* <span className="text-lg font-medium">
-                            {quantity}
-                        </span> */}
-                            <div className="text-lg font-medium">
-                                {quantity} Pack{quantity > 1 ? "s" : ""}
-                                <div className="text-sm text-gray-500">
-                                    ({quantity * selectedPack} packets)
-                                </div>
-                            </div>
+                            <span className="font-body font-medium w-8 text-center">
+                                {quantity}
+                            </span>
 
                             <button
-                                onClick={() =>
-                                    setQuantity((prev) => prev + 1)
-                                }
-                                className="px-4 py-2 border rounded"
+                                onClick={() => setQuantity((prev) => prev + 1)}
+                                className="w-10 h-10 flex items-center justify-center font-body text-lg cursor-pointer"
+                                aria-label="Increase quantity"
                             >
                                 +
                             </button>
-
                         </div>
 
                         {/* Buttons */}
-                        <div className="flex gap-4 mb-8">
-
-                            <button
-                                onClick={addToCart}
-                                className="flex-1 bg-black text-white py-3 rounded-lg"
-                            >
-                                Add To Cart
-                            </button>
+                        <div className="flex gap-4">
 
                             <button
                                 onClick={buyNow}
-                                className="flex-1 border border-black py-3 rounded-lg"
+                                className="flex-1 border-2 border-black text-black font-heading text-base py-3 rounded-full hover:bg-black hover:text-white transition cursor-pointer"
                             >
-                                Buy Now
+                                BUY NOW
                             </button>
 
-                        </div>
-
-                        {/* Trust Badges */}
-                        <div className="space-y-4 border-t pt-6">
-
-                            <div>
-                                <h3 className="font-semibold">
-                                    🚚 Fast Delivery
-                                </h3>
-                                <p className="text-sm text-gray-600">
-                                    Delivered within 3-5 business days.
-                                </p>
-                            </div>
-
-                            <div>
-                                <h3 className="font-semibold">
-                                    ↩️ Easy Returns
-                                </h3>
-                                <p className="text-sm text-gray-600">
-                                    Hassle-free returns within 7 days.
-                                </p>
-                            </div>
-
-                            <div>
-                                <h3 className="font-semibold">
-                                    🔒 Secure Checkout
-                                </h3>
-                                <p className="text-sm text-gray-600">
-                                    Your payments are protected and encrypted.
-                                </p>
-                            </div>
+                            <button
+                                onClick={addToCart}
+                                className="flex-1 bg-brand-orange text-white font-heading text-base py-3 rounded-full shadow-md hover:-translate-y-1 transition cursor-pointer"
+                            >
+                                ADD TO CART
+                            </button>
 
                         </div>
 
                     </div>
-                    {showViewCart && (
-                        <div className="fixed bottom-0 left-0 w-full bg-green-600 text-white p-4 flex justify-between items-center shadow-lg">
-                            <span>Item added to cart</span>
-
-                            <button
-                                onClick={() => navigate("/cart")}
-                                className="bg-white text-green-600 px-4 py-2 rounded"
-                            >
-                                View Cart
-                            </button>
-                        </div>
-                    )}
                 </div>
+
+                {/* Trust Badges */}
+                <div className="grid grid-cols-3 gap-4 sm:gap-6 mt-12 sm:mt-16 text-center">
+                    <div className="flex flex-col items-center">
+                        <Truck size={32} strokeWidth={1.5} className="text-brand-orange mb-3" />
+                        <h4 className="font-body font-semibold text-sm mb-1">
+                            Fast Delivery
+                        </h4>
+                        <p className="font-body text-xs text-gray-500">
+                            Delivered within 3-5 business days
+                        </p>
+                    </div>
+
+                    <div className="flex flex-col items-center">
+                        <RotateCcw size={32} strokeWidth={1.5} className="text-brand-orange mb-3" />
+                        <h4 className="font-body font-semibold text-sm mb-1">
+                            Easy Returns
+                        </h4>
+                        <p className="font-body text-xs text-gray-500">
+                            Hassle-free returns within 7 days
+                        </p>
+                    </div>
+
+                    <div className="flex flex-col items-center">
+                        <Lock size={32} strokeWidth={1.5} className="text-brand-orange mb-3" />
+                        <h4 className="font-body font-semibold text-sm mb-1">
+                            Secure Checkout
+                        </h4>
+                        <p className="font-body text-xs text-gray-500">
+                            Your payments are protected and encrypted
+                        </p>
+                    </div>
+                </div>
+
+                {showViewCart && (
+                    <div className="fixed bottom-0 left-0 w-full bg-green-600 text-white p-4 flex justify-between items-center shadow-lg">
+                        <span>Item added to cart</span>
+
+                        <button
+                            onClick={() => navigate("/cart")}
+                            className="bg-white text-green-600 px-4 py-2 rounded"
+                        >
+                            View Cart
+                        </button>
+                    </div>
+                )}
 
             </div>
             {product.howToEnjoy?.length > 0 && (
@@ -628,7 +670,6 @@ export default function ProductDetails() {
                         ))}
                     </div>
                 )}
-                ```
 
             </div>
             <FeaturedProducts
