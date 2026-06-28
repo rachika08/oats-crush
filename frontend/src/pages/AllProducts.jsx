@@ -24,6 +24,7 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
         }`}
       >
         {value || label}
+        
         <ChevronDown
           size={14}
           className={`transition-transform duration-200 ${
@@ -33,7 +34,18 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-10 left-0 bg-white rounded-xl shadow-md min-w-[160px] py-2 z-20 text-sm">
+        <div className="absolute top-10 left-0 bg-white border rounded-xl shadow-md min-w-[160px] py-2 z-20 text-sm">
+          {isSelected && (
+            <button
+              onClick={() => {
+                onChange("");
+                setIsOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-red-400 hover:bg-gray-100 transition-colors duration-150 cursor-pointer border-b border-gray-100"
+            >
+              ✕ Clear
+            </button>
+          )}
           {options.map((option) => (
             <button
               key={option}
@@ -99,13 +111,69 @@ const AllProducts = () => {
       console.log(error.response?.data || error.message);
     }
   };
+  // Apply filters
+  let filteredProducts = [...products];
+
+  // Category filter
+  if (category) {
+    filteredProducts = filteredProducts.filter(
+      (product) =>
+        product.category?.name?.toLowerCase() === category.toLowerCase()
+    );
+  }
+
+  // Availability filter
+  if (availability === "In Stock") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.stock > 0
+    );
+  }
+
+  if (availability === "Sold Out") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.stock <= 0
+    );
+  }
+
+  // Price filter
+  if (price === "Under ₹150") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.price < 150
+    );
+  }
+
+  if (price === "₹150 - ₹300") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.price >= 150 && product.price <= 300
+    );
+  }
+
+  if (price === "₹300+") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.price > 300
+    );
+  }
+
+  // Sorting
+  if (sortBy === "Price: Low to High") {
+    filteredProducts.sort((a, b) => a.price - b.price);
+  }
+
+  if (sortBy === "Price: High to Low") {
+    filteredProducts.sort((a, b) => b.price - a.price);
+  }
+
+  if (sortBy === "Newest") {
+    filteredProducts.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+  }
 
   const totalPages = Math.max(
     1,
-    Math.ceil(products.length / PRODUCTS_PER_PAGE)
+    Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE)
   );
-
-  const paginatedProducts = products.slice(
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * PRODUCTS_PER_PAGE,
     currentPage * PRODUCTS_PER_PAGE
   );
@@ -150,7 +218,8 @@ const AllProducts = () => {
           </p>
 
           <p className="font-heading text-xl mb-3">
-            ₹{product.price}.00
+            {/* ₹{product.price}.00 */}
+            ₹{product.packSizes?.find(p => p.units === 1)?.price || "N/A"}
           </p>
 
           <button
@@ -223,7 +292,7 @@ const AllProducts = () => {
             label="Category"
             value={category}
             onChange={setCategory}
-            options={["Coffee", "Rasmalai", "Savoury", "Midnight Latte"]}
+            options={["Oats","Coffee", "Rasmalai", "Savoury", "Midnight Latte","Milk"]}
           />
 
           <FilterDropdown
@@ -239,6 +308,19 @@ const AllProducts = () => {
             onChange={setPrice}
             options={["Under ₹150", "₹150 - ₹300", "₹300+"]}
           />
+          {(category || availability || price) && (
+            <button
+              onClick={() => {
+                setCategory("");
+                setAvailability("");
+                setPrice("");
+                setCurrentPage(1);
+              }}
+              className="text-xs font-body text-red-400 underline cursor-pointer hover:text-red-600 transition-colors"
+            >
+              Clear All
+            </button>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
@@ -256,7 +338,7 @@ const AllProducts = () => {
       {/* Product grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <p className="font-body text-sm text-gray-600 mb-6">
-          Showing {paginatedProducts.length} of {products.length} products
+          Showing {paginatedProducts.length} of {filteredProducts.length} products
         </p>
 
         {paginatedProducts.length === 0 ? (
