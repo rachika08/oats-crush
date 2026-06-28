@@ -89,13 +89,13 @@ const FeaturedProducts = ({
           <div className="relative">
             {/* Custom nav arrows, large circular orange, overlapping the row */}
             <button
-              className="cravings-prev hidden sm:flex absolute -left-5 top-[38%] z-10 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center shadow-md hover:bg-black transition cursor-pointer"
+              className="cravings-prev hidden sm:flex absolute -left-5 top-[38%] z-10 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center shadow-md hover:-translate-x-1 text-white text-4xl transition cursor-pointer"
               aria-label="Previous"
             >
               ‹
             </button>
             <button
-              className="cravings-next hidden sm:flex absolute -right-5 top-[38%] z-10 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center shadow-md hover:bg-black transition cursor-pointer"
+              className="cravings-next hidden sm:flex absolute -right-5 top-[38%] z-10 w-12 h-12 rounded-full bg-brand-orange text-white items-center justify-center text-white text-4xl shadow-md hover:-translate-x-1 transition cursor-pointer"
               aria-label="Next"
             >
               ›
