@@ -393,21 +393,6 @@ const AllProducts = () => {
         )}
       </section>
 
-      {/* Explore Similar Products */}
-      {similarProducts.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-          <h2 className="font-heading text-3xl sm:text-4xl mb-8">
-            EXPLORE SIMILAR PRODUCTS
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {similarProducts.map((product) => (
-              <ProductCardItem key={product._id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
-
       <Footer />
     </>
   );
