@@ -6,6 +6,7 @@ import cors from 'cors';
 
 // import "./utils/sendEmail.js";
 import cleanupPendingOrders from "./jobs/cleanupPendingOrders.js";
+import cartReminderJob from "./jobs/cartReminderJob.js";
 import authRoutes from './routes/authRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
@@ -38,6 +39,7 @@ app.get('/',(req,res)=>{
 
 connectDB();
 cleanupPendingOrders();
+cartReminderJob();
 
 const PORT=process.env.PORT || 5000;
 

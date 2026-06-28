@@ -23,7 +23,20 @@ const cartSchema = new mongoose.Schema({
                 price: { type: Number }
             } 
         }
-    ]
+    ],
+    reminderCount: {
+        type: Number,
+        default: 0
+    },
+
+    lastReminderAt: {
+        type: Date,
+        default: null
+    },
+    lastReminderType: {
+        type: String,
+        default: null // "1h", "6h", "24h"
+    }
 }, { timestamps: true });
 
 export default mongoose.model("Cart", cartSchema);

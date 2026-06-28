@@ -77,7 +77,9 @@ export const addToCart = async (req, res) => {
                 pack
             });
         }
-
+        cart.reminderCount = 0;
+        cart.lastReminderAt = null;
+        cart.lastReminderType = null;
         await cart.save();
         res.status(200).json(cart);
 
@@ -125,7 +127,9 @@ export const updateCartItem = async (req, res) => {
         } else {
             cart.items[itemIndex].quantity = quantity;
         }
-
+        cart.reminderCount = 0;
+        cart.lastReminderAt = null;
+        cart.lastReminderType = null;
         await cart.save();
         res.status(200).json(cart);
 
@@ -148,7 +152,9 @@ export const removeCartItem = async (req, res) => {
         cart.items = cart.items.filter(
             item => item.product.toString() !== productId
         );
-
+        cart.reminderCount = 0;
+        cart.lastReminderAt = null;
+        cart.lastReminderType = null;
         await cart.save();
         res.status(200).json(cart);
 
@@ -168,27 +174,6 @@ export const getCart = async (req, res) => {
             return res.status(200).json({ user: userId, items: [] });
         }
 
-        // 🔥 ENRICH CART ITEMS
-        // const enrichedItems = cart.items.map(item => {
-        //     const packUnits = item.pack?.units || 1;
-
-        //     return {
-        //         ...item._doc,
-
-        //         // total units user is buying
-        //         totalUnits: item.quantity * packUnits,
-
-        //         // subtotal price
-        //         subtotal: item.quantity * (item.pack.price ),
-
-        //         // safety fallback
-        //         pack: item.pack || {
-        //             label: "Pack of 1",
-        //             units: 1,
-        //             price: item.pack.price
-        //         }
-        //     };
-        // });
         const enrichedItems = cart.items.map(item => {
             const pack = item.pack || {
                 label: "Pack of 1",

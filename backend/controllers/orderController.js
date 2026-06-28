@@ -154,8 +154,11 @@ export const placeOrder = async (req, res) => {
             item.product.stock -= item.quantity * packUnits;
             await item.product.save();
         }
-
+        
         cart.items = [];
+        cart.reminderCount = 0;
+        cart.lastReminderAt = null;
+        cart.lastReminderType = null;
         await cart.save();
 
         return res.status(201).json({
