@@ -28,7 +28,7 @@ const Navbar = () => {
   const token = localStorage.getItem("token");
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-20 px-4 sm:px-6 py-15">
+    <header className="absolute top-0 left-0 right-0 z-20 px-4 sm:px-6 py-2">
       <nav className="max-w-7xl mx-auto flex items-center justify-between bg-white rounded-full px-8 sm:px-10 py-1.5 shadow-sm">
         {/* Logo */}
         <div
@@ -36,7 +36,7 @@ const Navbar = () => {
           onClick={() => navigate("/")}
         >
 
-          <img src="/images/oats-crush-logo.jpeg" className="w-23 h-15"/>
+          <img src="/images/oats-crush.png" className="w-19 h-13"/>
 
         </div>
 
@@ -105,21 +105,22 @@ const Navbar = () => {
           </button>
 
           {!token ? (
-            <button
-              className="hidden sm:flex cursor-pointer hover:text-brand-orange"
-              aria-label="Account"
-              onClick={() => navigate("/signup")}
-            >
-              <User size={20} />
-            </button>
-          ) : (
-            <div className="relative hidden sm:block cursor-pointer hover:text-brand-orange">
-              <button
-                aria-label="Account"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                <User size={20} />
-              </button>
+  <button
+    className="hidden sm:flex cursor-pointer hover:text-brand-orange"
+    aria-label="Account"
+    onClick={() => navigate("/signup")}
+  >
+    <User size={20} />
+  </button>
+) : (
+  <div className="relative hidden sm:flex items-center">
+    <button
+      className="flex items-center cursor-pointer hover:text-brand-orange"
+      aria-label="Account"
+      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+    >
+      <User size={20} />
+    </button>
 
               {isMobileMenuOpen && (
                 <div className="absolute top-8 right-0 bg-white border rounded-xl shadow-md min-w-[180px] py-2 z-50 text-sm cursor-pointer">

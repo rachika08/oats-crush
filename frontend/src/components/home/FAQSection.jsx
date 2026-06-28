@@ -25,9 +25,9 @@ const faqs = [
 const FAQSection = ({ faqs = [],image }) => {
   const [openId, setOpenId] = useState(null);
 
-  const toggleFaq = (id) => {
-    setOpenId((prev) => (prev === id ? null : id));
-  };
+  const toggleFaq = (key) => {
+    setOpenId((prev) => (prev === key ? null : key));
+};
 
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6">
@@ -50,22 +50,23 @@ const FAQSection = ({ faqs = [],image }) => {
           </h2>
 
           <div className="flex flex-col gap-4">
-            {faqs.map((faq) => {
-              const isOpen = openId === faq.id;
+            {faqs.map((faq, index) => {
+  const faqKey = faq.id ?? faq._id ?? index;
+  const isOpen = openId === faqKey;
 
-              return (
-                <div
-                  key={faq.id}
-                  className={`rounded-xl border overflow-hidden transition-colors duration-300 ${
-                    isOpen
-                      ? "bg-brand-orange border-brand-orange"
-                      : "bg-white border-brand-orange shadow-sm"
-                  }`}
-                >
-                  <button
-                    onClick={() => toggleFaq(faq.id)}
-                    className="w-full flex items-center justify-between px-5 py-4 text-left"
-                  >
+  return (
+    <div
+      key={faqKey}
+      className={`rounded-xl border overflow-hidden transition-colors duration-300 ${
+        isOpen
+          ? "bg-brand-orange border-brand-orange"
+          : "bg-white border-brand-orange shadow-sm"
+      }`}
+    >
+      <button
+        onClick={() => toggleFaq(faqKey)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left"
+      >
                     <span
                       className={`font-body text-sm sm:text-base font-medium transition-colors duration-300 ${
                         isOpen ? "text-white" : "text-black"
