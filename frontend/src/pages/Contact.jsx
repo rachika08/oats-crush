@@ -82,7 +82,7 @@ export default function Contact() {
                         <div className="rounded-2xl overflow-hidden border border-gray-200 aspect-[4/3] sm:aspect-[16/10]">
                             <iframe
                                 title="Oats Crush location"
-                                src="https://www.google.com/maps?q=Vegas+Mall,+Dwarka+Sector+14,+New+Delhi&output=embed"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.9676470447203!2d77.02699707549962!3d28.60074737568218!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1dd61eb460af%3A0xe89377d97456bc5e!2sVegas%20Mall!5e0!3m2!1sen!2sin!4v1782563624684!5m2!1sen!2sin"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}
