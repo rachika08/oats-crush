@@ -66,9 +66,16 @@ h6,
   width: 22px;
 }
 
-/* Pagination is mobile-only; fully hide the layer at sm and above */
+
 @media (min-width: 640px) {
   .cravings-swiper .swiper-pagination {
     display: none !important;
   }
+}
+
+input::-ms-reveal,
+input::-ms-clear,
+input::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none !important;
 }

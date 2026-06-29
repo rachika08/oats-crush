@@ -25,6 +25,19 @@ const Navbar = () => {
     }
   };
 
+  const [cartCount, setCartCount] = useState(0);
+
+useEffect(() => {
+  const updateCount = () => {
+    const saved = localStorage.getItem("cartItems");
+    const items = saved ? JSON.parse(saved) : [];
+    setCartCount(items.length);
+  };
+  updateCount();
+  window.addEventListener("cartUpdated", updateCount);
+  return () => window.removeEventListener("cartUpdated", updateCount);
+}, []);
+
   const token = localStorage.getItem("token");
 
   return (
@@ -96,13 +109,18 @@ const Navbar = () => {
             <Search size={20} />
           </button>
 
-          <button
-            className="flex cursor-pointer hover:text-brand-orange"
-            aria-label="Cart"
-            onClick={() => navigate("/cart")}
-          >
-            <ShoppingBag size={20} />
-          </button>
+         <button
+  className="relative flex cursor-pointer hover:text-brand-orange"
+  aria-label="Cart"
+  onClick={() => navigate("/cart")}
+>
+  <ShoppingBag size={20} />
+  {cartCount > 0 && (
+    <span className="absolute -bottom-1.5 -right-1.5 bg-brand-orange text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+      {cartCount > 9 ? "9+" : cartCount}
+    </span>
+  )}
+</button>
 
           {!token ? (
   <button

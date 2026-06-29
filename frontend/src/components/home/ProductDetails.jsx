@@ -7,6 +7,8 @@ import Navbar from "../Navbar";
 import Footer from "./Footer";
 import FAQSection from "./FAQSection";
 import FeaturedProducts from "./FeaturedProducts";
+import CartToast from "../CartToast";
+
 import {
  
   Moon,
@@ -45,6 +47,7 @@ export default function ProductDetails() {
     const [reviewSort, setReviewSort] = useState("");
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [visibleReviewCount, setVisibleReviewCount] = useState(6);
+    const [showToast, setShowToast] = useState(false);
     const token = localStorage.getItem("token");
 
     useEffect(() => {
@@ -58,35 +61,41 @@ export default function ProductDetails() {
         }
     }, [product]);
     
-    const addToCart = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("Please login to add items to your cart");
-                navigate("/login");
-                return;
-            }
+const addToCart = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Please login to add items to your cart");
+            navigate("/login");
+            return;
+        }
 
-            const res = await api.post(
-                "/cart/add",
-                {
-                    productId: product._id,
-                    quantity: quantity,
-                    pack: {
-                        label: selectedPack.label,
-                        units: selectedPack.units,
-                        price: selectedPack.price
-                    }
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+        await api.post(
+            "/cart/add",
+            {
+                productId: product._id,
+                quantity: quantity,
+                pack: {
+                    label: selectedPack.label,
+                    units: selectedPack.units,
+                    price: selectedPack.price
                 }
-            );
+            },
+            {
+                headers: { Authorization: `Bearer ${token}` }
+            }
+        );
+
+        const cartRes = await api.get("/cart", {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const updatedItems = cartRes.data.items || [];
+        localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+        localStorage.setItem("cartCount", updatedItems.length); 
 
             setShowViewCart(true);
-            alert("Added to cart!");
+            window.dispatchEvent(new Event("cartUpdated"));
+setShowToast(true);
         } catch (error) {
             console.log(error.response?.data || error.message);
         }
@@ -131,7 +140,9 @@ export default function ProductDetails() {
             console.log(res);
             setProduct(res.data);
             setSelectedImage(res.data.image);
-            setSelectedPack(res.data.packSizes?.[0]);
+            const packs = res.data.packSizes || [];
+            const pack6 = packs.find(p => p.units === 6);
+            setSelectedPack(pack6 || packs[0]);
         } catch (error) {
             console.log(error);
         }
@@ -485,7 +496,6 @@ export default function ProductDetails() {
                 {showViewCart && (
     <div className="fixed bottom-3 left-0 w-full z-50 bg-brand-orange text-white px-8 py-4 flex justify-between items-center shadow-lg rounded-full">
         <span>Item added to cart</span>
-
         <button
             onClick={() => navigate("/cart")}
             className="bg-white font-heading text-brand-orange px-8 py-2 rounded hover:translate-y-[-2px] transition cursor-pointer rounded-full shadow-md"
@@ -754,6 +764,7 @@ export default function ProductDetails() {
             />
             <FAQSection faqs={product.faqs} image={product.image}/>
             <Footer />
+            <CartToast show={showToast} onClose={() => setShowToast(false)} />
         </>
     );
 }

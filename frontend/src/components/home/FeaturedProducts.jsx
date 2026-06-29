@@ -9,12 +9,14 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+
 const FeaturedProducts = ({
   excludeProductId,
   heading = "CRUSH YOUR CRAVINGS",
   subheading = "Pick your flavour. Same protein punch, different vibe."
 }) => {
   const [products, setProducts] = useState([]);
+  const [toastVisible, setToastVisible] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,13 +49,41 @@ const FeaturedProducts = ({
         return;
       }
 
+      const defaultPack = product.packSizes?.find(p => p.units === 1) || product.packSizes?.[0];
+
+      if (!defaultPack) {
+        alert("Product has no pack sizes configured");
+        return;
+      }
+
       await api.post(
         "/cart/add",
-        { productId: product._id, quantity: 1 },
+        { 
+          productId: product._id, 
+          quantity: 1,
+          pack: {
+            label: defaultPack.label,
+            units: defaultPack.units,
+            price: defaultPack.price
+          }
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert("Added to cart!");
+      const cartRes = await api.get("/cart", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const updatedItems = cartRes.data.items || [];
+      localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+      localStorage.setItem("cartCount", updatedItems.length);
+
+      setTimeout(() => {
+        window.dispatchEvent(new Event("cartUpdated"));
+      }, 50);
+
+      setToastVisible(true);
+      setTimeout(() => setToastVisible(false), 3000);
+
     } catch (error) {
       console.log(error.response?.data || error.message);
     }
@@ -184,6 +214,25 @@ const FeaturedProducts = ({
           </div>
         )}
       </div>
+
+      {toastVisible && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-2xl shadow-xl px-6 py-4 flex items-center gap-4 min-w-[280px]">
+          <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+          <p className="font-body text-sm text-black flex-1">Added to cart successfully!</p>
+          <button
+            onClick={() => navigate("/cart")}
+            className="bg-brand-orange text-white font-heading text-xs px-4 py-1.5 rounded-full hover:-translate-y-0.5 transition cursor-pointer"
+          >
+            VIEW CART
+          </button>
+          <button
+            onClick={() => setToastVisible(false)}
+            className="text-gray-400 hover:text-black text-lg leading-none cursor-pointer"
+          >
+            ×
+          </button>
+        </div>
+      )}
     </section>
   );
 };
