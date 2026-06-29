@@ -210,6 +210,18 @@ export default function EditProduct() {
             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
+        <div>
+          <label className="block mb-2 font-medium">
+            Description
+          </label>
+          <input
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="description"
+            className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
 
         {/* Image */}
         <div>

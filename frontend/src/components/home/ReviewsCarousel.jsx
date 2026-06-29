@@ -11,7 +11,7 @@ const reviews = [
     id: 1,
     videoThumbnail: "/images/coffee.png",
     productName: "RASMALAI OATS SHAKE",
-    price: 120,
+    price: 149,
     productId: "",
     videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
   },
@@ -19,7 +19,7 @@ const reviews = [
     id: 2,
     videoThumbnail: "/images/oat-milk.png",
     productName: "COFFEE OATS SHAKE",
-    price: 120,
+    price: 149,
     productId: "",
     videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
   },
@@ -27,12 +27,62 @@ const reviews = [
     id: 3,
     videoThumbnail: "/images/rasmalai.png",
     productName: "MIDNIGHT LATTE",
-    price: 140,
+    price: 200,
     productId: "",
     videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
   },
 ];
+// const handleAddToCart = async (e, product) => {
+//   e.stopPropagation();
 
+//   try {
+//     const token = localStorage.getItem("token");
+
+//     if (!token) {
+//       alert("Please login to add items to your cart");
+//       navigate("/login");
+//       return;
+//     }
+
+//     const defaultPack =
+//       product.packSizes?.find((p) => Number(p.units) === 1) ||
+//       product.packSizes?.[0];
+
+//     if (!defaultPack) {
+//       alert("Product pack missing");
+//       return;
+//     }
+
+//     const price = Number(defaultPack.price);
+
+//     if (isNaN(price)) {
+//       alert("Invalid product price");
+//       return;
+//     }
+
+//     await api.post(
+//       "/cart/add",
+//       {
+//         productId: product._id,
+//         quantity: 1,
+//         pack: {
+//           label: defaultPack.label,
+//           units: Number(defaultPack.units) || 1,
+//           price: price, // ✅ ALWAYS NUMBER
+//         },
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     alert("Added to cart!");
+//   } catch (error) {
+//     console.log(error.response?.data || error.message);
+//   }
+// };
 const ReelModal = ({ review, onClose }) => {
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(false); // start as false — we won't autoplay

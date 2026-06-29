@@ -24,11 +24,16 @@ import OrderDetails from './pages/OrderDetails';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminOrders from './admin/AdminOrder';
 import AdminOrderDetails from './admin/AdminOrderDetails';
+import AdminBlogs from './admin/AdminBlogs';
+import AddBlog from './admin/AddBlog';
+import EditBlog from './admin/EditBlog';
 import ReturnPolicy from './pages/RefundPolicy';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ShippingPolicy from './pages/ShippingPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Contact from './pages/Contact';
+import BlogDetails from './components/home/BlogDetails';
+import Blogs from './components/home/Blogs';
 const router = createBrowserRouter([
   {path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
@@ -48,6 +53,8 @@ const router = createBrowserRouter([
   {path:"/shippingpolicy",element:<ShippingPolicy/>},
   {path:"/terms",element:<TermsOfService/>},
   {path:"/contact",element:<Contact/>},
+  {path:"/blogs/:id",element:<BlogDetails/>},
+  {path:"/blog",element:<Blogs/>},
   // ADMIN ROUTES
   {path:"/admin",element:<AdminRoute><AdminDashboard/></AdminRoute>},
   {
@@ -76,8 +83,16 @@ const router = createBrowserRouter([
         <AdminRoute>
             <AdminOrderDetails />
         </AdminRoute>
-    }
-  
+    },
+  {
+     path:"/admin/blogs", element:<AdminBlogs />
+  },
+  {
+     path:"/admin/blogs/add", element:<AddBlog />
+  },
+  {
+     path:"/admin/blogs/edit/:id", element:<EditBlog />
+  },
 
 ]);
 export default function App() {

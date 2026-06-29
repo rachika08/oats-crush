@@ -72,7 +72,7 @@ const AllProducts = () => {
   const [availability, setAvailability] = useState("");
   const [price, setPrice] = useState("");
   const [sortBy, setSortBy] = useState("Most Popular");
-
+  let filteredProducts = [...products];
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -89,39 +89,123 @@ const AllProducts = () => {
     }
   };
 
+  // const handleAddToCart = async (e, product) => {
+  //   e.stopPropagation();
+
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       alert("Please login to add items to your cart");
+  //       navigate("/login");
+  //       return;
+  //     }
+
+  //     await api.post(
+  //       "/cart/add",
+  //       { productId: product._id, quantity: 1 },
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+
+  //     alert("Added to cart!");
+  //   } catch (error) {
+  //     console.log(error.response?.data || error.message);
+  //   }
+  // };
+  // // Apply filters
+  // let filteredProducts = [...products];
+
+  // // Category filter
+  // if (category) {
+  //   filteredProducts = filteredProducts.filter(
+  //     (product) =>
+  //       product.category?.name?.toLowerCase() === category.toLowerCase()
+  //   );
+  // }
+  // const handleAddToCart = async () => {
+  //         try {
+  //             const token = localStorage.getItem("token");
+  //             if (!token) {
+  //                 alert("Please login to add items to your cart");
+  //                 navigate("/login");
+  //                 return;
+  //             }
+  
+  //             const res = await api.post(
+  //                 "/cart/add",
+  //                 {
+  //                     productId: product._id,
+  //                     quantity: quantity,
+  //                     pack: {
+  //                         label: selectedPack.label,
+  //                         units: selectedPack.units,
+  //                         price: selectedPack.price
+  //                     }
+  //                 },
+  //                 {
+  //                     headers: {
+  //                         Authorization: `Bearer ${token}`
+  //                     }
+  //                 }
+  //             );
+  
+  //             setShowViewCart(true);
+  //             alert("Added to cart!");
+  //         } catch (error) {
+  //             console.log(error.response?.data || error.message);
+  //         }
+  //     };
   const handleAddToCart = async (e, product) => {
-    e.stopPropagation();
+  e.stopPropagation();
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Please login to add items to your cart");
-        navigate("/login");
-        return;
-      }
+  try {
+    const token = localStorage.getItem("token");
 
-      await api.post(
-        "/cart/add",
-        { productId: product._id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      alert("Added to cart!");
-    } catch (error) {
-      console.log(error.response?.data || error.message);
+    if (!token) {
+      alert("Please login to add items to your cart");
+      navigate("/login");
+      return;
     }
-  };
-  // Apply filters
-  let filteredProducts = [...products];
 
-  // Category filter
-  if (category) {
-    filteredProducts = filteredProducts.filter(
-      (product) =>
-        product.category?.name?.toLowerCase() === category.toLowerCase()
+    const defaultPack =
+      product.packSizes?.find((p) => Number(p.units) === 1) ||
+      product.packSizes?.[0];
+
+    if (!defaultPack) {
+      alert("Product pack missing");
+      return;
+    }
+
+    const price = Number(defaultPack.price);
+
+    if (isNaN(price)) {
+      alert("Invalid product price");
+      return;
+    }
+
+    await api.post(
+      "/cart/add",
+      {
+        productId: product._id,
+        quantity: 1,
+        pack: {
+          label: defaultPack.label,
+          units: Number(defaultPack.units) || 1,
+          price: price, // ✅ ALWAYS NUMBER
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-  }
 
+    alert("Added to cart!");
+  } catch (error) {
+    console.log(error.response?.data || error.message);
+  }
+};
+  
   // Availability filter
   if (availability === "In Stock") {
     filteredProducts = filteredProducts.filter(
@@ -134,34 +218,45 @@ const AllProducts = () => {
       (product) => product.stock <= 0
     );
   }
-
+  //price
+  const getBasePrice = (product) => {
+    return product.packSizes?.find((p) => p.units === 1)?.price || 0;
+  };
   // Price filter
   if (price === "Under ₹150") {
     filteredProducts = filteredProducts.filter(
-      (product) => product.price < 150
+      (product) => getBasePrice(product) < 150
     );
   }
 
   if (price === "₹150 - ₹300") {
     filteredProducts = filteredProducts.filter(
-      (product) => product.price >= 150 && product.price <= 300
+      (product) =>
+        getBasePrice(product) >= 150 && getBasePrice(product) <= 300
     );
   }
 
   if (price === "₹300+") {
     filteredProducts = filteredProducts.filter(
-      (product) => product.price > 300
+      (product) => getBasePrice(product) > 300
     );
   }
 
   // Sorting
+  const getPrice = (product) => {
+    return product.packSizes?.find((p) => p.units === 1)?.price ?? 0;
+  };
   if (sortBy === "Price: Low to High") {
-    filteredProducts.sort((a, b) => a.price - b.price);
-  }
+  filteredProducts = [...filteredProducts].sort(
+    (a, b) => getPrice(a) - getPrice(b)
+  );
+}
 
-  if (sortBy === "Price: High to Low") {
-    filteredProducts.sort((a, b) => b.price - a.price);
-  }
+if (sortBy === "Price: High to Low") {
+  filteredProducts = [...filteredProducts].sort(
+    (a, b) => getPrice(b) - getPrice(a)
+  );
+}
 
   if (sortBy === "Newest") {
     filteredProducts.sort(
