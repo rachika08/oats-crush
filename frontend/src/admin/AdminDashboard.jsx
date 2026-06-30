@@ -36,6 +36,14 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
+                    <div>
+                        <div onClick={()=>{
+                            navigate("/admin/blogs")
+                        }}className="bg-white shadow-md rounded-lg p-6">
+                            <h4 className="text-xl font-semibold">Blogs</h4>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>

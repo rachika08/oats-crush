@@ -16,7 +16,7 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import orderRoutes from './routes/orderRoutes.js';
 import adminOrderRoutes from './routes/adminOrderRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
-
+import blogRoutes from './routes/blogRoutes.js'
 
 app.use(express.urlencoded({extended:true}));
 app.use(cors());
@@ -31,6 +31,7 @@ app.use("/api/order",orderRoutes);
 app.use("/api/payment",paymentRoutes);
 app.use("/api/admin",adminOrderRoutes);
 app.use("/api/reviews",reviewRoutes);
+app.use("/api/blog",blogRoutes);
 
 
 app.get('/',(req,res)=>{

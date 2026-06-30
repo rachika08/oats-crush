@@ -40,52 +40,75 @@ const FeaturedProducts = ({
     }
   };
 
+  // const handleAddToCart = async (e, product) => {
+  //   e.stopPropagation();
+
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       alert("Please login to add items to your cart");
+  //       navigate("/login");
+  //       return;
+  //     }
+
+  //     await api.post(
+  //       "/cart/add",
+  //       { productId: product._id, quantity: 1 },
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+
+  //     alert("Added to cart!");
+  //   } catch (error) {
+  //     console.log(error.response?.data || error.message);
+  //   }
+  // };
   const handleAddToCart = async (e, product) => {
     e.stopPropagation();
-
+  
     try {
       const token = localStorage.getItem("token");
+  
       if (!token) {
         alert("Please login to add items to your cart");
         navigate("/login");
         return;
       }
-
-      const defaultPack = product.packSizes?.find(p => p.units === 1) || product.packSizes?.[0];
-
+  
+      const defaultPack =
+        product.packSizes?.find((p) => Number(p.units) === 1) ||
+        product.packSizes?.[0];
+  
       if (!defaultPack) {
-        alert("Product has no pack sizes configured");
+        alert("Product pack missing");
         return;
       }
-
+  
+      const price = Number(defaultPack.price);
+  
+      if (isNaN(price)) {
+        alert("Invalid product price");
+        return;
+      }
+  
       await api.post(
         "/cart/add",
-        { 
-          productId: product._id, 
+        {
+          productId: product._id,
           quantity: 1,
           pack: {
             label: defaultPack.label,
-            units: defaultPack.units,
-            price: defaultPack.price
-          }
+            units: Number(defaultPack.units) || 1,
+            price: price, // ✅ ALWAYS NUMBER
+          },
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-
-      const cartRes = await api.get("/cart", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const updatedItems = cartRes.data.items || [];
-      localStorage.setItem("cartItems", JSON.stringify(updatedItems));
-      localStorage.setItem("cartCount", updatedItems.length);
-
-      setTimeout(() => {
-        window.dispatchEvent(new Event("cartUpdated"));
-      }, 50);
-
-      setToastVisible(true);
-      setTimeout(() => setToastVisible(false), 3000);
-
+  
+      alert("Added to cart!");
     } catch (error) {
       console.log(error.response?.data || error.message);
     }
