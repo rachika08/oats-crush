@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import { OAuth2Client } from "google-auth-library";
 import jwt from 'jsonwebtoken';
 import crypto from "crypto";
 import { sendEmail } from "../utils/sendEmail.js";
@@ -74,7 +75,7 @@ export const loginUser=async(req,res)=>{
         if(!userFound){
             return res.status(400).json({message:"user not found"});
         }
-        if (!userFound.isVerified && !userFound.role=="admin") {
+        if (!userFound.isVerified && userFound.role !=="admin") {
             return res.status(403).json({
                 message:
                     "Please verify your email before logging in"
@@ -154,3 +155,164 @@ export const verifyEmail = async (req, res) => {
     }
 };
 
+const client = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID
+);
+
+// export const googleLogin = async (req, res) => {
+//     try {
+//         const { token } = req.body;
+
+//         const ticket = await client.verifyIdToken({
+//             idToken: token,
+//             audience: process.env.GOOGLE_CLIENT_ID,
+//         });
+
+//         const payload = ticket.getPayload();
+
+//         const {
+//             sub,
+//             email,
+//             name,
+//             picture,
+//         } = payload;
+
+//         let user = await User.findOne({ email });
+
+//         // Existing email/password user
+//         if (user && user.authProvider === "local") {
+//             user.isVerified = true;
+//             await user.save();
+//         }
+
+//         // First Google login
+//         if (!user) {
+//             user = await User.create({
+//                 name,
+//                 email,
+//                 phone: "", // optional fallback
+//                 googleId: sub,
+//                 avatar: picture,
+//                 authProvider: "google",
+//                 isVerified: true,
+//                 role: "user",
+//             });
+//         }
+
+//         const jwtToken = jwt.sign(
+//             {
+//                 id: user._id,
+//                 role: user.role,
+//             },
+//             process.env.JWT_SECRET,
+//             {
+//                 expiresIn: "7d",
+//             }
+//         );
+
+//         res.json({
+//             message: "Google login successful",
+//             token: jwtToken,
+//             user: {
+//                 id: user._id,
+//                 name: user.name,
+//                 email: user.email,
+//                 role: user.role,
+//                 avatar: user.avatar,
+//             },
+//         });
+//     } catch (error) {
+//         console.log(error);
+
+//         res.status(500).json({
+//             message: "Google authentication failed",
+//         });
+//     }
+// };
+
+export const googleLogin = async (req, res) => {
+    try {
+        const { token } = req.body;
+
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+
+        const { sub, email, name, picture } = payload;
+
+        // 1. Check if user already exists
+        let user = await User.findOne({ email });
+
+        // 2. If user exists → LINK GOOGLE ACCOUNT
+        if (user) {
+            // attach googleId if not present
+            if (!user.googleId) {
+                user.googleId = sub;
+            }
+
+            // update avatar if missing
+            if (!user.avatar) {
+                user.avatar = picture;
+            }
+
+            // ensure verified (Google is trusted)
+            user.isVerified = true;
+
+            // OPTIONAL: mark that google is used
+            if (user.authProvider === "local") {
+                user.authProvider = "local"; // keep as local but linked
+            }
+
+            await user.save();
+        }
+
+        // 3. If user does NOT exist → CREATE NEW USER
+        else {
+            user = await User.create({
+                name,
+                email,
+                phone: "", // Google does not provide phone
+                googleId: sub,
+                avatar: picture,
+                authProvider: "google",
+                isVerified: true,
+                role: "user",
+            });
+        }
+
+        // 4. Create JWT
+        const jwtToken = jwt.sign(
+            {
+                id: user._id,
+                role: user.role,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+        
+        console.log("Google Payload:", payload);
+        console.log("User in DB:", user);
+
+        // 5. Send response
+        return res.json({
+            message: "Google login successful",
+            token: jwtToken,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                avatar: user.avatar,
+            },
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Google authentication failed",
+        });
+    }
+};
