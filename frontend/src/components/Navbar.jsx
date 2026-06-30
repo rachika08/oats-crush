@@ -11,10 +11,16 @@ const Navbar = () => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSearch, setShowSearch] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchCategories();
+    fetchProducts();
   }, []);
 
   const fetchCategories = async () => {
@@ -25,19 +31,39 @@ const Navbar = () => {
       console.log(error);
     }
   };
-
+  const fetchProducts = async () => {
+  try {
+    const res = await api.get("/product"); // adjust endpoint if needed
+    console.log(res);
+    setProducts(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
   const [cartCount, setCartCount] = useState(0);
 
-useEffect(() => {
-  const updateCount = () => {
-    const saved = localStorage.getItem("cartItems");
-    const items = saved ? JSON.parse(saved) : [];
-    setCartCount(items.length);
-  };
-  updateCount();
-  window.addEventListener("cartUpdated", updateCount);
-  return () => window.removeEventListener("cartUpdated", updateCount);
-}, []);
+  useEffect(() => {
+    const updateCount = () => {
+      const saved = localStorage.getItem("cartItems");
+      const items = saved ? JSON.parse(saved) : [];
+      setCartCount(items.length);
+    };
+    updateCount();
+    window.addEventListener("cartUpdated", updateCount);
+    return () => window.removeEventListener("cartUpdated", updateCount);
+  }, []);
+  useEffect(() => {
+    if (!search.trim()) {
+      setSuggestions([]);
+      return;
+    }
+
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    setSuggestions(filtered.slice(0, 5));
+  }, [search, products]);
 
   const token = localStorage.getItem("token");
   const { openCart } = useCart();
@@ -107,10 +133,55 @@ useEffect(() => {
 
         {/* Right Section */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <button className="hidden sm:flex cursor-pointer hover:text-brand-orange" aria-label="Search">
+          {/* <button className="hidden sm:flex cursor-pointer hover:text-brand-orange" aria-label="Search">
             <Search size={20} />
-          </button>
+          </button> */}
+          <div className="relative hidden sm:block">
+  <button
+    className="cursor-pointer hover:text-brand-orange"
+    onClick={() => setShowSearch(!showSearch)}
+  >
+    <Search size={20} />
+  </button>
 
+  {showSearch && (
+    <div className="absolute right-0 top-10 w-72">
+      <input
+        type="text"
+        placeholder="Search products..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full border rounded-lg px-4 py-2 bg-white shadow"
+        autoFocus
+      />
+
+      {suggestions.length > 0 && (
+        <div className="absolute w-full mt-1 bg-white border rounded-lg shadow-lg z-50">
+          {suggestions.map((product) => (
+            <div
+              key={product._id}
+              className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
+              onClick={() => {
+                navigate(`/product/${product._id}`); // adjust route if needed
+                setSearch("");
+                setSuggestions([]);
+                setShowSearch(false);
+              }}
+            >
+              {product.name}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {search && suggestions.length === 0 && (
+        <div className="absolute w-full mt-1 bg-white border rounded-lg shadow-lg p-3 text-sm text-gray-500">
+          No products found
+        </div>
+      )}
+    </div>
+  )}
+</div>
          <button
   className="relative flex cursor-pointer hover:text-brand-orange"
   aria-label="Cart"
