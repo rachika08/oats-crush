@@ -95,7 +95,7 @@ const addToCart = async () => {
 
             setShowViewCart(true);
             window.dispatchEvent(new Event("cartUpdated"));
-setShowToast(true);
+            setShowToast(true);
         } catch (error) {
             console.log(error.response?.data || error.message);
         }

@@ -138,8 +138,18 @@ const handleAddToCart = async (e, product) => {
       }
     );
 
+    const cartRes = await api.get("/cart", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const updatedItems = cartRes.data.items || [];
+    localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+    localStorage.setItem("cartCount", updatedItems.length);
+
+    setTimeout(() => {
+      window.dispatchEvent(new Event("cartUpdated"));
+    }, 50);
+
     setShowToast(true);
-    window.dispatchEvent(new Event("cartUpdated"));
   } catch (error) {
     console.log(error.response?.data || error.message);
   }
