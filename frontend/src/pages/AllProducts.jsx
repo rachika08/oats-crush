@@ -5,8 +5,10 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import InfoBar from "../components/home/InfoBar";
+import CartToast from "../components/CartToast";
 
 const PRODUCTS_PER_PAGE = 6;
+ 
 
 const FilterDropdown = ({ label, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +69,7 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [showToast, setShowToast] = useState(false);
   const [category, setCategory] = useState("");
   const [availability, setAvailability] = useState("");
   const [price, setPrice] = useState("");
@@ -90,7 +92,7 @@ const AllProducts = () => {
   };
 
   
-  const handleAddToCart = async (e, product) => {
+const handleAddToCart = async (e, product) => {
   e.stopPropagation();
 
   try {
@@ -126,7 +128,7 @@ const AllProducts = () => {
         pack: {
           label: defaultPack.label,
           units: Number(defaultPack.units) || 1,
-          price: price, // ✅ ALWAYS NUMBER
+          price: price,
         },
       },
       {
@@ -136,11 +138,23 @@ const AllProducts = () => {
       }
     );
 
-    alert("Added to cart!");
+    const cartRes = await api.get("/cart", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const updatedItems = cartRes.data.items || [];
+    localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+    localStorage.setItem("cartCount", updatedItems.length);
+
+    setTimeout(() => {
+      window.dispatchEvent(new Event("cartUpdated"));
+    }, 50);
+
+    setShowToast(true);
   } catch (error) {
     console.log(error.response?.data || error.message);
   }
 };
+
   const filteredProducts = products
   .filter((product) => {
     if (!category) return true;
@@ -455,6 +469,7 @@ const AllProducts = () => {
       </section>
 
       <Footer />
+      <CartToast show={showToast} onClose={() => setShowToast(false)} />
     </>
   );
 };
