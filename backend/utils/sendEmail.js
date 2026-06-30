@@ -7,7 +7,7 @@ export const sendEmail = async (to, subject, html) => {
     console.log("Sending email via Resend HTTP API...");
     
     const { data, error } = await resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: "Oats Crush <noreply@oatscrush.co.in>",
         to,
         subject,
         html,
