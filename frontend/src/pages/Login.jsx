@@ -31,7 +31,7 @@ export default function Login() {
             );
             localStorage.setItem("token", res.data.token);
 
-            setMsg("Login successfull!");
+            setMsg("Login successful!");
             setTimeout(() => {
                 if (res.data.userFound.role === "admin") {
                     navigate("/admin");

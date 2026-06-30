@@ -2,6 +2,8 @@ import { useState } from 'react'
 import ScrollToTop from './components/ScrollToTop';
 import {Outlet, createBrowserRouter, RouterProvider } from "react-router-dom";
 import './App.css'
+import { CartProvider } from './context/CartContext';
+import CartDrawer from './components/CartDrawer';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import VerifyEmail from './pages/VerifyEmail';
@@ -16,7 +18,6 @@ import CategoryPage from './user/Categorypage';
 import Navbar from './components/Navbar';
 import CategoryProducts from "./pages/CategoryProducts";
 import ProductDetails from './components/home/ProductDetails';
-import CartPage from './pages/CartPage';
 import Checkout from './pages/Checkout';
 import Addresses from './pages/Addresses';
 import MyOrders from './pages/MyOrders';
@@ -41,6 +42,7 @@ function RootLayout() {
   return (
     <>
       <ScrollToTop />
+      <CartDrawer />
       <Outlet />
     </>
   );
@@ -55,7 +57,6 @@ const router = createBrowserRouter([
   {path:"/category",element:<Categories/>},
   {path:"/category/:id" ,element:<CategoryProducts />},
   {path:'/product/:id', element:<ProductDetails/>},
-  {path:"/cart" , element:<CartPage/>},
   {path:"/checkout", element:<Checkout/>},
   {path:"/addresses", element:<Addresses/>},
   {path:"/order", element:<MyOrders/>},
@@ -113,5 +114,9 @@ const router = createBrowserRouter([
 
 ]);
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+<CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
+  );
 }

@@ -1,5 +1,4 @@
-// Using inline SVG linework icons as placeholders — swap with your real
-// finalized SVG files (protein/muscle motif, zero-sugar, vegan, flavours).
+
 const benefits = [
   {
     icon: "/images/icon-protein.svg",
@@ -53,11 +52,14 @@ const BenefitsSection = () => {
 
       {/* Right half — product callout on deep red */}
       <div className="relative overflow-hidden">
-  <img
-    src="/images/brew-chew.jpeg"
-    alt="Brew Less, Chew More — Oats Crush Coffee"
-    className="w-full h-full object-cover"
-  />
+  <video
+          src="/images/video2.mp4"
+          className="w-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
 </div>
     </section>
   );
