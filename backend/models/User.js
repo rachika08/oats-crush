@@ -8,14 +8,15 @@ const userSchema=mongoose.Schema({
     email:{
         type:String,
         required:true,
+        unique: true,
     },
     password:{
         type:String,
-        required:true,
+        // required:true,
     },
     phone:{
         type:String,
-        required:true
+        // required:true
     },
     role:{
         type:String,
@@ -29,6 +30,14 @@ const userSchema=mongoose.Schema({
 
     verificationToken: String,
     verificationTokenExpires: Date,
+    googleId: String,
+    avatar: String,
+
+    authProvider: {
+        type: String,
+        enum: ["local", "google"],
+        default: "local"
+    },
 },{
     timestamps: true,
 });
