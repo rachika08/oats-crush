@@ -19,8 +19,7 @@ import Navbar from './components/Navbar';
 import CategoryProducts from "./pages/CategoryProducts";
 import ProductDetails from './components/home/ProductDetails';
 import Checkout from './pages/Checkout';
-import Addresses from './pages/Addresses';
-import MyOrders from './pages/MyOrders';
+import Profile from './pages/Profile';
 import OrderDetails from './pages/OrderDetails';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminOrders from './admin/AdminOrder';
@@ -33,7 +32,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import ShippingPolicy from './pages/ShippingPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Contact from './pages/Contact';
-
+import CustomizeBox from './pages/CustomizeBox';
 import BlogDetails from './components/home/BlogDetails';
 import Blogs from './components/home/Blogs';
 
@@ -58,8 +57,7 @@ const router = createBrowserRouter([
   {path:"/category/:id" ,element:<CategoryProducts />},
   {path:'/product/:id', element:<ProductDetails/>},
   {path:"/checkout", element:<Checkout/>},
-  {path:"/addresses", element:<Addresses/>},
-  {path:"/order", element:<MyOrders/>},
+{path:"/profile", element:<Profile/>},
   {path:"/order/:id", element:<OrderDetails/>},
   {path: "/verify-email/:token",element: <VerifyEmail />},
   {path: "/products",element: <AllProducts />},
@@ -68,6 +66,7 @@ const router = createBrowserRouter([
   {path:"/shippingpolicy",element:<ShippingPolicy/>},
   {path:"/terms",element:<TermsOfService/>},
   {path:"/contact",element:<Contact/>},
+  {path:"/customize-box", element:<CustomizeBox/>},
   {path:"/blogs/:id",element:<BlogDetails/>},
   {path:"/blog",element:<Blogs/>},
   // ADMIN ROUTES

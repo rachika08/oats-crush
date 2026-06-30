@@ -100,9 +100,13 @@ useEffect(() => {
             )}
           </div>
 
-          <Link to="/contact" className="hover:text-brand-orange transition">
-            About Us
-          </Link>
+          <Link to="/customize-box" className="hover:text-brand-orange transition">
+  Customize Box
+</Link>
+
+<Link to="/contact" className="hover:text-brand-orange transition">
+  About Us
+</Link>
         </div>
 
         {/* Right Section */}
@@ -143,37 +147,28 @@ useEffect(() => {
     </button>
 
               {isMobileMenuOpen && (
-                <div className="absolute top-8 right-0 bg-white border rounded-xl shadow-md min-w-[180px] py-2 z-50 text-sm cursor-pointer">
-                  <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange"
-                    onClick={() => {
-                      navigate("/addresses");
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    My Addresses
-                  </button>
-                  <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange"
-                    onClick={() => {
-                      navigate("/order");
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    My Orders
-                  </button>
-                  <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer hover:text-brand-orange"
-                    onClick={() => {
-                      localStorage.removeItem("token");
-                      navigate("/");
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
+  <div className="absolute top-8 right-0 bg-white border rounded-xl shadow-md min-w-[180px] py-2 z-50 text-sm cursor-pointer">
+    <button
+      className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange"
+      onClick={() => {
+        navigate("/profile");
+        setIsMobileMenuOpen(false);
+      }}
+    >
+      View Profile
+    </button>
+    <button
+      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer hover:text-brand-orange"
+      onClick={() => {
+        localStorage.removeItem("token");
+        navigate("/");
+        setIsMobileMenuOpen(false);
+      }}
+    >
+      Logout
+    </button>
+  </div>
+)}
             </div>
           )}
 
@@ -206,12 +201,19 @@ useEffect(() => {
             Categories
           </Link>
           <Link
-            to="/contact"
-            className="py-2"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            About Us
-          </Link>
+  to="/customize-box"
+  className="py-2"
+  onClick={() => setIsMobileMenuOpen(false)}
+>
+  Customize Box
+</Link>
+<Link
+  to="/contact"
+  className="py-2"
+  onClick={() => setIsMobileMenuOpen(false)}
+>
+  About Us
+</Link>
 
           <div className="border-t my-1" />
 
@@ -237,37 +239,28 @@ useEffect(() => {
               </button>
             </>
           ) : (
-            <>
-              <button
-                className="py-2 text-left cursor-pointer"
-                onClick={() => {
-                  navigate("/addresses");
-                  setIsMobileMenuOpen(false);
-                }}
-              >
-                My Addresses
-              </button>
-              <button
-                className="py-2 text-left cursor-pointer"
-                onClick={() => {
-                  navigate("/order");
-                  setIsMobileMenuOpen(false);
-                }}
-              >
-                My Orders
-              </button>
-              <button
-                className="py-2 text-left text-red-600 cursor-pointer"
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  navigate("/");
-                  setIsMobileMenuOpen(false);
-                }}
-              >
-                Logout
-              </button>
-            </>
-          )}
+  <>
+    <button
+      className="py-2 text-left cursor-pointer"
+      onClick={() => {
+        navigate("/profile");
+        setIsMobileMenuOpen(false);
+      }}
+    >
+      View Profile
+    </button>
+    <button
+      className="py-2 text-left text-red-600 cursor-pointer"
+      onClick={() => {
+        localStorage.removeItem("token");
+        navigate("/");
+        setIsMobileMenuOpen(false);
+      }}
+    >
+      Logout
+    </button>
+  </>
+)}
         </div>
       )}
     </header>
