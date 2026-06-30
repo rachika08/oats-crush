@@ -69,7 +69,7 @@ export const addToCart = async (req, res) => {
 
         if (itemIndex > -1) {
             // update quantity
-            cart.items[itemIndex].quantity = quantity;
+            cart.items[itemIndex].quantity += quantity;
         } else {
             cart.items.push({
                 product: productId,
