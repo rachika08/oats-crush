@@ -63,6 +63,8 @@ const cartReminderJob = () => {
                 }
 
                 if (shouldSend) {
+                    if (cart._id.toString() === cart.lastProcessedId) continue;
+                    cart.lastProcessedId = cart._id;
                     await sendMessage(user.phone, message);
 
                     console.log(

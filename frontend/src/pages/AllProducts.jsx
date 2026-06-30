@@ -72,7 +72,7 @@ const AllProducts = () => {
   const [availability, setAvailability] = useState("");
   const [price, setPrice] = useState("");
   const [sortBy, setSortBy] = useState("Most Popular");
-
+  // let filteredProducts = [...products];
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -89,85 +89,146 @@ const AllProducts = () => {
     }
   };
 
+  
   const handleAddToCart = async (e, product) => {
-    e.stopPropagation();
+  e.stopPropagation();
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Please login to add items to your cart");
-        navigate("/login");
-        return;
-      }
+  try {
+    const token = localStorage.getItem("token");
 
-      await api.post(
-        "/cart/add",
-        { productId: product._id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      alert("Added to cart!");
-    } catch (error) {
-      console.log(error.response?.data || error.message);
+    if (!token) {
+      alert("Please login to add items to your cart");
+      navigate("/login");
+      return;
     }
-  };
-  // Apply filters
-  let filteredProducts = [...products];
 
-  // Category filter
-  if (category) {
-    filteredProducts = filteredProducts.filter(
-      (product) =>
-        product.category?.name?.toLowerCase() === category.toLowerCase()
+    const defaultPack =
+      product.packSizes?.find((p) => Number(p.units) === 1) ||
+      product.packSizes?.[0];
+
+    if (!defaultPack) {
+      alert("Product pack missing");
+      return;
+    }
+
+    const price = Number(defaultPack.price);
+
+    if (isNaN(price)) {
+      alert("Invalid product price");
+      return;
+    }
+
+    await api.post(
+      "/cart/add",
+      {
+        productId: product._id,
+        quantity: 1,
+        pack: {
+          label: defaultPack.label,
+          units: Number(defaultPack.units) || 1,
+          price: price, // ✅ ALWAYS NUMBER
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-  }
 
-  // Availability filter
-  if (availability === "In Stock") {
-    filteredProducts = filteredProducts.filter(
-      (product) => product.stock > 0
-    );
+    alert("Added to cart!");
+  } catch (error) {
+    console.log(error.response?.data || error.message);
   }
+};
+  const filteredProducts = products
+  .filter((product) => {
+    if (!category) return true;
+    return product.category?.name?.toLowerCase() === category.toLowerCase();
+  })
+  .filter((product) => {
+    if (availability === "In Stock") return product.stock > 0;
+    if (availability === "Sold Out") return product.stock <= 0;
+    return true;
+  })
+  .filter((product) => {
+    const basePrice =
+      product.packSizes?.find((p) => p.units === 1)?.price || 0;
 
-  if (availability === "Sold Out") {
-    filteredProducts = filteredProducts.filter(
-      (product) => product.stock <= 0
-    );
-  }
+    if (price === "Under ₹150") return basePrice < 150;
+    if (price === "₹150 - ₹300") return basePrice >= 150 && basePrice <= 300;
+    if (price === "₹300+") return basePrice > 300;
 
-  // Price filter
-  if (price === "Under ₹150") {
-    filteredProducts = filteredProducts.filter(
-      (product) => product.price < 150
-    );
-  }
+    return true;
+  })
+  .sort((a, b) => {
+    const getPrice = (p) =>
+      p.packSizes?.find((x) => x.units === 1)?.price || 0;
 
-  if (price === "₹150 - ₹300") {
-    filteredProducts = filteredProducts.filter(
-      (product) => product.price >= 150 && product.price <= 300
-    );
-  }
+    if (sortBy === "Price: Low to High") return getPrice(a) - getPrice(b);
+    if (sortBy === "Price: High to Low") return getPrice(b) - getPrice(a);
+    if (sortBy === "Newest")
+      return new Date(b.createdAt) - new Date(a.createdAt);
 
-  if (price === "₹300+") {
-    filteredProducts = filteredProducts.filter(
-      (product) => product.price > 300
-    );
-  }
+    return 0;
+  });
+//   // Availability filter
+//   if (availability === "In Stock") {
+//     filteredProducts = filteredProducts.filter(
+//       (product) => product.stock > 0
+//     );
+//   }
 
-  // Sorting
-  if (sortBy === "Price: Low to High") {
-    filteredProducts.sort((a, b) => a.price - b.price);
-  }
+//   if (availability === "Sold Out") {
+//     filteredProducts = filteredProducts.filter(
+//       (product) => product.stock <= 0
+//     );
+//   }
+//   //price
+//   const getBasePrice = (product) => {
+//     return product.packSizes?.find((p) => p.units === 1)?.price || 0;
+//   };
+//   // Price filter
+//   if (price === "Under ₹150") {
+//     filteredProducts = filteredProducts.filter(
+//       (product) => getBasePrice(product) < 150
+//     );
+//   }
 
-  if (sortBy === "Price: High to Low") {
-    filteredProducts.sort((a, b) => b.price - a.price);
-  }
+//   if (price === "₹150 - ₹300") {
+//     filteredProducts = filteredProducts.filter(
+//       (product) =>
+//         getBasePrice(product) >= 150 && getBasePrice(product) <= 300
+//     );
+//   }
 
-  if (sortBy === "Newest") {
-    filteredProducts.sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
-  }
+//   if (price === "₹300+") {
+//     filteredProducts = filteredProducts.filter(
+//       (product) => getBasePrice(product) > 300
+//     );
+//   }
+
+//   // Sorting
+//   const getPrice = (product) => {
+//     return product.packSizes?.find((p) => p.units === 1)?.price ?? 0;
+//   };
+//   if (sortBy === "Price: Low to High") {
+//   filteredProducts = [...filteredProducts].sort(
+//     (a, b) => getPrice(a) - getPrice(b)
+//   );
+// }
+
+// if (sortBy === "Price: High to Low") {
+//   filteredProducts = [...filteredProducts].sort(
+//     (a, b) => getPrice(b) - getPrice(a)
+//   );
+// }
+
+//   if (sortBy === "Newest") {
+//     filteredProducts.sort(
+//       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+//     );
+//   }
 
   const totalPages = Math.max(
     1,
