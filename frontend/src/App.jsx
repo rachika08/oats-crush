@@ -1,6 +1,6 @@
 import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ScrollToTop from './components/ScrollToTop';
+import {Outlet, createBrowserRouter, RouterProvider } from "react-router-dom";
 import './App.css'
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -32,10 +32,24 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import ShippingPolicy from './pages/ShippingPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Contact from './pages/Contact';
+
 import BlogDetails from './components/home/BlogDetails';
 import Blogs from './components/home/Blogs';
+
+
+function RootLayout() {
+  return (
+    <>
+      <ScrollToTop />
+      <Outlet />
+    </>
+  );
+}
+
 const router = createBrowserRouter([
-  {path:"/", element:<Home/>},
+  { 
+    element: <RootLayout />,
+  children: [{path:"/", element:<Home/>},
   {path:"/login", element:<Login/>},
   {path:"/signup", element:<SignUp/>},
   {path:"/category",element:<Categories/>},
@@ -83,6 +97,7 @@ const router = createBrowserRouter([
         <AdminRoute>
             <AdminOrderDetails />
         </AdminRoute>
+
     },
   {
      path:"/admin/blogs", element:<AdminBlogs />
@@ -93,6 +108,8 @@ const router = createBrowserRouter([
   {
      path:"/admin/blogs/edit/:id", element:<EditBlog />
   },
+  ]
+}
 
 ]);
 export default function App() {

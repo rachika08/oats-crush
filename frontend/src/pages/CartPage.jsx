@@ -300,28 +300,23 @@ export default function CartPage() {
   const fetchCart = async () => {
     try {
       setLoading(true);
-
       const res = await api.get("/cart", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
       const items = res.data.items || [];
-      console.log(items);
-
       setCartItems(items);
       localStorage.setItem("cartItems", JSON.stringify(items));
+      localStorage.setItem("cartCount", items.length);
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
       console.log("Cart fetch error:", error);
-
-      if (cartItems.length === 0) {
-        setCartItems([]);
-      }
+      if (cartItems.length === 0) setCartItems([]);
     } finally {
       setLoading(false);
     }
-  };
+};
 
   useEffect(() => {
     fetchCart();
@@ -373,6 +368,8 @@ export default function CartPage() {
 
     setCartItems(updatedCart);
     localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+    localStorage.setItem("cartCount", updatedCart.length);
+    window.dispatchEvent(new Event("cartUpdated"));
 
     try {
       await api.delete(`/cart/remove/${productId}`, {
@@ -384,7 +381,7 @@ export default function CartPage() {
       console.log(error);
       fetchCart();
     }
-  };
+};
 
   return (
     <>
