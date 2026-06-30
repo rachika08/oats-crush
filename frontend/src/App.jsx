@@ -19,8 +19,7 @@ import Navbar from './components/Navbar';
 import CategoryProducts from "./pages/CategoryProducts";
 import ProductDetails from './components/home/ProductDetails';
 import Checkout from './pages/Checkout';
-import Addresses from './pages/Addresses';
-import MyOrders from './pages/MyOrders';
+import Profile from './pages/Profile';
 import OrderDetails from './pages/OrderDetails';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminOrders from './admin/AdminOrder';
@@ -58,8 +57,7 @@ const router = createBrowserRouter([
   {path:"/category/:id" ,element:<CategoryProducts />},
   {path:'/product/:id', element:<ProductDetails/>},
   {path:"/checkout", element:<Checkout/>},
-  {path:"/addresses", element:<Addresses/>},
-  {path:"/order", element:<MyOrders/>},
+{path:"/profile", element:<Profile/>},
   {path:"/order/:id", element:<OrderDetails/>},
   {path: "/verify-email/:token",element: <VerifyEmail />},
   {path: "/products",element: <AllProducts />},
