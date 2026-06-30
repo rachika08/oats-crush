@@ -90,7 +90,13 @@ input[type="password"]::-ms-reveal {
   transform-style: preserve-3d;
 }
 
-.flip-card:hover .flip-card-inner {
+@media (hover: hover) {
+  .flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+}
+
+.flip-card.is-flipped .flip-card-inner {
   transform: rotateY(180deg);
 }
 
