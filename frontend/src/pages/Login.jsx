@@ -86,7 +86,7 @@ export default function Login() {
             </div>
 
             {/* FORM SIDE */}
-            <div className="order-2 md:order-1 w-full md:w-1/2 flex items-center justify-center px-8 py-10">
+            <div className="order-2 md:order-1 w-full md:w-1/2 flex items-center justify-center px-8 py-10 bg-white relative z-10 -mt-10 rounded-t-[40px] md:mt-0 md:rounded-none">
 
                 <div className="w-full max-w-sm">
 
@@ -99,9 +99,9 @@ export default function Login() {
                         />
                     </div>
 
-                    <h1 className="text-2xl font-bold text-center mb-6">
-                        TIME TO CRUSH IT AGAIN
-                    </h1>
+                    <h1 className="text-2xl text-center mb-6">
+    TIME TO CRUSH IT <span className="text-brand-orange">AGAIN</span>
+</h1>
 
                     {/* GOOGLE LOGIN */}
                     <div className="flex justify-center mb-6">
@@ -129,7 +129,7 @@ export default function Login() {
                             value={form.email}
                             onChange={handleChange}
                             required
-                            className="w-full border-b p-2 outline-none"
+                            className="w-full border-b border-gray-300 p-2 outline-none transition-colors duration-300 focus:border-brand-orange"
                         />
 
                         {/* PASSWORD */}
@@ -141,7 +141,7 @@ export default function Login() {
                                 value={form.password}
                                 onChange={handleChange}
                                 required
-                                className="w-full border-b p-2 outline-none pr-10"
+                                className="w-full border-b border-gray-300 p-2 outline-none transition-colors duration-300 focus:border-brand-orange"
                             />
 
                             <button
@@ -156,7 +156,7 @@ export default function Login() {
                         {/* BUTTON */}
                         <button
                             type="submit"
-                            className="w-full bg-orange-500 text-white py-3 rounded-full"
+                            className="w-full bg-orange-500 text-white py-3 rounded-full cursor-pointer"
                         >
                             LOGIN
                         </button>
