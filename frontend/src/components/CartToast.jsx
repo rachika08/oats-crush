@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 export default function CartToast({ show, onClose }) {
   const navigate = useNavigate();
+  const { openCart } = useCart();
 
   useEffect(() => {
     if (!show) return;
@@ -21,7 +23,7 @@ export default function CartToast({ show, onClose }) {
         Added to cart successfully!
       </p>
       <button
-        onClick={() => navigate("/cart")}
+        onClick={() => { onClose(); openCart(); }}
         className="bg-brand-orange text-white font-heading text-xs px-4 py-1.5 rounded-full hover:-translate-y-0.5 transition cursor-pointer"
       >
         VIEW CART

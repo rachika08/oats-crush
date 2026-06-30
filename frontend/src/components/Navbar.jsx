@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingBag, User, Menu, X, ChevronDown } from "lucide-react";
+import { useCart } from "../context/CartContext";
 import api from "../api/axios"; 
 
 const Navbar = () => {
@@ -39,6 +40,7 @@ useEffect(() => {
 }, []);
 
   const token = localStorage.getItem("token");
+  const { openCart } = useCart();
 
   return (
     <header className="absolute top-0 left-0 right-0 z-20 px-4 sm:px-6 py-15">
@@ -112,7 +114,7 @@ useEffect(() => {
          <button
   className="relative flex cursor-pointer hover:text-brand-orange"
   aria-label="Cart"
-  onClick={() => navigate("/cart")}
+  onClick={openCart}
 >
   <ShoppingBag size={20} />
   {cartCount > 0 && (

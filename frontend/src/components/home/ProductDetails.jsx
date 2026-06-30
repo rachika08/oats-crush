@@ -8,6 +8,7 @@ import Footer from "./Footer";
 import FAQSection from "./FAQSection";
 import FeaturedProducts from "./FeaturedProducts";
 import CartToast from "../CartToast";
+import { useCart } from "../../context/CartContext";
 
 import {
  
@@ -34,7 +35,7 @@ export default function ProductDetails() {
     const [selectedImage, setSelectedImage] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [showViewCart, setShowViewCart] = useState(false);
-
+    const [showToast, setShowToast] = useState(false);
     const [showReviewForm, setShowReviewForm] = useState(false);
 
     const [reviews, setReviews] = useState([]);
@@ -47,7 +48,6 @@ export default function ProductDetails() {
     const [reviewSort, setReviewSort] = useState("");
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [visibleReviewCount, setVisibleReviewCount] = useState(6);
-    const [showToast, setShowToast] = useState(false);
     const token = localStorage.getItem("token");
 
     useEffect(() => {
@@ -250,6 +250,7 @@ setShowToast(true);
 
 
     };
+    const { openCart } = useCart();
 
     return (
         <><Navbar />
@@ -497,7 +498,7 @@ setShowToast(true);
     <div className="fixed bottom-3 left-0 w-full z-50 bg-brand-orange text-white px-8 py-4 flex justify-between items-center shadow-lg rounded-full">
         <span>Item added to cart</span>
         <button
-            onClick={() => navigate("/cart")}
+            onClick={openCart}
             className="bg-white font-heading text-brand-orange px-8 py-2 rounded hover:translate-y-[-2px] transition cursor-pointer rounded-full shadow-md"
         >
             VIEW CART

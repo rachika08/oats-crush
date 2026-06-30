@@ -5,8 +5,10 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import InfoBar from "../components/home/InfoBar";
+import CartToast from "../components/CartToast";
 
 const PRODUCTS_PER_PAGE = 6;
+ 
 
 const FilterDropdown = ({ label, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +69,7 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [showToast, setShowToast] = useState(false);
   const [category, setCategory] = useState("");
   const [availability, setAvailability] = useState("");
   const [price, setPrice] = useState("");
@@ -100,13 +102,25 @@ const AllProducts = () => {
         return;
       }
 
+      const defaultPack = product.packSizes?.find(p => p.units === 1) || product.packSizes?.[0];
+
+      const packPayload = defaultPack ? {
+          label: defaultPack.label,
+          units: defaultPack.units,
+          price: defaultPack.price
+      } : undefined;
       await api.post(
         "/cart/add",
-        { productId: product._id, quantity: 1 },
+        { 
+            productId: product._id, 
+            quantity: 1,
+            pack: packPayload 
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert("Added to cart!");
+      setShowToast(true);
+      window.dispatchEvent(new Event("cartUpdated")); 
     } catch (error) {
       console.log(error.response?.data || error.message);
     }
@@ -394,6 +408,7 @@ const AllProducts = () => {
       </section>
 
       <Footer />
+      <CartToast show={showToast} onClose={() => setShowToast(false)} />
     </>
   );
 };

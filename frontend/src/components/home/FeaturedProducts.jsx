@@ -4,6 +4,7 @@ import api from "../../api/axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Bell } from "lucide-react";
+import { useCart } from "../../context/CartContext";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -18,6 +19,7 @@ const FeaturedProducts = ({
   const [products, setProducts] = useState([]);
   const [toastVisible, setToastVisible] = useState(false);
   const navigate = useNavigate();
+  const { openCart } = useCart();
 
   useEffect(() => {
     fetchProducts();
@@ -220,7 +222,7 @@ const FeaturedProducts = ({
           <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
           <p className="font-body text-sm text-black flex-1">Added to cart successfully!</p>
           <button
-            onClick={() => navigate("/cart")}
+            onClick={() => { setToastVisible(false); openCart(); }}
             className="bg-brand-orange text-white font-heading text-xs px-4 py-1.5 rounded-full hover:-translate-y-0.5 transition cursor-pointer"
           >
             VIEW CART
