@@ -100,9 +100,13 @@ useEffect(() => {
             )}
           </div>
 
-          <Link to="/contact" className="hover:text-brand-orange transition">
-            About Us
-          </Link>
+          <Link to="/customize-box" className="hover:text-brand-orange transition">
+  Customize Box
+</Link>
+
+<Link to="/contact" className="hover:text-brand-orange transition">
+  About Us
+</Link>
         </div>
 
         {/* Right Section */}
@@ -197,12 +201,19 @@ useEffect(() => {
             Categories
           </Link>
           <Link
-            to="/contact"
-            className="py-2"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            About Us
-          </Link>
+  to="/customize-box"
+  className="py-2"
+  onClick={() => setIsMobileMenuOpen(false)}
+>
+  Customize Box
+</Link>
+<Link
+  to="/contact"
+  className="py-2"
+  onClick={() => setIsMobileMenuOpen(false)}
+>
+  About Us
+</Link>
 
           <div className="border-t my-1" />
 

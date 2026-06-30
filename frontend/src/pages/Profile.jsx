@@ -13,6 +13,7 @@ import {
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
+import AddressModal from "../components/AddressModal";
 
 const TABS = [
   { id: "overview", label: "OVERVIEW", icon: User },
@@ -47,6 +48,8 @@ export default function Profile() {
   const [addresses, setAddresses] = useState([]);
   const [addressesLoaded, setAddressesLoaded] = useState(false);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(null);
 
   const [orders, setOrders] = useState([]);
   const [ordersLoaded, setOrdersLoaded] = useState(false);
@@ -139,13 +142,30 @@ export default function Profile() {
     setIsEditingOverview(false);
   };
 
-  const handleAddAddress = () => {
-    console.log("Open add address modal — coming soon");
-  };
+const handleAddAddress = () => {
+  setEditingAddress(null);
+  setIsAddressModalOpen(true);
+};
 
-  const handleEditAddress = (address) => {
-    console.log("Open edit address modal for:", address);
-  };
+const handleEditAddress = (address) => {
+  setEditingAddress(address);
+  setIsAddressModalOpen(true);
+};
+
+const handleSaveAddress = async (formData, addressId) => {
+  try {
+    if (addressId) {
+      await api.put(`/address/${addressId}`, formData);
+    } else {
+      await api.post("/address", formData);
+    }
+    await fetchAddresses();
+    setIsAddressModalOpen(false);
+    setEditingAddress(null);
+  } catch (error) {
+    alert(error.response?.data?.message || "Failed to save address");
+  }
+};
 
   const handleDeleteAddress = async (id) => {
     const confirmDelete = window.confirm("Delete this address?");
@@ -506,6 +526,15 @@ export default function Profile() {
       </div>
 
       <Footer />
+      <AddressModal
+  isOpen={isAddressModalOpen}
+  onClose={() => {
+    setIsAddressModalOpen(false);
+    setEditingAddress(null);
+  }}
+  onSave={handleSaveAddress}
+  initialData={editingAddress}
+/>
     </>
   );
 }
