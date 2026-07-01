@@ -11,7 +11,7 @@ const cartSchema = new mongoose.Schema({
             product: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Product",
-                required: true
+                // required: true
             },
             quantity: {
                 type: Number,
@@ -21,7 +21,24 @@ const cartSchema = new mongoose.Schema({
                 label: { type: String },
                 units: { type: Number },
                 price: { type: Number }
-            } 
+            },
+            // -------- Custom Box --------
+
+            isCustomBox: {
+                type: Boolean,
+                default: false
+            },
+
+            packSize: Number,
+
+            customProducts: [
+                {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Product"
+                }
+            ],
+
+            customPrice: Number
         }
     ],
     reminderCount: {

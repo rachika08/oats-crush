@@ -372,7 +372,7 @@ setShowToast(true);
             label="Category"
             value={category}
             onChange={setCategory}
-            options={categories.map((c) => c.name)}
+            options={["Oats", "Oats Shake"]}
           />
 
           <FilterDropdown
