@@ -47,6 +47,7 @@ const AddBlog = () => {
 
     } catch (error) {
       console.log(error);
+      alert(error.response?.data?.message || "Failed to create blog");
     }
   };
 

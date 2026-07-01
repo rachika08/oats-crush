@@ -214,7 +214,7 @@ export default function CartDrawer() {
         aria-modal="true"
       >
         {/* HEADER */}
-        <div className="flex items-center justify-between px-6 py-5 border-b">
+        <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-gray-100 flex-shrink-0">
           <h2 className="font-heading text-xl uppercase">
             MY <span className="text-brand-orange">CART</span>
           </h2>
@@ -229,16 +229,27 @@ export default function CartDrawer() {
           {loading ? (
             <p className="text-center py-10">Loading...</p>
           ) : cartItems.length === 0 ? (
-            <p className="text-center py-10">Cart is empty</p>
-          ) : (
+    <div className="text-center py-16 flex flex-col items-center">
+        <p className="font-heading text-xl mb-2 text-gray-800">YOUR CART IS EMPTY</p>
+        <p className="font-body text-sm text-gray-500 mb-8">
+            Add a flavour and crush your cravings.
+        </p>
+        <button
+            onClick={() => { closeCart(); navigate("/products"); }}
+            className="bg-brand-orange text-white font-heading text-sm px-8 py-3 rounded-full shadow hover:bg-orange-600 transition cursor-pointer"
+        >
+            SHOP NOW
+        </button>
+    </div>
+) : (
             cartItems.map((item) => {
               // ---------------- CUSTOM BOX ----------------
               if (item.isCustomBox) {
                 return (
                   <div
-                    key={`custom-${item._id}`}
-                    className="py-5 border-b flex justify-between"
-                  >
+  key={`custom-${item._id}`}
+  className="py-5 border-b border-gray-100 flex justify-between"
+>
                     <div>
                       <h3 className="font-heading uppercase">
                         CUSTOM BOX ({item.packSize})
@@ -281,61 +292,59 @@ export default function CartDrawer() {
 
               return (
                 <div
-                  key={`${item._id}-${item.pack?.label || "default"}`}
-                  className="py-5 border-b flex gap-4"
-                >
+    key={`${item._id}-${item.pack?.label || "default"}`}
+    className="py-5 border-b border-gray-100 last:border-0 flex gap-5"
+>
                   <img
-                    src={item.product?.image}
-                    alt={item.product?.name}
-                    className="w-20 h-20 rounded object-cover"
-                  />
+    src={item.product?.image}
+    alt={item.product?.name}
+    className="w-24 h-24 rounded-lg object-cover flex-shrink-0 bg-gray-50"
+/>
 
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div className="flex justify-between">
-                      <h3 className="font-heading uppercase">
-                        {item.product?.name}
-                      </h3>
+                      <h3 className="font-heading text-base text-gray-900 uppercase leading-snug">
+    {item.product?.name}
+</h3>
 
-                      {/* TRASH BUTTON (NORMAL PRODUCT) */}
-                      <button
-                        onClick={() => removeItem(item._id)}
-                        className="text-red-500"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+<button
+    onClick={() => removeItem(item._id)}
+    aria-label="Remove item"
+    className="text-black hover:text-red-500 transition cursor-pointer flex-shrink-0"
+>
+    <Trash2 size={16} />
+</button>
                     </div>
 
-                    <p className="text-xs text-gray-500">
-                      {item.product?.weight || "100gm"}
-                    </p>
+                    <p className="font-body text-xs text-gray-500 mt-1">
+    {item.product?.weight || "100gm"}
+</p>
 
-                    <div className="flex justify-between mt-3">
-                      <span className="font-heading">
-                        ₹{price * item.quantity}
-                      </span>
+                    <div className="flex items-center justify-between mt-4">
+    <span className="font-heading text-lg text-gray-900">
+        ₹{(price * item.quantity).toFixed(2)}
+    </span>
 
-                      <div className="flex items-center border rounded-full">
+    <div className="flex items-center border border-brand-orange rounded-full bg-white">
                         <button
-                          onClick={() =>
-                            updateQuantity(
-                              item._id, item.quantity - 1
-                            )
-                          }
-                        >
-                          <Minus size={14} />
-                        </button>
+    onClick={() => updateQuantity(item._id, item.quantity - 1)}
+    aria-label="Decrease quantity"
+    className="w-8 h-8 flex items-center justify-center text-black hover:text-brand-orange cursor-pointer transition"
+>
+    <Minus size={14} />
+</button>
 
-                        <span className="px-2">{item.quantity}</span>
+<span className="font-body text-sm font-medium w-6 text-center text-black">
+    {item.quantity}
+</span>
 
-                        <button
-                          onClick={() =>
-                            updateQuantity(
-                              item._id, item.quantity + 1
-                            )
-                          }
-                        >
-                          <Plus size={14} />
-                        </button>
+<button
+    onClick={() => updateQuantity(item._id, item.quantity + 1)}
+    aria-label="Increase quantity"
+    className="w-8 h-8 flex items-center justify-center text-black hover:text-brand-orange cursor-pointer transition"
+>
+    <Plus size={14} />
+</button>
                       </div>
                     </div>
                   </div>
@@ -347,24 +356,27 @@ export default function CartDrawer() {
 
         {/* FOOTER */}
         {cartItems.length > 0 && (
-          <div className="border-t px-6 py-5">
-            <div className="flex justify-between text-sm">
-              <span>Subtotal</span>
-              <span>₹{subtotal.toFixed(0)}</span>
-            </div>
+          <div className="flex-shrink-0 bg-white border-t border-gray-100 px-6 sm:px-8 py-6">
+    <div className="space-y-3 font-body text-sm text-gray-600 mb-6">
+        <div className="flex justify-between">
+            <span>Subtotal</span>
+            <span className="font-medium text-gray-900">₹{subtotal.toFixed(0)}</span>
+        </div>
+    </div>
 
-            {/* <div className="flex justify-between text-sm mt-2">
-              <span>Shipping</span>
-              <span>₹{SHIPPING_FEE}</span>
-            </div> */}
-
-            <button
-              onClick={handleCheckout}
-              className="w-full mt-4 bg-brand-orange text-white py-3 rounded-full"
-            >
-              PROCEED TO CHECKOUT ₹{grandTotal.toFixed(0)}
-            </button>
-          </div>
+    <button
+        onClick={handleCheckout}
+        className="w-full bg-brand-orange text-white flex justify-between items-center px-1 font-heading text-base py-1.5 rounded-full shadow-lg hover:bg-orange-600 transition cursor-pointer"
+    >
+        <span className="flex-1 text-center py-2.5 ml-4 tracking-wide">
+            PROCEED TO CHECKOUT
+        </span>
+        <div className="h-6 w-[1px] bg-white/40"></div>
+        <span className="w-1/3 text-center py-2.5 tracking-wide">
+            ₹{grandTotal.toFixed(0)}
+        </span>
+    </button>
+</div>
         )}
       </aside>
     </>
