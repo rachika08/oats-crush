@@ -53,10 +53,11 @@ export default function CustomizeBox() {
   };
 
   const addItem = (product) => {
-    if (selectedItems.length >= packSize) return;
-    uidRef.current += 1;
-    setSelectedItems((prev) => [...prev, { uid: uidRef.current, product }]);
-  };
+  if (selectedItems.length >= packSize) return;
+  if (product.stock <= 0) return;
+  uidRef.current += 1;
+  setSelectedItems((prev) => [...prev, { uid: uidRef.current, product }]);
+};
 
   const removeItem = (uid) => {
     setSelectedItems((prev) => prev.filter((item) => item.uid !== uid));
@@ -192,44 +193,41 @@ export default function CustomizeBox() {
               }}
             >
               {products.map((product) => {
-                const count = countFor(product._id);
+  const count = countFor(product._id);
+  const isSoldOut = product.stock <= 0;
 
-                return (
-                  <SwiperSlide key={product._id}>
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                      <div className="relative aspect-square">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                        {count > 0 && (
-                          <span className="absolute top-3 right-3 bg-brand-orange text-white text-xs font-heading w-6 h-6 rounded-full flex items-center justify-center shadow-md">
-                            {count}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="p-5">
-                        <h3 className="font-heading text-lg uppercase mb-1">
-                          {product.name}
-                        </h3>
-                        <p className="font-body text-sm text-gray-500 mb-4">
-                          {product.benefits?.slice(0, 2).join(" • ") ||
-                            "Lactose-free • Vegan friendly"}
-                        </p>
-
-                        <button
-                          onClick={() => addItem(product)}
-                          disabled={isComplete}
-                          className={`w-full rounded-full py-2.5 font-heading text-base font-medium transition border-2 ${
-                            isComplete
-                              ? "bg-gray-200 text-gray-400 border-transparent cursor-not-allowed"
-                              : "bg-brand-orange text-white border-transparent hover:bg-white hover:text-brand-orange hover:border-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
-                          }`}
-                        >
-                          {isComplete ? "BOX FULL" : "ADD TO CART"}
-                        </button>
+  return (
+    <SwiperSlide key={product._id}>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="relative aspect-square">
+          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+          {isSoldOut && (
+            <span className="absolute top-3 left-3 bg-white text-black text-xs font-body font-medium px-3 py-1 rounded-full">
+              Sold Out
+            </span>
+          )}
+          {count > 0 && !isSoldOut && (
+            <span className="absolute top-3 right-3 bg-brand-orange text-white text-xs font-heading w-6 h-6 rounded-full flex items-center justify-center shadow-md">
+              {count}
+            </span>
+          )}
+        </div>
+        <div className="p-5">
+          <h3 className="font-heading text-lg uppercase mb-1">{product.name}</h3>
+          <p className="font-body text-sm text-gray-500 mb-4">
+            {product.benefits?.slice(0, 2).join(" • ") || "Lactose-free • Vegan friendly"}
+          </p>
+          <button
+            onClick={() => addItem(product)}
+            disabled={isComplete || isSoldOut}
+            className={`w-full rounded-full py-2.5 font-heading text-base font-medium transition border-2 ${
+              isComplete || isSoldOut
+                ? "bg-gray-200 text-gray-400 border-transparent cursor-not-allowed"
+                : "bg-brand-orange text-white border-transparent hover:bg-white hover:text-brand-orange hover:border-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
+            }`}
+          >
+            {isSoldOut ? "SOLD OUT" : isComplete ? "BOX FULL" : "ADD TO CART"}
+          </button>
                       </div>
                     </div>
                   </SwiperSlide>
@@ -252,7 +250,7 @@ export default function CustomizeBox() {
                 <button
                   onClick={() => removeItem(item.uid)}
                   aria-label={`Remove ${item.product.name}`}
-                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-black text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
+                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-black text-white flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition cursor-pointer"
                 >
                   <X size={12} />
                 </button>

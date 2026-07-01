@@ -21,7 +21,6 @@ const Navbar = () => {
 
   useEffect(() => {
     fetchCategories();
-    fetchProducts();
   }, []);
 
   const fetchCategories = async () => {
@@ -41,6 +40,12 @@ const Navbar = () => {
     console.log(error);
   }
 };
+
+useEffect(() => {
+    if (showSearch && products.length === 0) {
+        fetchProducts();
+    }
+}, [showSearch]);
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {

@@ -72,16 +72,19 @@ export default function Checkout() {
     };
 
     const handlePlaceOrder = async () => {
-        try {
-            if (!selectedAddress) {
-                alert("Please select an address");
-                return;
-            }
+    if (isPlacingOrder) return;
+    setIsPlacingOrder(true);
 
-            const orderRes = await api.post("/order", {
-                addressId: selectedAddress,
-                paymentMethod,
-            });
+    try {
+        if (!selectedAddress) {
+            alert("Please select an address");
+            return;
+        }
+
+        const orderRes = await api.post("/order", {
+            addressId: selectedAddress,
+            paymentMethod,
+        });
 
             const order = orderRes.data.order;
 
@@ -123,14 +126,11 @@ export default function Checkout() {
             razorpay.open();
 
         } catch (error) {
-            alert(error.response?.data?.message || "Failed to place order");
-        }
-
-
-        finally {
-            setIsPlacingOrder(false);
-        }
-    };
+        alert(error.response?.data?.message || "Failed to place order");
+    } finally {
+        setIsPlacingOrder(false);
+    }
+};
 
     if (loading) {
         return (
@@ -181,7 +181,15 @@ export default function Checkout() {
                                             Phone: {address.phone}
                                         </label>
                                     </div>
+                                    
                                 ))}
+                                <button
+    type="button"
+    onClick={() => setIsAddressModalOpen(true)}
+    className="mt-2 text-brand-orange font-body text-l underline hover:text-orange-600 transition cursor-pointer"
+>
+    + Add New Address
+</button>
                             </div>
                         </div>
 
@@ -273,11 +281,12 @@ export default function Checkout() {
                                 </div>
 
                                 <button
-                                    className="bg-green-500 text-white px-4 py-2 rounded mt-4 w-full"
-                                    onClick={handlePlaceOrder}
-                                >
-                                    Place Order
-                                </button>
+    className="bg-green-500 text-white px-4 py-2 rounded mt-4 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+    onClick={handlePlaceOrder}
+    disabled={isPlacingOrder}
+>
+    {isPlacingOrder ? "Placing Order..." : "Place Order"}
+</button>
 
                             </div>
                         </div>
