@@ -17,7 +17,8 @@ import {
   Snowflake,
   Coffee,
   IceCreamCone,
-  Soup
+  Soup,
+  Bell
 } from "lucide-react";
 
 const iconMap = {
@@ -27,6 +28,7 @@ const iconMap = {
   coffee: Coffee,
   bowl: Soup,
   icecream: IceCreamCone,
+  bell: Bell,
 };
 export default function ProductDetails() {
     const { id } = useParams();
@@ -70,7 +72,7 @@ const addToCart = async () => {
             return;
         }
 
-        await api.post(
+        const res = await api.post(
             "/cart/add",
             {
                 productId: product._id,
@@ -86,10 +88,7 @@ const addToCart = async () => {
             }
         );
 
-        const cartRes = await api.get("/cart", {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        const updatedItems = cartRes.data.items || [];
+        const updatedItems = res.data.items || [];
         localStorage.setItem("cartItems", JSON.stringify(updatedItems));
         localStorage.setItem("cartCount", updatedItems.length); 
 
@@ -128,7 +127,7 @@ const addToCart = async () => {
             );
             console.log("Cart updated:", res.data);
 
-            navigate("/cart")
+            navigate("/checkout")
         } catch (error) {
             console.log(error.response?.data || error.message);
         }
@@ -187,7 +186,7 @@ const addToCart = async () => {
             </div>
         );
     }
-
+const isSoldOut = product.stock <= 0; 
     const allImages = [
         product.image,
         ...(product.additionalImages || [])
@@ -431,8 +430,11 @@ const addToCart = async () => {
                             </span>
 
                             <button
-                                onClick={() => setQuantity((prev) => prev + 1)}
-                                className="w-10 h-10 flex items-center justify-center font-body text-lg cursor-pointer"
+    onClick={() =>
+        setQuantity((prev) => (prev < product.stock ? prev + 1 : prev))
+    }
+    disabled={quantity >= product.stock}
+                                className="w-10 h-10 flex items-center justify-center font-body text-lg cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                 aria-label="Increase quantity"
                             >
                                 +
@@ -441,22 +443,34 @@ const addToCart = async () => {
 
                         {/* Buttons */}
                         <div className="flex gap-4">
+  <button
+    onClick={buyNow}
+    disabled={isSoldOut}
+    className={`flex-1 border-2 font-heading text-base py-3 rounded-full shadow-md transition ${
+      isSoldOut
+        ? "border-gray-300 text-gray-400 cursor-not-allowed"
+        : "border-brand-orange text-black hover:-translate-y-1 cursor-pointer"
+    }`}
+  >
+    BUY NOW
+  </button>
 
-                            <button
-                                onClick={buyNow}
-                                className="flex-1 border-2 border-brand-orange text-black font-heading text-base py-3 rounded-full shadow-md hover:-translate-y-1 transition cursor-pointer"
-                            >
-                                BUY NOW
-                            </button>
-
-                            <button
-                                onClick={addToCart}
-                                className="flex-1 bg-brand-orange text-white font-heading text-base py-3 rounded-full shadow-md hover:-translate-y-1 transition cursor-pointer"
-                            >
-                                ADD TO CART
-                            </button>
-
-                        </div>
+  <button
+    onClick={isSoldOut ? undefined : addToCart}
+    disabled={isSoldOut}
+    className={`flex-1 font-heading text-base py-3 rounded-full shadow-md transition flex items-center justify-center gap-2 ${
+      isSoldOut
+        ? "bg-gray-400 text-white cursor-not-allowed"
+        : "bg-brand-orange text-white hover:-translate-y-1 cursor-pointer"
+    }`}
+  >
+    {isSoldOut ? (
+      <>NOTIFY WHEN BACK <Bell size={16} /></>
+    ) : (
+      "ADD TO CART"
+    )}
+  </button>
+</div>
 
                     </div>
                 </div>

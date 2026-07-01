@@ -1,12 +1,22 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 
+const STATUS_STYLES = {
+    Pending: "text-yellow-600 border-yellow-600",
+    Processing: "text-yellow-600 border-yellow-600",
+    Shipped: "text-blue-600 border-blue-600",
+    Delivered: "text-green-600 border-green-600",
+    Cancelled: "text-red-500 border-red-500",
+};
+
 export default function OrderDetails() {
 
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -17,11 +27,8 @@ export default function OrderDetails() {
 
     const fetchOrder = async () => {
         try {
-
             const res = await api.get(`/order/${id}`);
-
             setOrder(res.data);
-
         } catch (error) {
             console.log(error);
         } finally {
@@ -56,6 +63,7 @@ export default function OrderDetails() {
             </>
         );
     }
+
     const handleCancel = async () => {
         try {
             await api.put(
@@ -73,136 +81,209 @@ export default function OrderDetails() {
         }
     };
 
+    const subtotal = order.items.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+    const grandTotal = subtotal;
+
     return (
         <>
             <Navbar />
 
-            <div className="max-w-7xl mx-auto px-4 py-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-37 pb-16 sm:pb-20">
 
-                <h2 className="text-3xl font-bold mb-6">
-                    Order Details
-                </h2>
+                <button
+                    onClick={() => navigate("/profile?tab=orders")}
+                    className="flex items-center gap-2 font-body text-sm text-gray-500 hover:text-brand-orange transition cursor-pointer mb-6"
+                >
+                    <ArrowLeft size={16} />
+                    Back to Orders
+                </button>
 
-                {/* Order Summary */}
+                <div className="mb-8">
+    <h2 className="font-heading text-2xl sm:text-3xl mb-4">
+        ORDER SUMMARY
+    </h2>
 
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
-                    <div className="p-6">
+    <div className="flex items-center justify-between flex-wrap gap-4">
+        <span
+            className={`inline-block border-2 rounded-full px-6 py-2 font-heading text-sm uppercase tracking-wide ${
+                STATUS_STYLES[order.orderStatus] ||
+                "text-gray-500 border-gray-300"
+            }`}
+        >
+            {order.orderStatus}
+        </span>
 
-                        <h5 className="text-lg font-semibold mb-3">
-                            Order #{order._id.slice(-6)}
-                        </h5>
+        {order.orderStatus === "Pending" && (
+            <button
+                onClick={handleCancel}
+                className="bg-red-500 text-white font-heading text-sm px-6 py-2.5 rounded-full hover:-translate-y-0.5 transition cursor-pointer shadow-md"
+            >
+                CANCEL ORDER
+            </button>
+        )}
+    </div>
+</div>
 
-                        <p>
-                            <strong>Status:</strong>{" "}
-                            {order.orderStatus}
-                        </p>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Left column */}
+                    <div className="lg:col-span-7 space-y-6">
+                        {/* Items in this Order */}
+                        <div className="border border-gray-200 rounded-2xl p-6">
+                            <p className="font-body font-semibold text-brand-orange text-sm mb-5">
+                                Items in this Order
+                            </p>
 
-                        <p>
-                            <strong>Payment:</strong>{" "}
-                            {order.paymentMethod}
-                        </p>
+                            <div className="space-y-5">
+                                {order.items.map((item) => (
+                                    <div
+                                        key={item._id}
+                                        className="flex gap-4"
+                                    >
+                                        <img
+                                            src={item.product?.image}
+                                            alt={item.product?.name}
+                                            className="w-20 h-20 rounded-xl object-cover flex-shrink-0 bg-gray-50"
+                                        />
 
-                        <p>
-                            <strong>Payment Status:</strong>{" "}
-                            {order.paymentStatus}
-                        </p>
+                                        <div className="flex-1 flex justify-between gap-4">
+                                            <div>
+                                                <p className="font-body font-semibold text-base mb-1">
+                                                    {item.product?.name}
+                                                </p>
+                                                <p className="font-body text-sm text-gray-500">
+                                                    Quantity: {item.quantity}
+                                                </p>
+                                                {item.pack?.label && (
+                                                    <p className="font-body text-sm text-gray-500">
+                                                        {item.pack.label}
+                                                    </p>
+                                                )}
+                                            </div>
 
-                        <p>
-                            <strong>Total:</strong> ₹
-                            {order.totalAmount}
-                        </p>
-                        {order.orderStatus === "Pending" && (
-                            <button
-                                onClick={handleCancel}
-                                style={{ background: "red", color: "white" }}
-                            >
-                                Cancel Order
-                            </button>
-                        )}
+                                            <div className="text-right flex-shrink-0">
+                                                <p className="font-body font-semibold text-lg">
+                                                    ₹{item.price * item.quantity}
+                                                </p>
+                                                {item.quantity > 1 && (
+                                                    <p className="font-body text-xs text-gray-400">
+                                                        ₹{item.price} per item
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Delivery Details */}
+                        <div className="border border-gray-200 rounded-2xl p-6">
+                            <p className="font-body font-semibold text-brand-orange text-sm mb-4">
+                                Delivery Details
+                            </p>
+
+                            <p className="font-body text-sm text-black mb-2">
+                                Name:{" "}
+                                <span className="font-semibold">
+                                    {order.address?.fullName}
+                                </span>
+                            </p>
+
+                            <p className="font-body text-sm text-black mb-2">
+                                Address:{" "}
+                                <span className="font-semibold">
+                                    {order.address?.addressLine1}
+                                    {order.address?.addressLine2 &&
+                                        `, ${order.address.addressLine2}`}
+                                    , {order.address?.city}, {order.address?.state},{" "}
+                                    {order.address?.pincode}
+                                </span>
+                            </p>
+
+                            <p className="font-body text-sm text-black">
+                                Contact Number:{" "}
+                                <span className="font-semibold">
+                                    {order.address?.phone}
+                                </span>
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-                {/* Address */}
+                    {/* Right column */}
+                    <div className="lg:col-span-5 space-y-6">
+                        {/* Bill Details */}
+                        <div className="border border-gray-200 rounded-2xl p-6">
+                            <p className="font-body font-semibold text-brand-orange text-sm mb-4">
+                                Bill Details
+                            </p>
 
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
-                    <div className="p-6">
-
-                        <h4 className="text-xl font-semibold mb-4">
-                            Delivery Address
-                        </h4>
-
-                        <p>
-                            {order.address.fullName}
-                        </p>
-
-                        <p>
-                            {order.address.phone}
-                        </p>
-
-                        <p>
-                            {order.address.addressLine1}
-                        </p>
-
-                        <p>
-                            {order.address.city},{" "}
-                            {order.address.state}
-                        </p>
-
-                        <p>
-                            {order.address.pincode}
-                        </p>
-
-                    </div>
-                </div>
-
-                {/* Products */}
-
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div className="p-6">
-
-                        <h4 className="text-xl font-semibold mb-3">
-                            Ordered Products
-                        </h4>
-
-                        {order.items.map((item) => (
-
-                            <div
-                                key={item._id}
-                                className="border-b border-gray-200 py-3 last:border-b-0"
-                            >
-
-                                <h5 className="text-lg font-semibold">
-                                    {item.product?.name}
-                                </h5>
-
-                                <p>
-                                    Quantity:
-                                    {" "}
-                                    {item.quantity}
-                                </p>
-
-                                <p>
-                                    Price:
-                                    {" "}
-                                    ₹{item.price}
-                                </p>
-
-                                <p>
-                                    Subtotal:
-                                    {" "}
-                                    ₹
-                                    {item.price *
-                                        item.quantity}
-                                </p>
-
+                            <div className="space-y-3 font-body text-sm text-black">
+                                <div className="flex justify-between">
+                                    <span>Total Items</span>
+                                    <span>{order.items.length}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>Subtotal</span>
+                                    <span>₹{subtotal}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>Shipping</span>
+                                    <span className="text-green-600 font-semibold">FREE</span>
+                                </div>
                             </div>
 
-                        ))}
+                            <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">
+                                <span className="font-body font-semibold text-base">
+                                    Grand Total
+                                </span>
+                                <span className="font-body font-semibold text-lg">
+                                    ₹{grandTotal}
+                                </span>
+                            </div>
+                        </div>
 
+                        {/* Order Details */}
+                        <div className="border border-gray-200 rounded-2xl p-6">
+                            <p className="font-body font-semibold text-brand-orange text-sm mb-4">
+                                Order Details
+                            </p>
 
+                            <div className="space-y-2 font-body text-sm text-black">
+                                <p>
+                                    Payment Method:{" "}
+                                    <span className="font-semibold">
+                                        {order.paymentMethod === "RAZORPAY"
+                                            ? "Razorpay"
+                                            : "Cash on Delivery"}
+                                    </span>
+                                </p>
+                                <p>
+                                    Status of Payment:{" "}
+                                    <span className="font-semibold">
+                                        {order.paymentStatus}
+                                    </span>
+                                </p>
+                                <p>
+                                    Order Placed On:{" "}
+                                    <span className="font-semibold">
+                                        {new Date(
+                                            order.createdAt
+                                        ).toLocaleDateString("en-GB")}
+                                    </span>
+                                </p>
+                                <p>
+                                    Order ID:{" "}
+                                    <span className="font-semibold">
+                                        {order._id.slice(-6)}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
             </div>
 
             <Footer />
