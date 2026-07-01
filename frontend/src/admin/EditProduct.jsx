@@ -16,6 +16,11 @@ export default function EditProduct() {
   });
   const [packSizes, setPackSizes] = useState([]);
   const [howToEnjoy, setHowToEnjoy] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+    api.get("/category").then((res) => setCategories(res.data)).catch(console.log);
+  }, []);
   // GET product
   useEffect(() => {
     api.get(`/product/${id}`).then((res) => {
@@ -97,18 +102,23 @@ export default function EditProduct() {
     ]);
   };
   // update
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // await api.put(`/product/${id}`, form);
-    await api.put(`/product/${id}`, {
-        ...form,
-        packSizes,
-        howToEnjoy
-    });
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const payload = {
+      ...form,
+      packSizes,
+      howToEnjoy,
+      category: form.category || null, // null clears it, ObjectId still casts fine when set
+    };
+    await api.put(`/product/${id}`, payload);
     alert("Product updated successfully");
     navigate('/admin/products');
-
-  };
+  } catch (error) {
+    console.log(error);
+    alert(error.response?.data?.message || "Failed to update product");
+  }
+};
 
   return (
   <div className="max-w-3xl mx-auto p-6">
@@ -210,18 +220,6 @@ export default function EditProduct() {
             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
-        <div>
-          <label className="block mb-2 font-medium">
-            Description
-          </label>
-          <input
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="description"
-            className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-        </div>
 
         {/* Description */}
         <div>
@@ -253,17 +251,21 @@ export default function EditProduct() {
 
         {/* Category */}
         <div>
-          <label className="block mb-2 font-medium">
-            Category ID
-          </label>
-          <input
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            placeholder="Category ID"
-            className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-        </div>
+  <label className="block mb-2 font-medium">
+    Category <span className="text-gray-400 font-normal">(optional)</span>
+  </label>
+  <select
+    name="category"
+    value={form.category}
+    onChange={handleChange}
+    className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+  >
+    <option value="">No category</option>
+    {categories.map((c) => (
+      <option key={c._id} value={c._id}>{c.name}</option>
+    ))}
+  </select>
+</div>
         <div className="mt-6">
          <h3 className="font-bold mb-2">FAQs</h3>
 

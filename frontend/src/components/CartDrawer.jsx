@@ -4,7 +4,6 @@ import { Trash2, Minus, Plus, X } from "lucide-react";
 import api from "../api/axios";
 import { useCart } from "../context/CartContext";
 
-const SHIPPING_FEE = 99;
 
 export default function CartDrawer() {
   const { isCartOpen, closeCart } = useCart();
@@ -109,7 +108,7 @@ export default function CartDrawer() {
     (acc, item) => acc + (item.pack?.price || 0) * item.quantity,
     0
   );
-  const grandTotal = cartItems.length > 0 ? subtotal + SHIPPING_FEE : 0;
+  const grandTotal = subtotal;
 
   const handleCheckout = () => {
     closeCart();
@@ -246,15 +245,11 @@ export default function CartDrawer() {
         {cartItems.length > 0 && (
           <div className="flex-shrink-0 bg-white border-t border-gray-100 px-6 sm:px-8 py-6">
             <div className="space-y-3 font-body text-sm text-gray-600 mb-6">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span className="font-medium text-gray-900">₹{subtotal.toFixed(0)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Shipping</span>
-                <span className="font-medium text-gray-900">₹{SHIPPING_FEE}</span>
-              </div>
-            </div>
+  <div className="flex justify-between">
+    <span>Subtotal</span>
+    <span className="font-medium text-gray-900">₹{subtotal.toFixed(0)}</span>
+  </div>
+</div>
 
             <button
               onClick={handleCheckout}
