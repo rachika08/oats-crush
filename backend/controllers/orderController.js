@@ -4,93 +4,12 @@ import Cart from "../models/cartModel.js";
 import Product from "../models/Product.js";
 import Address from "../models/addressModel.js";
 
-// export const placeOrder = async (req, res) => {
-//     try {
-//         const userId = req.user.id;
-//         const { addressId, paymentMethod } = req.body;
-
-//         if (!["COD", "RAZORPAY"].includes(paymentMethod)) {
-//             return res.status(400).json({
-//                 message: "Invalid payment method"
-//             });
-//         }
-
-//         const address = await Address.findOne({
-//             _id: addressId,
-//             user: userId
-//         });
-
-//         if (!address) {
-//             return res.status(404).json({
-//                 message: "Address not found"
-//             });
-//         }
-
-//         const cart = await Cart.findOne({
-//             user: userId
-//         }).populate("items.product");
-
-//         if (!cart || cart.items.length === 0) {
-//             return res.status(400).json({
-//                 message: "Cart is empty"
-//             });
-//         }
-
-//         let totalAmount = 0;
-
-//         for (const item of cart.items) {
-
-//             if (item.product.stock < item.quantity) {
-//                 return res.status(400).json({
-//                     message: `${item.product.name} is out of stock`
-//                 });
-//             }
-
-//             totalAmount +=
-//                 item.product.price * item.quantity;
-//         }
-
-//         const orderItems = cart.items.map(item => ({
-//             product: item.product._id,
-//             quantity: item.quantity,
-//             price: item.product.price
-//         }));
-
-//         const order = await Order.create({
-//             user: userId,
-//             items: orderItems,
-//             address: addressId,
-//             totalAmount,
-//             paymentMethod,
-//             paymentStatus:"Pending",
-//             orderStatus: "Pending"
-//         });
-
-//         for (const item of cart.items) {
-//             item.product.stock -= item.quantity;
-//             await item.product.save();
-//         }
-
-//         cart.items = [];
-//         await cart.save();
-
-//         return res.status(201).json({
-//             message: "Order placed successfully",
-//             order
-//         });
-
-//     } catch (error) {
-//         return res.status(500).json({
-//             message: error.message
-//         });
-//     }
-// };
-
 export const placeOrder = async (req, res) => {
     try {
         const userId = req.user.id;
         const { addressId, paymentMethod } = req.body;
 
+        // ---------------- VALIDATION ----------------
         if (!["COD", "RAZORPAY"].includes(paymentMethod)) {
             return res.status(400).json({ message: "Invalid payment method" });
         }
@@ -104,6 +23,7 @@ export const placeOrder = async (req, res) => {
             return res.status(404).json({ message: "Address not found" });
         }
 
+        // ---------------- GET CART ----------------
         const cart = await Cart.findOne({ user: userId })
             .populate("items.product");
 
@@ -112,31 +32,99 @@ export const placeOrder = async (req, res) => {
         }
 
         let totalAmount = 0;
-
         const orderItems = [];
 
+        // ---------------- PROCESS ITEMS ----------------
         for (const item of cart.items) {
-            const packUnits = item.pack?.units || 1;
 
-            // stock check (IMPORTANT FIX)
-            if (item.product.stock < item.quantity * packUnits) {
+            // ================= CUSTOM BOX =================
+            // if (item.isCustomBox) {
+            //     totalAmount += item.customPrice;
+
+            //     orderItems.push({
+            //         isCustomBox: true,
+            //         packSize: item.packSize,
+            //         customProducts: item.customProducts,
+            //         quantity: 1,
+            //         price: item.customPrice
+            //     });
+
+            //     continue;
+            // }
+            if (item.isCustomBox) {
+                const productCounts = {};
+                for (const pid of item.customProducts) {
+                    const key = pid.toString();
+                    productCounts[key] = (productCounts[key] || 0) + 1;
+                }
+
+                for (const pid of Object.keys(productCounts)) {
+                    const freshProduct = await Product.findById(pid);
+                    if (!freshProduct || freshProduct.stock < productCounts[pid]) {
+                        return res.status(400).json({
+                            message: `${freshProduct?.name || "A product"} in your custom box is out of stock`
+                        });
+                    }
+                }
+
+                totalAmount += item.customPrice;
+                orderItems.push({
+                    isCustomBox: true,
+                    packSize: item.packSize,
+                    customProducts: item.customProducts,
+                    quantity: 1,
+                    price: item.customPrice
+                });
+
+                for (const pid of Object.keys(productCounts)) {
+                    await Product.findByIdAndUpdate(pid, { $inc: { stock: -productCounts[pid] } });
+                }
+
+                continue;
+            }
+
+            // ================= NORMAL PRODUCT =================
+            const product = item.product;
+            const packUnits = item.pack?.units || 1;
+            const quantityNeeded = item.quantity * packUnits;
+
+            if (!product) {
+                return res.status(400).json({ message: "Product missing in cart" });
+            }
+
+            // 🔥 STOCK CHECK (REAL DB VALUE SAFE)
+            const freshProduct = await Product.findById(product._id);
+
+            if (!freshProduct || freshProduct.stock < quantityNeeded) {
                 return res.status(400).json({
-                    message: `${item.product.name} is out of stock`
+                    message: `${product.name} is out of stock`
                 });
             }
 
+            // 💰 PRICE CALCULATION
             const itemTotal = item.quantity * item.pack.price;
-
             totalAmount += itemTotal;
 
             orderItems.push({
-                product: item.product._id,
+                product: product._id,
                 quantity: item.quantity,
                 pack: item.pack,
-                price: item.pack.price
+                price: item.pack.price,
+                isCustomBox: false
             });
+
+            // 🔥 STOCK UPDATE (FIXED - NO SAVE BUG)
+            await Product.findByIdAndUpdate(
+                product._id,
+                {
+                    $inc: {
+                        stock: -quantityNeeded
+                    }
+                }
+            );
         }
 
+        // ---------------- CREATE ORDER ----------------
         const order = await Order.create({
             user: userId,
             items: orderItems,
@@ -147,18 +135,12 @@ export const placeOrder = async (req, res) => {
             orderStatus: "Pending"
         });
 
-        // 🔥 FIX STOCK DEDUCTION
-        for (const item of cart.items) {
-            const packUnits = item.pack?.units || 1;
-
-            item.product.stock -= item.quantity * packUnits;
-            await item.product.save();
-        }
-        
+        // ---------------- CLEAR CART ----------------
         cart.items = [];
         cart.reminderCount = 0;
         cart.lastReminderAt = null;
         cart.lastReminderType = null;
+
         await cart.save();
 
         return res.status(201).json({
@@ -170,6 +152,8 @@ export const placeOrder = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+
+
 
 export const getOrders=async(req,res)=>{
     try {
@@ -225,15 +209,33 @@ export const cancelOrder = async (req, res) => {
         }
 
         // 🔁 Restore stock
+        // for (const item of order.items) {
+        //     await Product.findByIdAndUpdate(
+        //         item.product,
+        //         {
+        //             $inc: {
+        //                 stock: item.quantity,
+        //             },
+        //         }
+        //     );
+        // }
         for (const item of order.items) {
-            await Product.findByIdAndUpdate(
-                item.product,
-                {
-                    $inc: {
-                        stock: item.quantity,
-                    },
+            if (item.isCustomBox) {
+                const productCounts = {};
+                for (const pid of item.customProducts) {
+                    const key = pid.toString();
+                    productCounts[key] = (productCounts[key] || 0) + 1;
                 }
-            );
+                for (const pid of Object.keys(productCounts)) {
+                    await Product.findByIdAndUpdate(pid, { $inc: { stock: productCounts[pid] } });
+                }
+                continue;
+            }
+
+            const packUnits = item.pack?.units || 1;
+            await Product.findByIdAndUpdate(item.product, {
+                $inc: { stock: item.quantity * packUnits }
+            });
         }
 
         // 🧾 Update order
@@ -261,68 +263,3 @@ export const cancelOrder = async (req, res) => {
     }
 };
 
-// export const buyNow = async (req, res) => {
-//     try {
-//         const userId = req.user.id;
-//         const {
-//             productId,
-//             quantity,
-//             addressId,
-//             paymentMethod
-//         } = req.body;
-
-//         const product = await Product.findById(productId);
-
-//         if (!product) {
-//             return res.status(404).json({
-//                 message: "Product not found"
-//             });
-//         }
-
-//         if (product.stock < quantity) {
-//             return res.status(400).json({
-//                 message: "Product out of stock"
-//             });
-//         }
-
-//         const address = await Address.findOne({
-//             _id: addressId,
-//             user: userId
-//         });
-
-//         if (!address) {
-//             return res.status(404).json({
-//                 message: "Address not found"
-//             });
-//         }
-
-//         const order = await Order.create({
-//             user: userId,
-//             items: [
-//                 {
-//                     product: product._id,
-//                     quantity,
-//                     price: product.price
-//                 }
-//             ],
-//             address: addressId,
-//             totalAmount: product.price * quantity,
-//             paymentMethod,
-//             paymentStatus: "Pending",
-//             orderStatus: "Pending"
-//         });
-
-//         product.stock -= quantity;
-//         await product.save();
-
-//         res.status(201).json({
-//             message: "Order placed successfully",
-//             order
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({
-//             message: error.message
-//         });
-//     }
-// };

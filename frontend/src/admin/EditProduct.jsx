@@ -102,22 +102,34 @@ export default function EditProduct() {
     ]);
   };
   // update
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const payload = {
-      ...form,
-      packSizes,
-      howToEnjoy,
-      category: form.category || null, // null clears it, ObjectId still casts fine when set
-    };
-    await api.put(`/product/${id}`, payload);
-    alert("Product updated successfully");
-    navigate('/admin/products');
-  } catch (error) {
-    console.log(error);
-    alert(error.response?.data?.message || "Failed to update product");
-  }
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   // await api.put(`/product/${id}`, form);
+  //   await api.put(`/product/${id}`, {
+  //       ...form,
+  //       packSizes,
+  //       howToEnjoy
+  //   });
+  //   alert("Product updated successfully");
+  //   navigate('/admin/products');
+
+  // };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = { ...form, packSizes, howToEnjoy };
+
+    if (!payload.category) {
+        delete payload.category; // don't send empty string — let Mongoose leave it untouched
+    }
+
+    try {
+        await api.put(`/product/${id}`, payload);
+        alert("Product updated successfully");
+        navigate('/admin/products');
+    } catch (error) {
+        alert(error.response?.data?.message || "Failed to update product");
+    }
 };
 
   return (

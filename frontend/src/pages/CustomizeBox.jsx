@@ -79,26 +79,39 @@ export default function CustomizeBox() {
       return;
     }
 
+    // const payload = {
+    //   packSize,
+    //   price: PACK_CONFIG[packSize].price,
+    //   items: selectedItems.map((item) => item.product._id),
+    // };
     const payload = {
       packSize,
-      price: PACK_CONFIG[packSize].price,
-      items: selectedItems.map((item) => item.product._id),
+      items: selectedItems.map(item => item.product._id),
     };
-
     try {
-      // Backend endpoint not built yet — see contract notes for Rachika.
-      await api.post("/cart/add-custom-box", payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        await api.post("/cart/add-custom-box", payload, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        setSelectedItems([]);
+        openCart();
     } catch (error) {
-      console.log(
-        "Custom box backend not ready yet:",
-        payload,
-        error?.response?.data || error.message
-      );
+        alert(error?.response?.data?.message || "Could not add box to cart. Please try again.");
     }
 
-    openCart();
+    // try {
+    //   // Backend endpoint not built yet — see contract notes for Rachika.
+    //   await api.post("/cart/add-custom-box", payload, {
+    //     headers: { Authorization: `Bearer ${token}` },
+    //   });
+    // } catch (error) {
+    //   console.log(
+    //     "Custom box backend not ready yet:",
+    //     payload,
+    //     error?.response?.data || error.message
+    //   );
+    // }
+
+    // openCart();
   };
 
   return (

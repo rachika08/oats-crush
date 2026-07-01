@@ -53,7 +53,7 @@ export default function Login() {
             const res = await api.post("/auth/google", {
                 token: credentialResponse.credential,
             });
-
+            console.log("login credentials:  ",res);
             const user = res.data.user;
 
             localStorage.setItem("user", JSON.stringify(user));
