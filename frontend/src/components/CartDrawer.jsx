@@ -185,7 +185,7 @@ export default function CartDrawer() {
     return acc + (item.pack?.price || 0) * (item.quantity || 1);
   }, 0);
 
-  const grandTotal = cartItems.length > 0 ? subtotal + SHIPPING_FEE : 0;
+  const grandTotal = cartItems.length > 0 ? subtotal + 0 : 0;
 
   const handleCheckout = () => {
     closeCart();
@@ -353,10 +353,10 @@ export default function CartDrawer() {
               <span>₹{subtotal.toFixed(0)}</span>
             </div>
 
-            <div className="flex justify-between text-sm mt-2">
+            {/* <div className="flex justify-between text-sm mt-2">
               <span>Shipping</span>
               <span>₹{SHIPPING_FEE}</span>
-            </div>
+            </div> */}
 
             <button
               onClick={handleCheckout}
