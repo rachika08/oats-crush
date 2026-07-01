@@ -70,6 +70,7 @@ const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showToast, setShowToast] = useState(false);
+    const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
   const [availability, setAvailability] = useState("");
   const [price, setPrice] = useState("");
@@ -79,6 +80,7 @@ const AllProducts = () => {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const fetchProducts = async () => {
@@ -91,6 +93,14 @@ const AllProducts = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get("/category");
+      setCategories(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   
 const handleAddToCart = async (e, product) => {
   e.stopPropagation();
@@ -120,36 +130,31 @@ const handleAddToCart = async (e, product) => {
       return;
     }
 
-    await api.post(
-      "/cart/add",
-      {
-        productId: product._id,
-        quantity: 1,
-        pack: {
-          label: defaultPack.label,
-          units: Number(defaultPack.units) || 1,
-          price: price,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await api.post(
+  "/cart/add",
+  {
+    productId: product._id,
+    quantity: 1,
+    pack: {
+      label: defaultPack.label,
+      units: Number(defaultPack.units) || 1,
+      price: price,
+    },
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
-    const cartRes = await api.get("/cart", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const updatedItems = cartRes.data.items || [];
-    localStorage.setItem("cartItems", JSON.stringify(updatedItems));
-    localStorage.setItem("cartCount", updatedItems.length);
+const updatedItems = res.data.items || [];
+localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+localStorage.setItem("cartCount", updatedItems.length);
 
-    setTimeout(() => {
-      window.dispatchEvent(new Event("cartUpdated"));
-    }, 50);
+window.dispatchEvent(new Event("cartUpdated"));
 
-    setShowToast(true);
+setShowToast(true);
   } catch (error) {
     console.log(error.response?.data || error.message);
   }

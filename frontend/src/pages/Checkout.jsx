@@ -3,6 +3,7 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import { useNavigate } from "react-router";
+import AddressModal from "../components/AddressModal";
 
 export default function Checkout() {
     const [addresses, setAddresses] = useState([]);
@@ -10,6 +11,8 @@ export default function Checkout() {
     const [cart, setCart] = useState(null);
     const [loading, setLoading] = useState(true);
     const [paymentMethod, setPaymentMethod] = useState("COD");
+    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+    const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,6 +30,17 @@ export default function Checkout() {
             }
         } catch (error) {
             console.log(error);
+        }
+    };
+
+    const handleSaveAddress = async (formData) => {
+        try {
+            const res = await api.post("/address", formData);
+            await fetchAddresses();
+            setSelectedAddress(res.data._id);
+            setIsAddressModalOpen(false);
+        } catch (error) {
+            alert(error.response?.data?.message || "Failed to save address");
         }
     };
 
@@ -110,6 +124,11 @@ export default function Checkout() {
 
         } catch (error) {
             alert(error.response?.data?.message || "Failed to place order");
+        }
+
+
+        finally {
+            setIsPlacingOrder(false);
         }
     };
 
@@ -268,6 +287,12 @@ export default function Checkout() {
             </div>
 
             <Footer />
+            <AddressModal
+                isOpen={isAddressModalOpen}
+                onClose={() => setIsAddressModalOpen(false)}
+                onSave={handleSaveAddress}
+                initialData={null}
+            />
         </>
     );
 }

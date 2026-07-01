@@ -1,5 +1,4 @@
 import Navbar from "../components/Navbar";
-import PromoBar from "../components/home/PromoBar";
 import HeroSection from "../components/home/HeroSection";
 import FlavoursSection from "../components/home/FlavoursSection";
 import InfoBar from "../components/home/InfoBar";
@@ -36,7 +35,6 @@ const Home = () => {
   ];
   return (
     <>
-      <PromoBar />
       <Navbar />
       <HeroSection />
       <FlavoursSection />

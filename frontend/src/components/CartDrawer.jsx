@@ -4,7 +4,6 @@ import { Trash2, Minus, Plus, X } from "lucide-react";
 import api from "../api/axios";
 import { useCart } from "../context/CartContext";
 
-const SHIPPING_FEE = 99;
 
 export default function CartDrawer() {
   const { isCartOpen, closeCart } = useCart();
