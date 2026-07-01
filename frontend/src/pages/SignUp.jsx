@@ -195,7 +195,7 @@ export default function Signup() {
                         {/* SUBMIT */}
                         <button
                             type="submit"
-                            className="w-full bg-orange-500 text-white py-3 rounded-full cursor-pointer"
+                            className="w-full font-heading text-xl bg-orange-500 text-white py-3 rounded-full cursor-pointer"
                         >
                             SIGN UP
                         </button>
