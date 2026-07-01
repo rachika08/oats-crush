@@ -3,6 +3,7 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import { useNavigate } from "react-router";
+import AddressModal from "../components/AddressModal";
 
 export default function Checkout() {
     const [addresses, setAddresses] = useState([]);
@@ -10,6 +11,8 @@ export default function Checkout() {
     const [cart, setCart] = useState(null);
     const [loading, setLoading] = useState(true);
     const [paymentMethod, setPaymentMethod] = useState("COD");
+    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+    const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,6 +32,17 @@ export default function Checkout() {
             console.log(error);
         }
     };
+
+    const handleSaveAddress = async (formData) => {
+    try {
+        const res = await api.post("/address", formData);
+        await fetchAddresses();
+        setSelectedAddress(res.data._id);
+        setIsAddressModalOpen(false);
+    } catch (error) {
+        alert(error.response?.data?.message || "Failed to save address");
+    }
+};
 
     const fetchCart = async () => {
         try {
@@ -58,78 +72,83 @@ export default function Checkout() {
     };
 
     const handlePlaceOrder = async () => {
-        console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
-        try {
-            if (!selectedAddress) {
-                alert("Please select an address");
-                return;
-            }
+    if (isPlacingOrder) return;
+    setIsPlacingOrder(true);
 
-            const orderRes = await api.post("/order", {
-                addressId: selectedAddress,
-                paymentMethod,
-            });
-
-            const order = orderRes.data.order;
-
-            if (paymentMethod === "COD") {
-                navigate(`/order/${order._id}`);
-                return;
-            }
-
-            const paymentRes = await api.post(
-                "/payment/create-order",
-                {
-                    orderId: order._id,
-                }
-            );
-            const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-
-                amount: paymentRes.data.amount,
-
-                currency: paymentRes.data.currency,
-
-                order_id: paymentRes.data.orderId,
-
-                name: "Oats Crush",
-
-                description: "Order Payment",
-
-                handler: async function (response) {
-                    console.log(response);
-                    try {
-                        const res = await api.post("/payment/verify", {
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature,
-                        });
-
-                        console.log("Payment Verified:", res.data);
-
-                        navigate(`/order/${order._id}`);
-                    } catch (error) {
-                        console.log("Verification failed", error);
-                    }
-                },
-
-                theme: {
-                    color: "#3399cc",
-                },
-            };
-
-            const razorpay = new window.Razorpay(options);
-
-            razorpay.open();
-
-            console.log(paymentRes.data);
-        } catch (error) {
-            alert(
-                error.response?.data?.message ||
-                    "Failed to place order"
-            );
+    console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
+    try {
+        if (!selectedAddress) {
+            alert("Please select an address");
+            return;
         }
-    };
+
+        const orderRes = await api.post("/order", {
+            addressId: selectedAddress,
+            paymentMethod,
+        });
+
+        const order = orderRes.data.order;
+
+        if (paymentMethod === "COD") {
+            navigate(`/order/${order._id}`);
+            return;
+        }
+
+        const paymentRes = await api.post(
+            "/payment/create-order",
+            {
+                orderId: order._id,
+            }
+        );
+        const options = {
+            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
+            amount: paymentRes.data.amount,
+
+            currency: paymentRes.data.currency,
+
+            order_id: paymentRes.data.orderId,
+
+            name: "Oats Crush",
+
+            description: "Order Payment",
+
+            handler: async function (response) {
+                console.log(response);
+                try {
+                    const res = await api.post("/payment/verify", {
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                    });
+
+                    console.log("Payment Verified:", res.data);
+
+                    navigate(`/order/${order._id}`);
+                } catch (error) {
+                    console.log("Verification failed", error);
+                }
+            },
+
+            theme: {
+                color: "#3399cc",
+            },
+        };
+
+        const razorpay = new window.Razorpay(options);
+
+        razorpay.open();
+
+        console.log(paymentRes.data);
+    } catch (error) {
+        alert(
+            error.response?.data?.message ||
+                "Failed to place order"
+        );
+    } finally {
+        setIsPlacingOrder(false);
+    }
+};
 
     if (loading) {
         return (
@@ -165,9 +184,7 @@ export default function Checkout() {
 
                                 <button
                                     className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-                                    onClick={() =>
-                                        navigate("/addresses")
-                                    }
+                                    onClick={() => setIsAddressModalOpen(true)}
                                 >
                                     Add New Address
                                 </button>
@@ -357,13 +374,12 @@ export default function Checkout() {
                                 </div>
 
                                 <button
-                                    className="bg-green-500 text-white px-4 py-2 rounded mt-4"
-                                    onClick={
-                                        handlePlaceOrder
-                                    }
-                                >
-                                    Place Order
-                                </button>
+    className="bg-green-500 text-white px-4 py-2 rounded mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+    onClick={handlePlaceOrder}
+    disabled={isPlacingOrder}
+>
+    {isPlacingOrder ? "Placing Order..." : "Place Order"}
+</button>
                             </div>
                         </div>
                     </div>
@@ -371,6 +387,12 @@ export default function Checkout() {
             </div>
 
             <Footer />
+            <AddressModal
+    isOpen={isAddressModalOpen}
+    onClose={() => setIsAddressModalOpen(false)}
+    onSave={handleSaveAddress}
+    initialData={null}
+/>
         </>
     );
 }
