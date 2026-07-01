@@ -367,7 +367,7 @@ const handleAddToCart = async (e, product) => {
             label="Category"
             value={category}
             onChange={setCategory}
-            options={["Oats","Coffee", "Rasmalai", "Savoury", "Midnight Latte","Milk"]}
+            options={["Oats", "Oats Shake"]}
           />
 
           <FilterDropdown
