@@ -195,7 +195,7 @@ export default function Signup() {
                         {/* SUBMIT */}
                         <button
                             type="submit"
-                            className="w-full font-heading text-xl bg-orange-500 text-white py-3 rounded-full cursor-pointer"
+                            className="w-full font-heading text-xl bg-brand-orange text-white py-3 rounded-full cursor-pointer"
                         >
                             SIGN UP
                         </button>
@@ -206,7 +206,7 @@ export default function Signup() {
                         Already have an account?{" "}
                         <span
                             onClick={() => navigate("/login")}
-                            className="text-orange-500 cursor-pointer"
+                            className="text-brand-orange cursor-pointer"
                         >
                             Login
                         </span>

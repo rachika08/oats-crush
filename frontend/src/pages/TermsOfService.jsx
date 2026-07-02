@@ -296,7 +296,7 @@ export default function TermsOfService() {
 
                     <a
                         href="mailto:contact@oatscrush.co.in"
-                        className="text-brand-orange hover:underline mt-2 inline-block"
+                        className="text-brand-orange-dark font-semibold hover:underline mt-2 inline-block"
                     >
                         contact@oatscrush.co.in
                     </a>
@@ -316,7 +316,7 @@ export default function TermsOfService() {
 
                     <a
                         href="mailto:contact@oatscrush.co.in"
-                        className="text-brand-orange hover:underline mt-2 inline-block"
+                        className="text-brand-orange-dark font-semibold hover:underline mt-2 inline-block"
                     >
                         contact@oatscrush.co.in
                     </a>

@@ -278,7 +278,7 @@ export default function PrivacyPolicy() {
 
                     <a
                         href="mailto:contact@oatscrush.co.in"
-                        className="text-brand-orange hover:underline mt-2 inline-block"
+                        className="text-brand-orange-dark hover:underline mt-2 inline-block"
                     >
                         contact@oatscrush.co.in
                     </a>

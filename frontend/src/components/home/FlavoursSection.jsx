@@ -63,7 +63,7 @@ const FlavoursSection = () => {
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto text-center">
-        <span className="inline-block border border-brand-orange text-brand-orange rounded-full px-4 py-1 text-xs sm:text-sm font-body mb-4">
+        <span className="inline-block border border-brand-orange-dark text-brand-orange-dark rounded-full px-4 py-1 text-xs sm:text-sm font-body mb-4">
           Coming Soon
         </span>
 

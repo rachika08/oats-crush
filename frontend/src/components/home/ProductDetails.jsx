@@ -383,7 +383,7 @@ const isSoldOut = product.stock <= 0;
                                                     <span
                                                         className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
                                                             isActive
-                                                                ? "bg-white text-brand-orange border-brand-orange"
+                                                                ? "bg-white text-brand-orange-dark border-brand-orange"
                                                                 : "bg-white text-gray-500 border-gray-200"
                                                         }`}
                                                     >

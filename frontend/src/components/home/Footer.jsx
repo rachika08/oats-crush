@@ -12,20 +12,20 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 py-10 gap-10">
           {/* Quick Links */}
           <div className="md:border-r border-gray-200 md:pr-10">
-            <h3 className="font-heading text-brand-orange text-lg tracking-wide mb-4">
+            <h3 className="font-heading text-brand-orange-dark text-lg tracking-wide mb-4">
               QUICK LINKS
             </h3>
 
             <ul className="space-y-3 font-body text-sm">
               <li>
-                <Link to="/" className="hover:text-brand-orange transition">
+                <Link to="/" className="hover:text-brand-orange-dark transition">
                   Home
                 </Link>
               </li>
               <li>
                 <Link
                   to="/products"
-                  className="hover:text-brand-orange transition"
+                  className="hover:text-brand-orange-dark transition"
                 >
                   Products
                 </Link>
@@ -33,7 +33,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/contact"
-                  className="hover:text-brand-orange transition"
+                  className="hover:text-brand-orange-dark transition"
                 >
                   About Us
                 </Link>
@@ -43,7 +43,7 @@ const Footer = () => {
 
           {/* Support */}
           <div className="md:border-r border-gray-200 md:pr-10">
-            <h3 className="font-heading text-brand-orange text-lg tracking-wide mb-4">
+            <h3 className="font-heading text-brand-orange-dark text-lg tracking-wide mb-4">
               SUPPORT
             </h3>
 
@@ -51,7 +51,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/contact"
-                  className="hover:text-brand-orange transition"
+                  className="hover:text-brand-orange-dark transition"
                 >
                   Contact Us
                 </Link>
@@ -59,7 +59,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/terms"
-                  className="hover:text-brand-orange transition"
+                  className="hover:text-brand-orange-dark transition"
                 >
                   Terms of Services
                 </Link>
@@ -67,7 +67,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/shippingpolicy"
-                  className="hover:text-brand-orange transition"
+                  className="hover:text-brand-orange-dark transition"
                 >
                   Shipping Policy
                 </Link>
@@ -75,7 +75,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/returnpolicy"
-                  className="hover:text-brand-orange transition"
+                  className="hover:text-brand-orange-dark transition"
                 >
                   Return Policy
                 </Link>
@@ -83,7 +83,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/privacypolicy"
-                  className="hover:text-brand-orange transition"
+                  className="hover:text-brand-orange-dark transition"
                 >
                   Privacy Policy
                 </Link>
