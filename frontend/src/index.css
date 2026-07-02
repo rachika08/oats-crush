@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: light;
+}
+
 @theme {
   /* Brand */
-  --color-brand-orange: #f66f1e;
+  --color-brand-orange: #E06318;
+  --color-brand-orange-dark: #C45414;
 
   /* Flavour card palettes */
   --color-flavour-coffee-bg: #e8c9a8;
