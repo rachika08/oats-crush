@@ -3,44 +3,6 @@ import express from 'express';
 import helmet from "helmet";
 const app=express();
 
-app.use(
-    helmet({
-        contentSecurityPolicy: {
-            reportOnly: true,
-            directives: {
-                defaultSrc: ["'self'"],
-                scriptSrc: [
-                    "'self'",
-                    "https://accounts.google.com",
-                    "https://apis.google.com"
-                ],
-                connectSrc: [
-                    "'self'",
-                    process.env.BACKEND_URL
-                ],
-                imgSrc: [
-                    "'self'",
-                    "data:",
-                    "https:"
-                ],
-                styleSrc: [
-                    "'self'",
-                    "'unsafe-inline'"
-                ]
-            }
-        },
-
-        hsts: {
-            maxAge: 31536000,
-            includeSubDomains: true,
-            preload: true
-        },
-
-        frameguard: {
-            action: "deny"
-        }
-    })
-);
 import connectDB from './config/mongo.js';
 import cors from 'cors';
 
@@ -58,8 +20,63 @@ import adminOrderRoutes from './routes/adminOrderRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import blogRoutes from './routes/blogRoutes.js'
 
+app.use(helmet()); // base security defaults
+app.use(
+    helmet.contentSecurityPolicy({
+        reportOnly: true,
+        directives: {
+            defaultSrc: ["'self'"],
+
+            scriptSrc: [
+                "'self'",
+                "https://accounts.google.com",
+                "https://apis.google.com"
+            ],
+
+            connectSrc: [
+                "'self'",
+                "https://oatscrush-backend.onrender.com"
+            ],
+
+            imgSrc: [
+                "'self'",
+                "data:",
+                "https:"
+            ],
+
+            styleSrc: ["'self'", "'unsafe-inline'"],
+
+            baseUri: ["'self'"],
+            fontSrc: ["'self'", "https:", "data:"],
+            formAction: ["'self'"],
+            frameAncestors: ["'self'"],
+            objectSrc: ["'none'"],
+            scriptSrcAttr: ["'none'"],
+            upgradeInsecureRequests: []
+        }
+    })
+);
+
+app.use(
+    helmet.hsts({
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    })
+);
+
+app.use(
+    helmet.frameguard({
+        action: "deny"
+    })
+);
+
 app.use(express.urlencoded({extended:true}));
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true
+}));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
