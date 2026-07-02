@@ -1,6 +1,46 @@
 import 'dotenv/config';
 import express from 'express';
+import helmet from "helmet";
 const app=express();
+
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            reportOnly: true,
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: [
+                    "'self'",
+                    "https://accounts.google.com",
+                    "https://apis.google.com"
+                ],
+                connectSrc: [
+                    "'self'",
+                    process.env.BACKEND_URL
+                ],
+                imgSrc: [
+                    "'self'",
+                    "data:",
+                    "https:"
+                ],
+                styleSrc: [
+                    "'self'",
+                    "'unsafe-inline'"
+                ]
+            }
+        },
+
+        hsts: {
+            maxAge: 31536000,
+            includeSubDomains: true,
+            preload: true
+        },
+
+        frameguard: {
+            action: "deny"
+        }
+    })
+);
 import connectDB from './config/mongo.js';
 import cors from 'cors';
 
