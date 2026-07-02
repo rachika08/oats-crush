@@ -150,6 +150,7 @@ const BlogSection = () => {
               <img
                 src={blog.coverImage}
                 className="h-48 w-full object-cover"
+                alt={blog.title}
               />
 
               <div className="p-4">

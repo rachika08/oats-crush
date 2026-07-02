@@ -91,14 +91,14 @@ useEffect(() => {
 
         {/* Desktop Nav Links */}
         <div className="hidden md:flex items-center gap-15 font-body text-sm font-medium">
-          <Link to="/" className="hover:text-brand-orange transition">
+          <Link to="/" className="hover:text-brand-orange-dark transition">
             Home
           </Link>
 
           {/* Category Dropdown */}
           <div className="relative">
             <button
-  className="flex items-center gap-1 hover:text-brand-orange transition cursor-pointer"
+  className="flex items-center gap-1 hover:text-brand-orange-dark transition cursor-pointer"
   onClick={() => setIsCategoryOpen(!isCategoryOpen)}
 >
   Categories
@@ -134,11 +134,11 @@ useEffect(() => {
             )}
           </div>
 
-          <Link to="/customize-box" className="hover:text-brand-orange transition">
+          <Link to="/customize-box" className="hover:text-brand-orange-dark transition">
   Customize Box
 </Link>
 
-<Link to="/contact" className="hover:text-brand-orange transition">
+<Link to="/contact" className="hover:text-brand-orange-dark transition">
   About Us
 </Link>
         </div>
@@ -186,7 +186,7 @@ useEffect(() => {
               {isMobileMenuOpen && (
   <div className="absolute top-8 right-0 bg-white border rounded-xl shadow-md min-w-[180px] py-2 z-50 text-sm cursor-pointer">
     <button
-      className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange"
+      className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange-dark"
       onClick={() => {
         navigate("/profile");
         setIsMobileMenuOpen(false);
@@ -195,7 +195,7 @@ useEffect(() => {
       View Profile
     </button>
     <button
-      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer hover:text-brand-orange"
+      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer hover:text-brand-orange-dark"
       onClick={() => {
         localStorage.removeItem("token");
         navigate("/");

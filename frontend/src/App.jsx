@@ -35,6 +35,7 @@ import Contact from './pages/Contact';
 import CustomizeBox from './pages/CustomizeBox';
 import BlogDetails from './components/home/BlogDetails';
 import Blogs from './components/home/Blogs';
+import WhatsAppButton from './components/WhatsAppButton';
 
 
 function RootLayout() {
@@ -42,7 +43,9 @@ function RootLayout() {
     <>
       <ScrollToTop />
       <CartDrawer />
+      <WhatsAppButton />
       <Outlet />
+      
     </>
   );
 }

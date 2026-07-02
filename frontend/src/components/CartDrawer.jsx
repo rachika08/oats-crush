@@ -5,8 +5,25 @@ import api from "../api/axios";
 import { useCart } from "../context/CartContext";
 
 
+const SHIPPING_FEE = 60;
+const FREE_SHIPPING_THRESHOLD = 499;
+const DISCOUNT_THRESHOLD = 1499;
+const DISCOUNT_AMOUNT = 50;
+const FREE_BLENDER_THRESHOLD = 2999;
+
+const REWARD_TIERS = [
+  { amount: FREE_SHIPPING_THRESHOLD, label: "Free Shipping" },
+  { amount: DISCOUNT_THRESHOLD, label: "₹50 Off" },
+  { amount: FREE_BLENDER_THRESHOLD, label: "Free Blender" },
+];
+
+
 export default function CartDrawer() {
   const { isCartOpen, closeCart } = useCart();
+
+  // ---------------- EXPLORE MORE (real products, static UI) ----------------
+  const [exploreProducts, setExploreProducts] = useState([]);
+  
 
   const [cartItems, setCartItems] = useState(() => {
     const saved = localStorage.getItem("cartItems");
@@ -40,6 +57,73 @@ export default function CartDrawer() {
   };
 
   // ---------------- EFFECTS ----------------
+const handleExploreAddToCart = async (product) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Please login to add items to your cart");
+        closeCart();
+        navigate("/login");
+        return;
+      }
+
+      const defaultPack =
+        product.packSizes?.find((p) => Number(p.units) === 1) ||
+        product.packSizes?.[0];
+
+      if (!defaultPack) {
+        alert("Product pack missing");
+        return;
+      }
+
+      const price = Number(defaultPack.price);
+      if (isNaN(price)) {
+        alert("Invalid product price");
+        return;
+      }
+
+      await api.post(
+        "/cart/add",
+        {
+          productId: product._id,
+          quantity: 1,
+          pack: {
+            label: defaultPack.label,
+            units: Number(defaultPack.units) || 1,
+            price: price,
+          },
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      await fetchCart();
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+      alert(error.response?.data?.message || "Could not add item to cart");
+    }
+  };
+
+  const fetchExploreProducts = async () => {
+    try {
+      const res = await api.get("/product");
+      const allProducts = res.data.products || res.data;
+
+      const cartProductIds = cartItems
+        .filter((item) => !item.isCustomBox)
+        .map((item) => item.product?._id);
+
+      const filtered = allProducts
+        .filter((p) => !cartProductIds.includes(p._id))
+        .slice(0, 6);
+
+      setExploreProducts(filtered);
+    } catch (error) {
+      console.log("Explore products fetch error:", error);
+    }
+  };
+
+  // ---------------- EFFECTS ----------------
   useEffect(() => {
     if (!isCartOpen) return;
     fetchCart();
@@ -49,6 +133,11 @@ export default function CartDrawer() {
       document.body.style.overflow = "";
     };
   }, [isCartOpen]);
+
+  useEffect(() => {
+    if (!isCartOpen) return;
+    fetchExploreProducts();
+  }, [isCartOpen, cartItems.length]);
 
   useEffect(() => {
     if (!isCartOpen) return;
@@ -179,13 +268,19 @@ export default function CartDrawer() {
   const subtotal = cartItems.reduce((acc, item) => {
     if (item.isCustomBox) {
       return acc + (item.customPrice || 0);
-      // return acc + (item.customPrice || item.packSize * 100);
     }
 
     return acc + (item.pack?.price || 0) * (item.quantity || 1);
   }, 0);
 
-  const grandTotal = cartItems.length > 0 ? subtotal + 0 : 0;
+  const shippingFee =
+    cartItems.length === 0 || subtotal >= FREE_SHIPPING_THRESHOLD
+      ? 0
+      : SHIPPING_FEE;
+
+  const discount = subtotal >= DISCOUNT_THRESHOLD ? DISCOUNT_AMOUNT : 0;
+
+  const grandTotal = cartItems.length > 0 ? subtotal + shippingFee - discount : 0;
 
   const handleCheckout = () => {
     closeCart();
@@ -223,6 +318,58 @@ export default function CartDrawer() {
             <X size={24} />
           </button>
         </div>
+
+        {/* REWARD PROGRESS BAR */}
+        {cartItems.length > 0 && (
+          <div className="px-6 pt-4 pb-2 border-b border-gray-200">
+            <p className="font-body text-xs text-gray-500 mb-3 text-center">
+              {subtotal >= FREE_BLENDER_THRESHOLD
+                ? "You've unlocked every reward! 🎉"
+                : `Add ₹${(
+                    REWARD_TIERS.find((t) => subtotal < t.amount)?.amount -
+                    subtotal
+                  ).toFixed(0)} more to unlock ${
+                    REWARD_TIERS.find((t) => subtotal < t.amount)?.label
+                  }`}
+            </p>
+
+            <div className="relative h-1.5 bg-gray-200 rounded-full mb-3">
+              <div
+                className="absolute top-0 left-0 h-1.5 bg-brand-orange rounded-full transition-all duration-500"
+                style={{
+                  width: `${Math.min(
+                    (subtotal / FREE_BLENDER_THRESHOLD) * 100,
+                    100
+                  )}%`,
+                }}
+              />
+            </div>
+
+            <div className="flex justify-between text-center">
+              {REWARD_TIERS.map((tier) => {
+                const unlocked = subtotal >= tier.amount;
+                return (
+                  <div key={tier.amount} className="flex flex-col items-center w-1/3">
+                    <span
+                      className={`text-[10px] font-semibold ${
+                        unlocked ? "text-brand-orange" : "text-gray-400"
+                      }`}
+                    >
+                      {unlocked ? "✓" : "₹" + tier.amount}
+                    </span>
+                    <span
+                      className={`text-[10px] mt-0.5 ${
+                        unlocked ? "text-black" : "text-gray-400"
+                      }`}
+                    >
+                      {tier.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* BODY */}
         <div className="flex-1 overflow-y-auto px-6 py-2">
@@ -352,31 +499,79 @@ export default function CartDrawer() {
               );
             })
           )}
+
+          {/* EXPLORE MORE — real products */}
+          {cartItems.length > 0 && exploreProducts.length > 0 && (
+            <div className="py-5 border-t border-gray-200">
+              <p className="font-body text-sm font-semibold mb-3">
+                You might also like
+              </p>
+              <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {exploreProducts.map((p) => (
+                                    <div
+                    key={p._id}
+                    className="flex-shrink-0 w-28 border border-gray-200 rounded-xl p-2"
+                  >
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      className="w-full h-16 object-cover rounded-lg mb-2"
+                    />
+                    <p className="font-body text-[11px] leading-tight mb-1 line-clamp-2">
+                      {p.name}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="font-heading text-xs">
+                        ₹{p.packSizes?.[0]?.price ?? p.price}
+                      </span>
+                      <button
+                        onClick={() => handleExploreAddToCart(p)}
+                        className="text-brand-orange border border-brand-orange rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none hover:bg-brand-orange hover:text-white transition"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* FOOTER */}
-        {cartItems.length > 0 && (
-          <div className="flex-shrink-0 bg-white border-t border-gray-100 px-6 sm:px-8 py-6">
-    <div className="space-y-3 font-body text-sm text-gray-600 mb-6">
-        <div className="flex justify-between">
-            <span>Subtotal</span>
-            <span className="font-medium text-gray-900">₹{subtotal.toFixed(0)}</span>
-        </div>
-    </div>
+{cartItems.length > 0 && (
+          <div className="border-t  border-brand-orange px-6 py-5">
+            <div className="flex justify-between text-sm">
+              <span>Subtotal</span>
+              <span>₹{subtotal.toFixed(0)}</span>
+            </div>
 
-    <button
-        onClick={handleCheckout}
-        className="w-full bg-brand-orange text-white flex justify-between items-center px-1 font-heading text-base py-1.5 rounded-full shadow-lg hover:bg-orange-600 transition cursor-pointer"
-    >
-        <span className="flex-1 text-center py-2.5 ml-4 tracking-wide">
-            PROCEED TO CHECKOUT
-        </span>
-        <div className="h-6 w-[1px] bg-white/40"></div>
-        <span className="w-1/3 text-center py-2.5 tracking-wide">
-            ₹{grandTotal.toFixed(0)}
-        </span>
-    </button>
-</div>
+            <div className="flex justify-between text-sm mt-2">
+              <span>Shipping</span>
+              <span className={shippingFee === 0 ? "text-green-600 font-medium" : ""}>
+                {shippingFee === 0 ? "FREE" : `₹${SHIPPING_FEE}`}
+              </span>
+            </div>
+
+            {discount > 0 && (
+              <div className="flex justify-between text-sm mt-2 text-green-600 font-medium">
+                <span>Offer applied (₹1499+)</span>
+                <span>-₹{discount}</span>
+              </div>
+            )}
+
+            <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-200 font-semibold">
+              <span>Total</span>
+              <span>₹{grandTotal.toFixed(0)}</span>
+            </div>
+
+            <button
+              onClick={handleCheckout}
+              className="w-full mt-4 bg-brand-orange font-heading text-white py-3 rounded-full"
+            >
+              PROCEED TO CHECKOUT
+            </button>
+          </div>
         )}
       </aside>
     </>
