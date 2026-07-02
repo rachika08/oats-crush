@@ -6,7 +6,7 @@ export default function Products() {
     const [products, setProducts] = useState([]);
     const navigate=useNavigate();
     const fetchProducts = async () => {
-        const res = await api.get("/product");
+        const res = await api.get("/product/admin/all");
         setProducts(res.data);
     };
 

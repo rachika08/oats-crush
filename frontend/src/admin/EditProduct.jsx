@@ -13,6 +13,7 @@ export default function EditProduct() {
     image: "",
     category: "",
     faqs: [],
+    isLaunched: true,
   });
   const [packSizes, setPackSizes] = useState([]);
   const [howToEnjoy, setHowToEnjoy] = useState([]);
@@ -41,6 +42,7 @@ export default function EditProduct() {
           image: data.image || "",
           category: data.category?._id || data.category || "",
           faqs: data.faqs || [],
+          isLaunched: data.isLaunched !== undefined ? data.isLaunched : true, // 👈 add this
       });
 
       setPackSizes(
@@ -232,7 +234,24 @@ export default function EditProduct() {
             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
-
+        {/* Launch status */}
+        <div className="flex items-center gap-3 border rounded-lg px-4 py-3 bg-gray-50">
+          <input
+            type="checkbox"
+            id="isLaunched"
+            checked={form.isLaunched}
+            onChange={(e) =>
+              setForm({ ...form, isLaunched: e.target.checked })
+            }
+            className="w-5 h-5"
+          />
+          <label htmlFor="isLaunched" className="font-medium cursor-pointer">
+            Product is launched (visible to customers as available)
+            <span className="block text-sm text-gray-500 font-normal">
+              Uncheck to mark as "Coming Soon" — customers can subscribe for a launch notification.
+            </span>
+          </label>
+        </div>
         {/* Description */}
         <div>
           <label className="block mb-2 font-medium">
