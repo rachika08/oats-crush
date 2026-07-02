@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, ChevronDown } from "lucide-react";
+import { Bell, ChevronDown, SlidersHorizontal, X, ChevronRight } from "lucide-react";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
@@ -75,7 +75,40 @@ const AllProducts = () => {
   const [availability, setAvailability] = useState("");
   const [price, setPrice] = useState("");
   const [sortBy, setSortBy] = useState("Most Popular");
-  // let filteredProducts = [...products];
+
+    // ---------------- MOBILE FILTER DRAWER ----------------
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [expandedFilter, setExpandedFilter] = useState(null); // "category" | "availability" | "price" | "sort" | null
+  const [tempCategory, setTempCategory] = useState("");
+  const [tempAvailability, setTempAvailability] = useState("");
+  const [tempPrice, setTempPrice] = useState("");
+  const [tempSortBy, setTempSortBy] = useState("Most Popular");
+
+  const openMobileFilters = () => {
+    setTempCategory(category);
+    setTempAvailability(availability);
+    setTempPrice(price);
+    setTempSortBy(sortBy);
+    setExpandedFilter(null);
+    setIsMobileFilterOpen(true);
+  };
+
+  const applyMobileFilters = () => {
+    setCategory(tempCategory);
+    setAvailability(tempAvailability);
+    setPrice(tempPrice);
+    setSortBy(tempSortBy);
+    setCurrentPage(1);
+    setIsMobileFilterOpen(false);
+  };
+
+  const removeAllMobileFilters = () => {
+    setTempCategory("");
+    setTempAvailability("");
+    setTempPrice("");
+    setTempSortBy("Most Popular");
+  };
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -269,13 +302,13 @@ setShowToast(true);
     const isSoldOut = product.stock <= 0;
 
     return (
-      <div
+<div
         onClick={() => navigate(`/product/${product._id}`)}
-        className="bg-white border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:shadow-md transition"
+        className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer hover:shadow-md transition"
       >
-        <div className="relative aspect-square m-3 rounded-xl overflow-hidden">
+        <div className="relative aspect-square m-2 sm:m-3 rounded-lg sm:rounded-xl overflow-hidden">
           {isSoldOut && (
-            <span className="absolute top-3 left-3 bg-white text-black text-xs font-body font-medium px-3 py-1 rounded-full">
+            <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-white text-black text-[10px] sm:text-xs font-body font-medium px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
               Sold Out
             </span>
           )}
@@ -287,18 +320,17 @@ setShowToast(true);
           />
         </div>
 
-        <div className="px-4 pb-4">
-          <h3 className="font-heading text-lg sm:text-lg mb-1 uppercase">
+        <div className="px-3 pb-3 sm:px-4 sm:pb-4">
+          <h3 className="font-heading text-sm sm:text-lg mb-1 uppercase line-clamp-1">
             {product.name}
           </h3>
 
-          <p className="font-body text-sm text-gray-500 mb-3">
+          <p className="font-body text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3 line-clamp-1">
             {product.benefits?.slice(0, 2).join(" • ") ||
               product.category?.name}
           </p>
 
-          <p className="font-heading text-xl mb-3">
-            {/* ₹{product.price}.00 */}
+          <p className="font-heading text-base sm:text-xl mb-2 sm:mb-3">
             ₹{product.packSizes?.find(p => p.units === 1)?.price || "N/A"}
           </p>
 
@@ -307,19 +339,19 @@ setShowToast(true);
               isSoldOut ? e.stopPropagation() : handleAddToCart(e, product)
             }
             disabled={isSoldOut}
-            className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${
+            className={`w-full rounded-full py-1.5 sm:py-2.5 font-heading text-xs sm:text-lg font-medium transition flex items-center justify-center gap-1 sm:gap-2 border-2 ${
               isSoldOut
                 ? "bg-gray-500 text-white cursor-not-allowed"
                 : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
             }`}
           >
             {isSoldOut ? (
-                            <>
-                              NOTIFY WHEN BACK <Bell size={14} />
-                            </>
-                          ) : (
-                            "ADD TO CART"
-                          )}
+              <>
+                NOTIFY <Bell size={12} />
+              </>
+            ) : (
+              "ADD TO CART"
+            )}
           </button>
         </div>
       </div>
@@ -361,19 +393,19 @@ setShowToast(true);
       {/* Info marquee */}
       <InfoBar />
 
-      {/* Filter / Sort bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100">
+{/* Filter / Sort bar — desktop */}
+      <div className="hidden sm:flex max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-wrap items-center justify-between gap-4 border-b border-gray-100">
         <div className="flex items-center gap-3 flex-wrap">
           <span className="font-body text-sm text-gray-600 mr-1">
             Filter By
           </span>
 
           <FilterDropdown
-  label="Category"
-  value={category}
-  onChange={setCategory}
-  options={categories.map((c) => c.name)}
-/>
+            label="Category"
+            value={category}
+            onChange={setCategory}
+            options={["Oats", "Oats Shake"]}
+          />
 
           <FilterDropdown
             label="Availability"
@@ -415,6 +447,215 @@ setShowToast(true);
         </div>
       </div>
 
+      {/* Filter / Sort bar — mobile */}
+      <button
+        onClick={openMobileFilters}
+        className="sm:hidden w-full flex items-center justify-between px-4 py-4 border-b border-gray-100"
+      >
+        <span className="flex items-center gap-2 font-body text-sm text-brand-orange">
+          <SlidersHorizontal size={16} />
+          Filter and sort
+        </span>
+        <span className="font-body text-sm text-gray-500">
+          {filteredProducts.length} products
+        </span>
+      </button>
+
+      {/* Mobile filter drawer */}
+      {isMobileFilterOpen && (
+        <>
+          <div
+            onClick={() => setIsMobileFilterOpen(false)}
+            className="fixed inset-0 z-[80] bg-black/40 sm:hidden"
+          />
+
+          <div className="fixed bottom-0 left-0 right-0 z-[90] bg-white rounded-t-2xl sm:hidden flex flex-col max-h-[85vh]">
+            <div className="flex flex-col items-center pt-5 pb-4 border-b border-gray-100 relative flex-shrink-0">
+              <h2 className="font-heading text-base uppercase">Filter and sort</h2>
+              <p className="font-body text-xs text-gray-500 mt-1">
+                {filteredProducts.length} products
+              </p>
+              <button
+                onClick={() => setIsMobileFilterOpen(false)}
+                className="absolute right-5 top-5"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              {/* Category */}
+              <div className="border-b border-gray-100">
+                <button
+                  onClick={() =>
+                    setExpandedFilter(expandedFilter === "category" ? null : "category")
+                  }
+                  className="w-full flex items-center justify-between px-5 py-4"
+                >
+                  <span className="font-body text-sm">
+                    Category {tempCategory && <span className="text-brand-orange">· {tempCategory}</span>}
+                  </span>
+                  <ChevronRight
+                    size={16}
+                    className={`text-gray-400 transition-transform ${
+                      expandedFilter === "category" ? "rotate-90" : ""
+                    }`}
+                  />
+                </button>
+                {expandedFilter === "category" && (
+                  <div className="px-5 pb-4 flex flex-wrap gap-2">
+                    {["Oats", "Oats Shake"].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setTempCategory(tempCategory === opt ? "" : opt)}
+                        className={`px-4 py-2 rounded-full text-sm border ${
+                          tempCategory === opt
+                            ? "bg-brand-orange text-white border-brand-orange"
+                            : "border-gray-200 text-black"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Availability */}
+              <div className="border-b border-gray-100">
+                <button
+                  onClick={() =>
+                    setExpandedFilter(expandedFilter === "availability" ? null : "availability")
+                  }
+                  className="w-full flex items-center justify-between px-5 py-4"
+                >
+                  <span className="font-body text-sm">
+                    Availability {tempAvailability && <span className="text-brand-orange">· {tempAvailability}</span>}
+                  </span>
+                  <ChevronRight
+                    size={16}
+                    className={`text-gray-400 transition-transform ${
+                      expandedFilter === "availability" ? "rotate-90" : ""
+                    }`}
+                  />
+                </button>
+                {expandedFilter === "availability" && (
+                  <div className="px-5 pb-4 flex flex-wrap gap-2">
+                    {["In Stock", "Sold Out"].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() =>
+                          setTempAvailability(tempAvailability === opt ? "" : opt)
+                        }
+                        className={`px-4 py-2 rounded-full text-sm border ${
+                          tempAvailability === opt
+                            ? "bg-brand-orange text-white border-brand-orange"
+                            : "border-gray-200 text-black"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Price */}
+              <div className="border-b border-gray-100">
+                <button
+                  onClick={() =>
+                    setExpandedFilter(expandedFilter === "price" ? null : "price")
+                  }
+                  className="w-full flex items-center justify-between px-5 py-4"
+                >
+                  <span className="font-body text-sm">
+                    Price {tempPrice && <span className="text-brand-orange">· {tempPrice}</span>}
+                  </span>
+                  <ChevronRight
+                    size={16}
+                    className={`text-gray-400 transition-transform ${
+                      expandedFilter === "price" ? "rotate-90" : ""
+                    }`}
+                  />
+                </button>
+                {expandedFilter === "price" && (
+                  <div className="px-5 pb-4 flex flex-wrap gap-2">
+                    {["Under ₹150", "₹150 - ₹300", "₹300+"].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setTempPrice(tempPrice === opt ? "" : opt)}
+                        className={`px-4 py-2 rounded-full text-sm border ${
+                          tempPrice === opt
+                            ? "bg-brand-orange text-white border-brand-orange"
+                            : "border-gray-200 text-black"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Sort by */}
+              <div>
+                <button
+                  onClick={() =>
+                    setExpandedFilter(expandedFilter === "sort" ? null : "sort")
+                  }
+                  className="w-full flex items-center justify-between px-5 py-4"
+                >
+                  <span className="font-body text-sm">Sort by:</span>
+                  <span className="flex items-center gap-1 font-body text-sm text-gray-600">
+                    {tempSortBy}
+                    <ChevronDown
+                      size={14}
+                      className={`transition-transform ${
+                        expandedFilter === "sort" ? "rotate-180" : ""
+                      }`}
+                    />
+                  </span>
+                </button>
+                {expandedFilter === "sort" && (
+                  <div className="px-5 pb-4 flex flex-col gap-2">
+                    {["Most Popular", "Price: Low to High", "Price: High to Low", "Newest"].map(
+                      (opt) => (
+                        <button
+                          key={opt}
+                          onClick={() => setTempSortBy(opt)}
+                          className={`text-left px-4 py-2 rounded-full text-sm border ${
+                            tempSortBy === opt
+                              ? "bg-brand-orange text-white border-brand-orange"
+                              : "border-gray-200 text-black"
+                          }`}
+                        >
+                          {opt}
+                        </button>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100 flex-shrink-0">
+              <button
+                onClick={removeAllMobileFilters}
+                className="font-body text-sm underline"
+              >
+                Remove all
+              </button>
+              <button
+                onClick={applyMobileFilters}
+                className="bg-brand-orange text-white font-heading text-sm px-8 py-3 rounded-full"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Product grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <p className="font-body text-sm text-gray-600 mb-6">
@@ -426,7 +667,7 @@ setShowToast(true);
             No products available
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
             {paginatedProducts.map((product) => (
               <ProductCardItem key={product._id} product={product} />
             ))}
