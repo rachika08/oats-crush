@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingBag, User, Menu, X, ChevronDown } from "lucide-react";
+import { Search, ShoppingBag, User, Menu, X, ChevronDown, Home, LayoutGrid, PackageOpen, Info, LogIn, UserPlus, LogOut, ChevronRight } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import api from "../api/axios"; 
 import PromoBar from "./home/PromoBar";
@@ -11,6 +11,7 @@ const Navbar = () => {
   const [categories, setCategories] = useState([]);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
 
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
@@ -174,32 +175,32 @@ useEffect(() => {
     <User size={20} />
   </button>
 ) : (
-  <div className="relative hidden sm:flex items-center">
+<div className="relative hidden sm:flex items-center">
     <button
       className="flex items-center cursor-pointer hover:text-brand-orange"
       aria-label="Account"
-      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
     >
       <User size={20} />
     </button>
 
-              {isMobileMenuOpen && (
+              {isAccountMenuOpen && (
   <div className="absolute top-8 right-0 bg-white border rounded-xl shadow-md min-w-[180px] py-2 z-50 text-sm cursor-pointer">
     <button
-      className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange-dark"
+      className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange"
       onClick={() => {
         navigate("/profile");
-        setIsMobileMenuOpen(false);
+        setIsAccountMenuOpen(false);
       }}
     >
       View Profile
     </button>
     <button
-      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer hover:text-brand-orange-dark"
+      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer hover:text-brand-orange"
       onClick={() => {
         localStorage.removeItem("token");
         navigate("/");
-        setIsMobileMenuOpen(false);
+        setIsAccountMenuOpen(false);
       }}
     >
       Logout
@@ -226,86 +227,105 @@ useEffect(() => {
         </div>
       </nav>
 
-      {/* Mobile dropdown menu */}
+{/* Mobile drawer overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden mt-2 max-w-7xl mx-auto bg-white rounded-2xl shadow-md px-4 py-3 flex flex-col gap-1 font-body text-sm">
-          <Link
-            to="/"
-            className="py-2"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Home
-          </Link>
-          <Link
-            to="/products"
-            className="py-2"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Categories
-          </Link>
-          <Link
-  to="/customize-box"
-  className="py-2"
-  onClick={() => setIsMobileMenuOpen(false)}
->
-  Customize Box
-</Link>
-<Link
-  to="/contact"
-  className="py-2"
-  onClick={() => setIsMobileMenuOpen(false)}
->
-  About Us
-</Link>
+        <div
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="md:hidden fixed inset-0 z-[95] bg-black/40 backdrop-blur-sm"
+        />
+      )}
 
-          <div className="border-t my-1" />
+      {/* Mobile drawer panel */}
+      <div
+        className={`md:hidden fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white z-[100] shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 flex-shrink-0">
+          <img src="/images/oats-crush.png" className="w-16 h-11" alt="Oats Crush" />
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="Close menu"
+            className="cursor-pointer"
+          >
+            <X size={24} />
+          </button>
+        </div>
 
+        {/* Nav links */}
+        <nav className="flex-1 overflow-y-auto px-6 py-4 font-body">
+          {[
+            { to: "/", label: "Home", icon: Home },
+            { to: "/products", label: "Categories", icon: LayoutGrid },
+            { to: "/customize-box", label: "Customize Box", icon: PackageOpen },
+            { to: "/contact", label: "About Us", icon: Info },
+          ].map(({ to, label, icon: Icon }) => (
+            <Link
+              key={to}
+              to={to}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center justify-between py-4 border-b border-gray-100 group"
+            >
+              <span className="flex items-center gap-3">
+                <span className="w-9 h-9 rounded-full bg-orange-50 text-brand-orange flex items-center justify-center flex-shrink-0 group-hover:bg-brand-orange group-hover:text-white transition">
+                  <Icon size={16} />
+                </span>
+                <span className="text-base">{label}</span>
+              </span>
+              <ChevronRight size={16} className="text-gray-300" />
+            </Link>
+          ))}
+        </nav>
+
+        {/* Footer - auth actions */}
+        <div className="px-6 py-6 border-t border-gray-100 flex-shrink-0">
           {!token ? (
-            <>
+            <div className="flex gap-3">
               <button
-                className="py-2 text-left cursor-pointer"
                 onClick={() => {
                   navigate("/login");
                   setIsMobileMenuOpen(false);
                 }}
+                className="flex-1 flex items-center justify-center gap-2 border-2 border-brand-orange text-brand-orange font-heading text-sm py-3 rounded-full cursor-pointer"
               >
-                Login
+                <LogIn size={16} /> LOGIN
               </button>
               <button
-                className="py-2 text-left cursor-pointer"
                 onClick={() => {
                   navigate("/signup");
                   setIsMobileMenuOpen(false);
                 }}
+                className="flex-1 flex items-center justify-center gap-2 bg-brand-orange text-white font-heading text-sm py-3 rounded-full cursor-pointer"
               >
-                Signup
+                <UserPlus size={16} /> SIGNUP
               </button>
-            </>
+            </div>
           ) : (
-  <>
-    <button
-      className="py-2 text-left cursor-pointer"
-      onClick={() => {
-        navigate("/profile");
-        setIsMobileMenuOpen(false);
-      }}
-    >
-      View Profile
-    </button>
-    <button
-      className="py-2 text-left text-red-600 cursor-pointer"
-      onClick={() => {
-        localStorage.removeItem("token");
-        navigate("/");
-        setIsMobileMenuOpen(false);
-      }}
-    >
-      Logout
-    </button>
-  </>
-)}
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  navigate("/profile");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center justify-center gap-2 bg-brand-orange text-white font-heading text-sm py-3 rounded-full cursor-pointer"
+              >
+                <User size={16} /> VIEW PROFILE
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  navigate("/");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center justify-center gap-2 border-2 border-red-500 text-red-500 font-heading text-sm py-3 rounded-full cursor-pointer"
+              >
+                <LogOut size={16} /> LOGOUT
+              </button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 {/* Search overlay - styled like the header pill, works at all breakpoints */}
 {showSearch && (
   <>

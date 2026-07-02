@@ -19,6 +19,7 @@ const FeaturedProducts = ({
 }) => {
   const [products, setProducts] = useState([]);
   const [showToast, setShowToast] = useState(false);
+  const [notifyStatus, setNotifyStatus] = useState({});
   const navigate = useNavigate();
   const { openCart } = useCart();
 
@@ -121,6 +122,46 @@ setShowToast(true);
   }
 };
 
+  const handleNotify = async (e, product) => {
+    e.stopPropagation();
+
+    const productId = product._id;
+
+    if (notifyStatus[productId] === "loading" || notifyStatus[productId] === "success") {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please login to get notified");
+      navigate("/login");
+      return;
+    }
+
+    setNotifyStatus((prev) => ({ ...prev, [productId]: "loading" }));
+
+    try {
+      await api.post(
+        "/notification/notify",
+        { productId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setNotifyStatus((prev) => ({ ...prev, [productId]: "success" }));
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+
+      if (error.response?.data?.message === "Already subscribed") {
+        setNotifyStatus((prev) => ({ ...prev, [productId]: "success" }));
+        return;
+      }
+
+      setNotifyStatus((prev) => ({ ...prev, [productId]: "idle" }));
+      alert(error.response?.data?.message || "Something went wrong");
+    }
+  };
+
+
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
@@ -180,6 +221,7 @@ setShowToast(true);
             >
               {products.map((product) => {
                 const isSoldOut = product.stock <= 0;
+                const status = notifyStatus[product._id];
 
                 return (
                   <SwiperSlide key={product._id}>
@@ -203,7 +245,7 @@ setShowToast(true);
                       </div>
 
                       <div className="px-4 pb-4">
-                        <h3 className="font-heading text-xl sm:text-2xl mb-1 uppercase">
+                        <h3 className="font-heading text-2xl sm:text-2xl mb-1 uppercase">
                           {product.name}
                         </h3>
 
@@ -212,27 +254,33 @@ setShowToast(true);
                             product.category?.name}
                         </p>
 
-                        <p className="font-heading mb-3">
+                        <p className="font-heading text-2xl mb-3">
                           ₹{product.packSizes?.find(p => p.units === 1)?.price || "N/A"}
                         </p>
 
                         <button
                           onClick={(e) =>
                             isSoldOut
-                              ? e.stopPropagation()
+                              ? handleNotify(e, product)
                               : handleAddToCart(e, product)
                           }
-                          disabled={isSoldOut}
+                          disabled={isSoldOut && (status === "loading" || status === "success")}
                           className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${
                             isSoldOut
-                              ? "bg-gray-500 text-white cursor-not-allowed"
+                              ? "bg-gray-500 text-white cursor-pointer disabled:cursor-default"
                               : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
                           }`}
                         >
                           {isSoldOut ? (
-                            <>
-                              NOTIFY WHEN BACK <Bell size={14} />
-                            </>
+                            status === "success" ? (
+                              "SUBSCRIBED ✓"
+                            ) : status === "loading" ? (
+                              "SENDING..."
+                            ) : (
+                              <>
+                                NOTIFY WHEN BACK <Bell size={14} />
+                              </>
+                            )
                           ) : (
                             "ADD TO CART"
                           )}
