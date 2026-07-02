@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
+import helmet from "helmet";
 const app=express();
+
 import connectDB from './config/mongo.js';
 import cors from 'cors';
 
@@ -16,10 +18,66 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import orderRoutes from './routes/orderRoutes.js';
 import adminOrderRoutes from './routes/adminOrderRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
-import blogRoutes from './routes/blogRoutes.js'
+import blogRoutes from './routes/blogRoutes.js';
+import notificationRoutes from "./routes/notificationRoutes.js";
+
+app.use(helmet()); // base security defaults
+app.use(
+    helmet.contentSecurityPolicy({
+        reportOnly: true,
+        directives: {
+            defaultSrc: ["'self'"],
+
+            scriptSrc: [
+                "'self'",
+                "https://accounts.google.com",
+                "https://apis.google.com"
+            ],
+
+            connectSrc: [
+                "'self'",
+                "https://oatscrush-backend.onrender.com"
+            ],
+
+            imgSrc: [
+                "'self'",
+                "data:",
+                "https:"
+            ],
+
+            styleSrc: ["'self'", "'unsafe-inline'"],
+
+            baseUri: ["'self'"],
+            fontSrc: ["'self'", "https:", "data:"],
+            formAction: ["'self'"],
+            frameAncestors: ["'self'"],
+            objectSrc: ["'none'"],
+            scriptSrcAttr: ["'none'"],
+            upgradeInsecureRequests: []
+        }
+    })
+);
+
+app.use(
+    helmet.hsts({
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    })
+);
+
+app.use(
+    helmet.frameguard({
+        action: "deny"
+    })
+);
 
 app.use(express.urlencoded({extended:true}));
 app.use(cors());
+// app.use(cors({
+//     origin: process.env.FRONTEND_URL,
+//     credentials: true
+// }));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
@@ -32,6 +90,7 @@ app.use("/api/payment",paymentRoutes);
 app.use("/api/admin",adminOrderRoutes);
 app.use("/api/reviews",reviewRoutes);
 app.use("/api/blog",blogRoutes);
+app.use("/api/notification", notificationRoutes);
 
 
 app.get('/',(req,res)=>{

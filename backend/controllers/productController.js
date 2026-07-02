@@ -1,8 +1,8 @@
 import Product from "../models/Product.js";
 import cloudinary from "../config/cloudinary.js";
 import {uploadToCloudinary} from "../utils/uploadToCloudinary.js"
-
-
+import ProductNotification from "../models/ProductNotification.js";
+import { sendEmail } from "../utils/sendEmail.js";
 export const createProduct = async (req, res) => {
     try {
         const {
@@ -16,6 +16,7 @@ export const createProduct = async (req, res) => {
             ingredients,
             faqs,
             howToEnjoy,
+            isLaunched,
         } = req.body;
         const packSizes = JSON.parse(req.body.packSizes);
         const productExist = await Product.findOne({ name });
@@ -65,6 +66,9 @@ export const createProduct = async (req, res) => {
         const featuredValue =
             featured === true || featured === "true";
 
+        const isLaunchedValue =
+            isLaunched === undefined ? true : (isLaunched === true || isLaunched === "true");
+
         const product = await Product.create({
             name,
             description,
@@ -79,6 +83,7 @@ export const createProduct = async (req, res) => {
             ingredients: ingredientsArray,
             faqs,
             howToEnjoy,
+            isLaunched: isLaunchedValue, 
         });
 
         return res.status(201).json({
@@ -94,12 +99,30 @@ export const createProduct = async (req, res) => {
 };
 
 
-export const getProducts=async (req,res) => {
+// export const getProducts=async (req,res) => {
+//     try {
+//         const products=await Product.find().populate("category");
+//         res.status(200).json(products);
+//     } catch (error) {
+//         return res.status(500).json({message:error.message});
+//     }
+// }
+
+export const getProducts = async (req, res) => {
     try {
-        const products=await Product.find().populate("category");
+        const products = await Product.find({ isLaunched: true }).populate("category");
         res.status(200).json(products);
     } catch (error) {
-        return res.status(500).json({message:error.message});
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+export const getAllProductsAdmin = async (req, res) => {
+    try {
+        const products = await Product.find().populate("category");
+        res.status(200).json(products);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -117,20 +140,20 @@ export const getProductsById=async(req,res)=>{
     }
 }
 
-export const updateProduct=async (req,res) => {
-    try {
-        const product=await Product.findByIdAndUpdate(req.params.id,req.body,{new:true});
-        if (!product) {
-            return res.status(404).json({
-                message: "Product not found"
-            });
-        }
+// export const updateProduct=async (req,res) => {
+//     try {
+//         const product=await Product.findByIdAndUpdate(req.params.id,req.body,{new:true});
+//         if (!product) {
+//             return res.status(404).json({
+//                 message: "Product not found"
+//             });
+//         }
 
-        res.status(200).json(product);
-    } catch (error) {
-        return res.status(500).json({message:error.message});
-    }
-}
+//         res.status(200).json(product);
+//     } catch (error) {
+//         return res.status(500).json({message:error.message});
+//     }
+// }
 
 export const deleteProduct=async(req,res)=>{
     try {
@@ -169,3 +192,172 @@ export const getProductsByCategory=async (req,res) => {
         });
     }
 }
+
+// export const updateProduct = async (req, res) => {
+//     try {
+//         const oldProduct = await Product.findById(req.params.id);
+
+//         if (!oldProduct) {
+//             return res.status(404).json({
+//                 message: "Product not found"
+//             });
+//         }
+
+//         const wasUnavailable =
+//             oldProduct.stock === 0 || oldProduct.stock === undefined;
+
+//         const product = await Product.findByIdAndUpdate(
+//             req.params.id,
+//             req.body,
+//             { new: true }
+//         );
+
+//         // 🔥 Check if product just became available
+//         const isNowAvailable =
+//             product.stock > 0;
+
+//         if (wasUnavailable && isNowAvailable) {
+            
+//             const subs = await ProductNotification.find({
+//                 product: product._id,
+//                 notified: false
+//             });
+
+//             for (let sub of subs) {
+//                 await sendEmail(
+//                     sub.email,
+//                     `${product.name} is now available 🎉`,
+//                     `
+//                         <h2>Good news!</h2>
+//                         <p><b>${product.name}</b> is now back in stock.</p>
+//                         <p>Go grab it before it runs out again!</p>
+//                     `
+//                 );
+
+//                 sub.notified = true;
+//                 await sub.save();
+//             }
+//         }
+
+//         return res.status(200).json(product);
+
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// };
+
+// export const updateProduct = async (req, res) => {
+//     try {
+//         const oldProduct = await Product.findById(req.params.id);
+
+//         if (!oldProduct) {
+//             return res.status(404).json({ message: "Product not found" });
+//         }
+
+//         console.log("DEBUG req.body:", req.body);
+//         console.log("DEBUG oldProduct.stock:", oldProduct.stock, typeof oldProduct.stock);
+
+//         const wasUnavailable =
+//             oldProduct.stock === 0 || oldProduct.stock === undefined;
+
+//         const product = await Product.findByIdAndUpdate(
+//             req.params.id,
+//             req.body,
+//             { new: true }
+//         );
+
+//         const isNowAvailable = product.stock > 0;
+
+//         console.log("DEBUG new product.stock:", product.stock, typeof product.stock);
+//         console.log("DEBUG wasUnavailable:", wasUnavailable, "isNowAvailable:", isNowAvailable);
+
+//         if (wasUnavailable && isNowAvailable) {
+//             console.log("DEBUG entered notification block");
+//             const subs = await ProductNotification.find({
+//                 product: product._id,
+//                 notified: false
+//             });
+//             console.log("DEBUG subs found:", subs.length, subs);
+
+//             for (let sub of subs) {
+//                 await sendEmail(
+//                     sub.email,
+//                     `${product.name} is now available 🎉`,
+//                     `<h2>Good news!</h2><p><b>${product.name}</b> is now back in stock.</p>`
+//                 );
+//                 sub.notified = true;
+//                 await sub.save();
+//             }
+//         } else {
+//             console.log("DEBUG skipped notification block");
+//         }
+
+//         return res.status(200).json(product);
+
+//     } catch (error) {
+//         console.error("DEBUG updateProduct error:", error);
+//         return res.status(500).json({ message: error.message });
+//     }
+// };
+
+export const updateProduct = async (req, res) => {
+    try {
+        const oldProduct = await Product.findById(req.params.id);
+
+        if (!oldProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        console.log("DEBUG oldProduct.isLaunched:", oldProduct.isLaunched);
+        console.log("DEBUG req.body.isLaunched:", req.body.isLaunched);
+        const wasOutOfStock = oldProduct.stock === 0 || oldProduct.stock === undefined;
+        const wasNotLaunched = oldProduct.isLaunched === false;
+        console.log("DEBUG wasNotLaunched:", wasNotLaunched);
+        const product = await Product.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+
+        const isNowInStock = product.stock > 0;
+        const isNowLaunched = product.isLaunched === true;
+
+        const justLaunched = wasNotLaunched && isNowLaunched;
+        const justRestocked = !wasNotLaunched && wasOutOfStock && isNowInStock;
+
+        if (justLaunched || justRestocked) {
+            const subs = await ProductNotification.find({
+                product: product._id,
+                notified: false
+            });
+
+            for (let sub of subs) {
+                const subject = justLaunched
+                    ? `${product.name} is now LIVE 🚀`
+                    : `${product.name} is back in stock 🎉`;
+
+                const html = justLaunched
+                    ? `<h2>It's here!</h2><p><b>${product.name}</b> has just launched.</p><p>Be one of the first to grab it!</p>`
+                    : `<h2>Good news!</h2><p><b>${product.name}</b> is now back in stock.</p><p>Go grab it before it runs out again!</p>`;
+
+                await sendEmail(sub.email, subject, html);
+
+                sub.notified = true;
+                await sub.save();
+            }
+        }
+
+        return res.status(200).json(product);
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const getUpcomingProducts = async (req, res) => {
+    try {
+        const products = await Product.find({ isLaunched: false }).populate("category");
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
