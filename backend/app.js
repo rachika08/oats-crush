@@ -18,7 +18,8 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import orderRoutes from './routes/orderRoutes.js';
 import adminOrderRoutes from './routes/adminOrderRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
-import blogRoutes from './routes/blogRoutes.js'
+import blogRoutes from './routes/blogRoutes.js';
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 app.use(helmet()); // base security defaults
 app.use(
@@ -89,6 +90,7 @@ app.use("/api/payment",paymentRoutes);
 app.use("/api/admin",adminOrderRoutes);
 app.use("/api/reviews",reviewRoutes);
 app.use("/api/blog",blogRoutes);
+app.use("/api/notification", notificationRoutes);
 
 
 app.get('/',(req,res)=>{

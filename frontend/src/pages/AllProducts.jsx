@@ -8,7 +8,7 @@ import InfoBar from "../components/home/InfoBar";
 import CartToast from "../components/CartToast";
 
 const PRODUCTS_PER_PAGE = 6;
- 
+
 
 const FilterDropdown = ({ label, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,19 +19,17 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 border rounded-full px-4 py-2 font-body text-sm shadow-sm transition-colors duration-200 cursor-pointer ${
-          isSelected
-            ? "bg-brand-orange border-brand-orange text-white"
-            : "border-brand-orange text-black"
-        }`}
+        className={`flex items-center gap-2 border rounded-full px-4 py-2 font-body text-sm shadow-sm transition-colors duration-200 cursor-pointer ${isSelected
+          ? "bg-brand-orange border-brand-orange text-white"
+          : "border-brand-orange text-black"
+          }`}
       >
         {value || label}
-        
+
         <ChevronDown
           size={14}
-          className={`transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
         />
       </button>
 
@@ -70,11 +68,12 @@ const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showToast, setShowToast] = useState(false);
-    const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
   const [availability, setAvailability] = useState("");
   const [price, setPrice] = useState("");
   const [sortBy, setSortBy] = useState("Most Popular");
+  const [notifyStatus, setNotifyStatus] = useState({});
   // let filteredProducts = [...products];
   const navigate = useNavigate();
 
@@ -101,153 +100,135 @@ const AllProducts = () => {
       console.log(error);
     }
   };
-  
-const handleAddToCart = async (e, product) => {
-  e.stopPropagation();
 
-  try {
+  const handleAddToCart = async (e, product) => {
+    e.stopPropagation();
+
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Please login to add items to your cart");
+        navigate("/login");
+        return;
+      }
+
+      const defaultPack =
+        product.packSizes?.find((p) => Number(p.units) === 1) ||
+        product.packSizes?.[0];
+
+      if (!defaultPack) {
+        alert("Product pack missing");
+        return;
+      }
+
+      const price = Number(defaultPack.price);
+
+      if (isNaN(price)) {
+        alert("Invalid product price");
+        return;
+      }
+
+      const res = await api.post(
+        "/cart/add",
+        {
+          productId: product._id,
+          quantity: 1,
+          pack: {
+            label: defaultPack.label,
+            units: Number(defaultPack.units) || 1,
+            price: price,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const updatedItems = res.data.items || [];
+      localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+      localStorage.setItem("cartCount", updatedItems.length);
+
+      window.dispatchEvent(new Event("cartUpdated"));
+
+      setShowToast(true);
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+    }
+  };
+
+  const handleNotify = async (e, product) => {
+    e.stopPropagation();
+
+    const productId = product._id;
+
+    if (notifyStatus[productId] === "loading" || notifyStatus[productId] === "success") {
+      return;
+    }
+
     const token = localStorage.getItem("token");
 
     if (!token) {
-      alert("Please login to add items to your cart");
+      alert("Please login to get notified");
       navigate("/login");
       return;
     }
 
-    const defaultPack =
-      product.packSizes?.find((p) => Number(p.units) === 1) ||
-      product.packSizes?.[0];
+    setNotifyStatus((prev) => ({ ...prev, [productId]: "loading" }));
 
-    if (!defaultPack) {
-      alert("Product pack missing");
-      return;
+    try {
+      await api.post(
+        "/notification/notify",
+        { productId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setNotifyStatus((prev) => ({ ...prev, [productId]: "success" }));
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+
+      if (error.response?.data?.message === "Already subscribed") {
+        setNotifyStatus((prev) => ({ ...prev, [productId]: "success" }));
+        return;
+      }
+
+      setNotifyStatus((prev) => ({ ...prev, [productId]: "idle" }));
+      alert(error.response?.data?.message || "Something went wrong");
     }
-
-    const price = Number(defaultPack.price);
-
-    if (isNaN(price)) {
-      alert("Invalid product price");
-      return;
-    }
-
-    const res = await api.post(
-  "/cart/add",
-  {
-    productId: product._id,
-    quantity: 1,
-    pack: {
-      label: defaultPack.label,
-      units: Number(defaultPack.units) || 1,
-      price: price,
-    },
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-);
-
-const updatedItems = res.data.items || [];
-localStorage.setItem("cartItems", JSON.stringify(updatedItems));
-localStorage.setItem("cartCount", updatedItems.length);
-
-window.dispatchEvent(new Event("cartUpdated"));
-
-setShowToast(true);
-  } catch (error) {
-    console.log(error.response?.data || error.message);
-  }
-};
+  };
 
   const filteredProducts = products
-  .filter((product) => {
-    if (!category) return true;
-    return product.category?.name?.toLowerCase() === category.toLowerCase();
-  })
-  .filter((product) => {
-    if (availability === "In Stock") return product.stock > 0;
-    if (availability === "Sold Out") return product.stock <= 0;
-    return true;
-  })
-  .filter((product) => {
-    const basePrice =
-      product.packSizes?.find((p) => p.units === 1)?.price || 0;
+    .filter((product) => {
+      if (!category) return true;
+      return product.category?.name?.toLowerCase() === category.toLowerCase();
+    })
+    .filter((product) => {
+      if (availability === "In Stock") return product.stock > 0;
+      if (availability === "Sold Out") return product.stock <= 0;
+      return true;
+    })
+    .filter((product) => {
+      const basePrice =
+        product.packSizes?.find((p) => p.units === 1)?.price || 0;
 
-    if (price === "Under ₹150") return basePrice < 150;
-    if (price === "₹150 - ₹300") return basePrice >= 150 && basePrice <= 300;
-    if (price === "₹300+") return basePrice > 300;
+      if (price === "Under ₹150") return basePrice < 150;
+      if (price === "₹150 - ₹300") return basePrice >= 150 && basePrice <= 300;
+      if (price === "₹300+") return basePrice > 300;
 
-    return true;
-  })
-  .sort((a, b) => {
-    const getPrice = (p) =>
-      p.packSizes?.find((x) => x.units === 1)?.price || 0;
+      return true;
+    })
+    .sort((a, b) => {
+      const getPrice = (p) =>
+        p.packSizes?.find((x) => x.units === 1)?.price || 0;
 
-    if (sortBy === "Price: Low to High") return getPrice(a) - getPrice(b);
-    if (sortBy === "Price: High to Low") return getPrice(b) - getPrice(a);
-    if (sortBy === "Newest")
-      return new Date(b.createdAt) - new Date(a.createdAt);
+      if (sortBy === "Price: Low to High") return getPrice(a) - getPrice(b);
+      if (sortBy === "Price: High to Low") return getPrice(b) - getPrice(a);
+      if (sortBy === "Newest")
+        return new Date(b.createdAt) - new Date(a.createdAt);
 
-    return 0;
-  });
-//   // Availability filter
-//   if (availability === "In Stock") {
-//     filteredProducts = filteredProducts.filter(
-//       (product) => product.stock > 0
-//     );
-//   }
-
-//   if (availability === "Sold Out") {
-//     filteredProducts = filteredProducts.filter(
-//       (product) => product.stock <= 0
-//     );
-//   }
-//   //price
-//   const getBasePrice = (product) => {
-//     return product.packSizes?.find((p) => p.units === 1)?.price || 0;
-//   };
-//   // Price filter
-//   if (price === "Under ₹150") {
-//     filteredProducts = filteredProducts.filter(
-//       (product) => getBasePrice(product) < 150
-//     );
-//   }
-
-//   if (price === "₹150 - ₹300") {
-//     filteredProducts = filteredProducts.filter(
-//       (product) =>
-//         getBasePrice(product) >= 150 && getBasePrice(product) <= 300
-//     );
-//   }
-
-//   if (price === "₹300+") {
-//     filteredProducts = filteredProducts.filter(
-//       (product) => getBasePrice(product) > 300
-//     );
-//   }
-
-//   // Sorting
-//   const getPrice = (product) => {
-//     return product.packSizes?.find((p) => p.units === 1)?.price ?? 0;
-//   };
-//   if (sortBy === "Price: Low to High") {
-//   filteredProducts = [...filteredProducts].sort(
-//     (a, b) => getPrice(a) - getPrice(b)
-//   );
-// }
-
-// if (sortBy === "Price: High to Low") {
-//   filteredProducts = [...filteredProducts].sort(
-//     (a, b) => getPrice(b) - getPrice(a)
-//   );
-// }
-
-//   if (sortBy === "Newest") {
-//     filteredProducts.sort(
-//       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-//     );
-//   }
+      return 0;
+    });
 
   const totalPages = Math.max(
     1,
@@ -267,6 +248,8 @@ setShowToast(true);
 
   const ProductCardItem = ({ product }) => {
     const isSoldOut = product.stock <= 0;
+    const status = notifyStatus[product._id];
+
 
     return (
       <div
@@ -302,7 +285,7 @@ setShowToast(true);
             ₹{product.packSizes?.find(p => p.units === 1)?.price || "N/A"}
           </p>
 
-          <button
+          {/* <button
             onClick={(e) =>
               isSoldOut ? e.stopPropagation() : handleAddToCart(e, product)
             }
@@ -320,6 +303,30 @@ setShowToast(true);
                           ) : (
                             "ADD TO CART"
                           )}
+          </button> */}
+          <button
+            onClick={(e) =>
+              isSoldOut ? handleNotify(e, product) : handleAddToCart(e, product)
+            }
+            disabled={isSoldOut && (status === "loading" || status === "success")}
+            className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${isSoldOut
+              ? "bg-gray-500 text-white cursor-pointer disabled:cursor-default"
+              : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
+              }`}
+          >
+            {isSoldOut ? (
+              status === "success" ? (
+                "SUBSCRIBED ✓"
+              ) : status === "loading" ? (
+                "SENDING..."
+              ) : (
+                <>
+                  NOTIFY WHEN BACK <Bell size={14} />
+                </>
+              )
+            ) : (
+              "ADD TO CART"
+            )}
           </button>
         </div>
       </div>
@@ -369,11 +376,11 @@ setShowToast(true);
           </span>
 
           <FilterDropdown
-  label="Category"
-  value={category}
-  onChange={setCategory}
-  options={categories.map((c) => c.name)}
-/>
+            label="Category"
+            value={category}
+            onChange={setCategory}
+            options={categories.map((c) => c.name)}
+          />
 
           <FilterDropdown
             label="Availability"
@@ -450,11 +457,10 @@ setShowToast(true);
                 <button
                   key={page}
                   onClick={() => goToPage(page)}
-                  className={`w-9 h-9 rounded-full font-body text-sm font-medium transition cursor-pointer ${
-                    page === currentPage
-                      ? "bg-brand-orange text-white"
-                      : "text-black hover:bg-gray-100"
-                  }`}
+                  className={`w-9 h-9 rounded-full font-body text-sm font-medium transition cursor-pointer ${page === currentPage
+                    ? "bg-brand-orange text-white"
+                    : "text-black hover:bg-gray-100"
+                    }`}
                 >
                   {page}
                 </button>

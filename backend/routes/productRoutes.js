@@ -1,11 +1,13 @@
 import express from 'express';
-import { createProduct, getProducts, getProductsById,updateProduct,deleteProduct, featuredProduct,getProductsByCategory } from '../controllers/productController.js';
+import { createProduct, getProducts, getUpcomingProducts, getAllProductsAdmin, getProductsById,updateProduct,deleteProduct, featuredProduct,getProductsByCategory } from '../controllers/productController.js';
 import { protect } from '../midleware/protect.js';
 import { admin } from '../midleware/adminOnly.js';
 import {upload} from '../midleware/upload.js'
 const router=express.Router();
 
 router.get('/',getProducts);
+router.get('/upcoming', getUpcomingProducts);
+router.get('/admin/all', protect, admin, getAllProductsAdmin); 
 router.get('/featured',featuredProduct);
 router.get("/category/:categoryId",getProductsByCategory);
 router.get('/:id',getProductsById);

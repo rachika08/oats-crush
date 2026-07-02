@@ -72,6 +72,11 @@ const productSchema=mongoose.Schema({
             },
         },
     ],
+    // Product.js
+    isLaunched: {
+        type: Boolean,
+        default: true // existing products are already live
+    }
 },{timestamps:true});
 
 export default mongoose.model("Product",productSchema);
