@@ -16,9 +16,24 @@ import Footer from "../components/home/Footer";
 import AddressModal from "../components/AddressModal";
 
 const TABS = [
-  { id: "overview", label: "OVERVIEW", icon: User },
-  { id: "addresses", label: "ADDRESSES", icon: Home },
-  { id: "orders", label: "ORDERS", icon: ClipboardList },
+  {
+    id: "overview",
+    label: "OVERVIEW",
+    icon: User,
+    description: "View and edit your personal details",
+  },
+  {
+    id: "addresses",
+    label: "ADDRESSES",
+    icon: Home,
+    description: "Manage your saved delivery addresses",
+  },
+  {
+    id: "orders",
+    label: "ORDERS",
+    icon: ClipboardList,
+    description: "Track and view your past orders",
+  },
 ];
 
 const STATUS_STYLES = {
@@ -207,7 +222,7 @@ const handleSaveAddress = async (formData, addressId) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 sm:pt-16 pb-16 sm:pb-20">
         {/* Greeting */}
         <p className="text-center font-body text-black text-base sm:text-lg mb-10">
-          Hey, <span className="font-semibold">{displayName}</span>
+          Hey, <span className="font-semibold">{displayName}!</span>
         </p>
 
         {/* Tab cards */}
@@ -239,7 +254,7 @@ const handleSaveAddress = async (formData, addressId) => {
                 </div>
 
                 <p className="font-body text-sm text-gray-500">
-                  View and edit your personal details
+                  {tab.description}
                 </p>
               </button>
             );
@@ -250,7 +265,7 @@ const handleSaveAddress = async (formData, addressId) => {
         {activeTab === "overview" && (
           <div className="border border-gray-200 rounded-2xl p-6 sm:p-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-heading text-2xl sm:text-3xl">Overview</h2>
+              <p className="font-body font-semibold text-lg sm:text-xl">Overview</p>
 
               {!isEditingOverview && (
                 <button
@@ -339,9 +354,9 @@ const handleSaveAddress = async (formData, addressId) => {
         {/* ADDRESSES */}
         {activeTab === "addresses" && (
           <div>
-            <h2 className="font-heading text-2xl sm:text-3xl mb-3">
+            <p className="font-body font-semibold text-lg sm:text-xl mb-3">
               My Addresses
-            </h2>
+            </p>
 
             <div className="border-t border-gray-200 mb-5" />
 
@@ -363,9 +378,9 @@ const handleSaveAddress = async (formData, addressId) => {
                     key={address._id}
                     className="border border-gray-200 rounded-2xl p-6"
                   >
-                    <h3 className="font-heading text-lg mb-2">
+                    <p className="font-body font-semibold text-lg mb-2">
                       {address.label}
-                    </h3>
+                    </p>
 
                     <p className="font-body text-sm text-black">
                       {address.fullName}
@@ -413,11 +428,11 @@ const handleSaveAddress = async (formData, addressId) => {
         {/* ORDERS */}
         {activeTab === "orders" && (
           <div>
-            <h2 className="font-heading text-2xl sm:text-3xl mb-3">
+            <p className="font-body font-semibold text-lg sm:text-xl mb-3">
               My Orders
-            </h2>
+            </p>
 
-            <div className="border-t border-gray-200 mb-6" />
+            <div className="border-t border-gray-200 mb-6"/>
 
             {loadingOrders ? (
               <p className="font-body text-gray-500">Loading orders...</p>
@@ -426,11 +441,11 @@ const handleSaveAddress = async (formData, addressId) => {
                 You haven't placed any orders yet.
               </p>
             ) : (
-              <div className="space-y-8">
+              <div className="space-y-8" >
                 {orders.map((order) => (
                   <div
                     key={order._id}
-                    className="rounded-2xl overflow-hidden border border-gray-200"
+                    className="rounded-2xl overflow-hidden border border-gray-200  shadow-md"
                   >
                     {/* Header bar */}
                     <div className="bg-brand-orange text-white grid grid-cols-2 sm:grid-cols-4 gap-4 px-6 py-4 text-center">
@@ -438,7 +453,7 @@ const handleSaveAddress = async (formData, addressId) => {
                         <p className="font-body text-xs text-white/80 mb-1">
                           Order ID
                         </p>
-                        <p className="font-heading text-sm sm:text-base">
+                        <p className="font-body  font-semibold text-sm sm:text-base">
                           {order._id.slice(-6)}
                         </p>
                       </div>
@@ -447,7 +462,7 @@ const handleSaveAddress = async (formData, addressId) => {
                         <p className="font-body text-xs text-white/80 mb-1">
                           Total Payment
                         </p>
-                        <p className="font-heading text-sm sm:text-base">
+                        <p className="font-body font-semibold text-sm sm:text-base">
                           ₹{order.totalAmount}
                         </p>
                       </div>
@@ -456,7 +471,7 @@ const handleSaveAddress = async (formData, addressId) => {
                         <p className="font-body text-xs text-white/80 mb-1">
                           Payment Method
                         </p>
-                        <p className="font-heading text-sm sm:text-base">
+                        <p className="font-body font-semibold text-sm sm:text-base">
                           {order.paymentMethod === "RAZORPAY"
                             ? "Razorpay"
                             : "Cash on Delivery"}
@@ -467,7 +482,7 @@ const handleSaveAddress = async (formData, addressId) => {
                         <p className="font-body text-xs text-white/80 mb-1">
                           Order Date
                         </p>
-                        <p className="font-heading text-sm sm:text-base">
+                        <p className="font-body font-semibold text-sm sm:text-base">
                           {new Date(order.createdAt).toLocaleDateString(
                             "en-GB"
                           )}
@@ -499,9 +514,9 @@ const handleSaveAddress = async (formData, addressId) => {
                             />
 
                             <div>
-                              <h4 className="font-heading text-base">
+                              <p className="font-body font-semibold text-base">
                                 {item.product?.name}
-                              </h4>
+                              </p>
                               <p className="font-body text-sm text-gray-500">
                                 Quantity: {item.quantity}
                               </p>

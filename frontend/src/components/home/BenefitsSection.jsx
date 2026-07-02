@@ -27,29 +27,31 @@ const benefits = [
 const BenefitsSection = () => {
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Trust-badge style row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-6 mb-12 sm:mb-16 text-center">
+<div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-8 md:items-center">
+        {/* Trust-badge style column */}
+        <div className="grid grid-cols-2 md:grid-cols-1 gap-y-10 md:gap-y-16 text-center md:text-left">
           {benefits.map((benefit, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-brand-orange flex items-center justify-center mb-3">
+            <div key={index} className="flex flex-col items-center md:items-start md:flex-row md:gap-4">
+              <div className="w-16 h-16 rounded-full bg-brand-orange flex items-center justify-center mb-3 md:mb-0 flex-shrink-0">
                 <img src={benefit.icon} alt="" className="w-8 h-8 invert" />
               </div>
-              <p className="font-body font-semibold text-sm mb-1">
-                {benefit.title}
-              </p>
-              <p className="font-body text-xs text-gray-500 max-w-[180px]">
-                {benefit.description}
-              </p>
+              <div>
+                <p className="font-body font-semibold text-base md:text-lg mb-1">
+                  {benefit.title}
+                </p>
+<p className="font-body text-sm md:text-base text-gray-500 max-w-[180px] md:max-w-[280px] mx-auto md:mx-0">
+                  {benefit.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Video, centered */}
-        <div className="relative overflow-hidden rounded-2xl max-w-4xl mx-auto">
+{/* Video */}
+<div className="relative overflow-hidden rounded-2xl aspect-[4/5] md:h-[600px] md:aspect-auto">
           <video
             src="/images/video2.mp4"
-            className="w-full object-cover"
+            className="w-full h-full object-cover"
             autoPlay
             loop
             muted

@@ -39,7 +39,7 @@ export default function ProductDetails() {
     const [showViewCart, setShowViewCart] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [showReviewForm, setShowReviewForm] = useState(false);
-
+    const [notifyStatus, setNotifyStatus] = useState("idle");
     const [reviews, setReviews] = useState([]);
     const [rating, setRating] = useState(5);
     const [comments, setComments] = useState("");
@@ -154,6 +154,39 @@ const addToCart = async () => {
             console.log(error);
         }
     };
+
+const handleNotify = async () => {
+        if (notifyStatus === "loading" || notifyStatus === "success") return;
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Please login to get notified");
+            navigate("/login");
+            return;
+        }
+
+        setNotifyStatus("loading");
+
+        try {
+            await api.post(
+                "/notification/notify",
+                { productId: product._id },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setNotifyStatus("success");
+        } catch (error) {
+            console.log(error.response?.data || error.message);
+
+            if (error.response?.data?.message === "Already subscribed") {
+                setNotifyStatus("success");
+                return;
+            }
+
+            setNotifyStatus("idle");
+            alert(error.response?.data?.message || "Something went wrong");
+        }
+    };
+
     const fetchCartQuantity = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -383,7 +416,7 @@ const isSoldOut = product.stock <= 0;
                                                     <span
                                                         className={`absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
                                                             isActive
-                                                                ? "bg-white text-brand-orange-dark border-brand-orange"
+                                                                ? "bg-white text-green border-green"
                                                                 : "bg-white text-gray-500 border-gray-200"
                                                         }`}
                                                     >
@@ -455,17 +488,23 @@ const isSoldOut = product.stock <= 0;
     BUY NOW
   </button>
 
-  <button
-    onClick={isSoldOut ? undefined : addToCart}
-    disabled={isSoldOut}
+<button
+    onClick={isSoldOut ? handleNotify : addToCart}
+    disabled={isSoldOut && (notifyStatus === "loading" || notifyStatus === "success")}
     className={`flex-1 font-heading text-base py-3 rounded-full shadow-md transition flex items-center justify-center gap-2 ${
       isSoldOut
-        ? "bg-gray-400 text-white cursor-not-allowed"
+        ? "bg-gray-400 text-white cursor-pointer disabled:cursor-default"
         : "bg-brand-orange text-white hover:-translate-y-1 cursor-pointer"
     }`}
   >
     {isSoldOut ? (
-      <>NOTIFY WHEN BACK <Bell size={16} /></>
+      notifyStatus === "success" ? (
+        "SUBSCRIBED ✓"
+      ) : notifyStatus === "loading" ? (
+        "SENDING..."
+      ) : (
+        <>NOTIFY WHEN BACK <Bell size={16} /></>
+      )
     ) : (
       "ADD TO CART"
     )}

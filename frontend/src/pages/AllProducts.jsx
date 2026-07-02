@@ -74,6 +74,39 @@ const AllProducts = () => {
   const [price, setPrice] = useState("");
   const [sortBy, setSortBy] = useState("Most Popular");
   const [notifyStatus, setNotifyStatus] = useState({});
+
+    // ---------------- MOBILE FILTER DRAWER ----------------
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [expandedFilter, setExpandedFilter] = useState(null); // "category" | "availability" | "price" | "sort" | null
+  const [tempCategory, setTempCategory] = useState("");
+  const [tempAvailability, setTempAvailability] = useState("");
+  const [tempPrice, setTempPrice] = useState("");
+  const [tempSortBy, setTempSortBy] = useState("Most Popular");
+
+  const openMobileFilters = () => {
+    setTempCategory(category);
+    setTempAvailability(availability);
+    setTempPrice(price);
+    setTempSortBy(sortBy);
+    setExpandedFilter(null);
+    setIsMobileFilterOpen(true);
+  };
+
+  const applyMobileFilters = () => {
+    setCategory(tempCategory);
+    setAvailability(tempAvailability);
+    setPrice(tempPrice);
+    setSortBy(tempSortBy);
+    setCurrentPage(1);
+    setIsMobileFilterOpen(false);
+  };
+
+  const removeAllMobileFilters = () => {
+    setTempCategory("");
+    setTempAvailability("");
+    setTempPrice("");
+    setTempSortBy("Most Popular");
+  };
   // let filteredProducts = [...products];
   const navigate = useNavigate();
 
@@ -271,7 +304,7 @@ const AllProducts = () => {
         </div>
 
         <div className="px-3 pb-3 sm:px-4 sm:pb-4">
-          <h3 className="font-heading text-sm sm:text-lg mb-1 uppercase line-clamp-1">
+          <h3 className="font-heading text-lg sm:text-2xl mb-1 uppercase line-clamp-1">
             {product.name}
           </h3>
 
@@ -280,7 +313,7 @@ const AllProducts = () => {
               product.category?.name}
           </p>
 
-          <p className="font-heading text-base sm:text-xl mb-2 sm:mb-3">
+          <p className="font-heading text-lg sm:text-2xl mb-2 sm:mb-3">
             ₹{product.packSizes?.find(p => p.units === 1)?.price || "N/A"}
           </p>
 
@@ -320,7 +353,7 @@ const AllProducts = () => {
                 "SENDING..."
               ) : (
                 <>
-                  NOTIFY WHEN BACK <Bell size={14} />
+                  NOTIFY <Bell size={14} />
                 </>
               )
             ) : (
@@ -426,7 +459,7 @@ const AllProducts = () => {
         onClick={openMobileFilters}
         className="sm:hidden w-full flex items-center justify-between px-4 py-4 border-b border-gray-100"
       >
-        <span className="flex items-center gap-2 font-body text-sm text-brand-orange">
+        <span className="flex items-center gap-2 font-body text-sm text-black">
           <SlidersHorizontal size={16} />
           Filter and sort
         </span>
@@ -478,7 +511,7 @@ const AllProducts = () => {
                 </button>
                 {expandedFilter === "category" && (
                   <div className="px-5 pb-4 flex flex-wrap gap-2">
-                    {["Oats", "Oats Shake"].map((opt) => (
+                    {categories.map((c) => c.name).map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setTempCategory(tempCategory === opt ? "" : opt)}
@@ -621,9 +654,9 @@ const AllProducts = () => {
               </button>
               <button
                 onClick={applyMobileFilters}
-                className="bg-brand-orange text-white font-heading text-sm px-8 py-3 rounded-full"
+                className="bg-brand-orange text-white font-heading text-l px-8 py-3 rounded-full"
               >
-                Apply
+                APPLY
               </button>
             </div>
           </div>

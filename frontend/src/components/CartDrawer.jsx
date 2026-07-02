@@ -115,6 +115,7 @@ const handleExploreAddToCart = async (product) => {
 
       const filtered = allProducts
         .filter((p) => !cartProductIds.includes(p._id))
+        .filter((p) => p.stock > 0)
         .slice(0, 6);
 
       setExploreProducts(filtered);
