@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Play, X, Volume2, VolumeX, Heart, Share2 } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Navigation } from "swiper/modules";
+import { Navigation } from "swiper/modules";
 
 import "swiper/css";
-import "swiper/css/effect-coverflow";
 
 const reviews = [
   {
@@ -25,6 +24,22 @@ const reviews = [
   },
   {
     id: 3,
+    videoThumbnail: "/images/rasmalai.png",
+    productName: "MIDNIGHT LATTE",
+    price: 200,
+    productId: "",
+    videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
+  },
+  {
+    id: 4,
+    videoThumbnail: "/images/rasmalai.png",
+    productName: "MIDNIGHT LATTE",
+    price: 200,
+    productId: "",
+    videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
+  },
+  {
+    id: 5,
     videoThumbnail: "/images/rasmalai.png",
     productName: "MIDNIGHT LATTE",
     price: 200,
@@ -261,10 +276,7 @@ const ReelModal = ({ review, onClose }) => {
 
 // ─── Main Carousel ────────────────────────────────────────────────────────────
 const ReviewsCarousel = () => {
-  const [activeIndex, setActiveIndex] = useState(Math.floor(reviews.length / 2));
   const [openReview, setOpenReview] = useState(null);
-
-  const activeReview = reviews[activeIndex];
 
   return (
     <>
@@ -276,7 +288,7 @@ const ReviewsCarousel = () => {
         />
       )}
 
-      <section className="py-16 sm:py-20 px-4 sm:px-6">
+      <section className="py-12 sm:py-16 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="font-heading text-3xl sm:text-4xl md:text-[56px] mb-2">
             CRUSH-WORTHY REVIEWS
@@ -285,54 +297,52 @@ const ReviewsCarousel = () => {
             Watch what people have to say
           </p>
 
-          <div className="relative max-w-3xl mx-auto">
-            <button className="reviews-prev hidden sm:flex absolute -left-2 sm:-left-6 md:-left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-brand-orange text-white text-4xl items-center justify-center shadow-md hover:-translate-x-1 transition cursor-pointer" aria-label="Previous">‹</button>
-            <button className="reviews-next hidden sm:flex absolute -right-2 sm:-right-6 md:-right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-brand-orange text-white text-4xl items-center justify-center shadow-md hover:translate-x-1 transition cursor-pointer" aria-label="Next">›</button>
+          <div className="relative">
+            <button className="reviews-prev hidden sm:flex absolute -left-2 sm:-left-4 md:-left-6 ..." aria-label="Previous">‹</button>
+            <button className="reviews-next hidden sm:flex absolute -right-2 sm:-right-4 md:-right-6 ..." aria-label="Next">›</button>
 
             <Swiper
-              modules={[EffectCoverflow, Navigation]}
-              effect="coverflow"
-              grabCursor centeredSlides slidesPerView="auto"
-              initialSlide={Math.floor(reviews.length / 2)}
+              modules={[Navigation]}
               navigation={{ prevEl: ".reviews-prev", nextEl: ".reviews-next" }}
-              coverflowEffect={{ rotate: 0, stretch: -40, depth: 150, modifier: 1.5, slideShadows: false }}
-              onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-              className="reviews-swiper !py-6"
+              spaceBetween={16}
+              slidesPerView={1.6}
+              breakpoints={{
+                640: { slidesPerView: 2.2, spaceBetween: 20 },
+                1024: { slidesPerView: 3, spaceBetween: 28 },
+              }}
+              className="reviews-swiper !py-4"
             >
-              {reviews.map((review, index) => {
-                const isActive = index === activeIndex;
-                return (
-                  <SwiperSlide key={review.id} className="!w-52 sm:!w-72 md:!w-[340px]" style={{ zIndex: isActive ? 20 : 1 }}>
+              {reviews.map((review) => (
+                <SwiperSlide key={review.id}>
+                  <div className="text-left">
                     <div className="relative rounded-2xl overflow-hidden shadow-lg bg-gray-200" style={{ aspectRatio: "9 / 11" }}>
                       <img src={review.videoThumbnail} alt={review.productName} className="absolute inset-0 w-full h-full object-cover" />
-                      <div className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${isActive ? "opacity-0" : "opacity-100"}`} />
-                      {isActive && (
-                        <button
-                          aria-label="Play reel"
-                          onClick={() => setOpenReview(review)}
-                          className="absolute inset-0 flex items-center justify-center group cursor-pointer"
-                        >
-                          <span className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black flex items-center justify-center group-hover:bg-brand-orange transition">
-                            <Play size={18} className="text-white fill-white ml-0.5" />
-                          </span>
-                        </button>
-                      )}
+                      <div className="absolute inset-0 bg-black/40" />
+                      <button
+                        aria-label="Play reel"
+                        onClick={() => setOpenReview(review)}
+                        className="absolute inset-0 flex items-center justify-center group cursor-pointer"
+                      >
+                        <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black flex items-center justify-center group-hover:bg-brand-orange transition">
+                          <Play size={16} className="text-white fill-white ml-0.5" />
+                        </span>
+                      </button>
                     </div>
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          </div>
 
-          <div className="mt-8 max-w-xs sm:max-w-sm mx-auto text-left">
-            <h3 className="font-heading text-lg uppercase mb-1">{activeReview.productName}</h3>
-            <p className="font-body text-sm text-gray-700 mb-4">₹{activeReview.price}.00</p>
-            <button
-              onClick={() => console.log("Add to cart:", activeReview.productName)}
-              className="w-full bg-black text-white rounded-full py-3 font-heading text-base font-medium hover:bg-brand-orange transition cursor-pointer shadow-md hover:-translate-y-1"
-            >
-              ADD TO CART
-            </button>
+                    <h3 className="font-heading text-sm sm:text-base uppercase mt-4 mb-1">
+                      {review.productName}
+                    </h3>
+                    <p className="font-body text-sm text-gray-700 mb-3">₹{review.price}.00</p>
+                    <button
+                      onClick={() => console.log("Add to cart:", review.productName)}
+                      className="w-full bg-black text-white rounded-full py-2.5 font-heading text-sm font-medium hover:bg-brand-orange transition cursor-pointer"
+                    >
+                      ADD TO CART
+                    </button>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </div>
       </section>

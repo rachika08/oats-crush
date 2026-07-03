@@ -36,6 +36,8 @@ import CustomizeBox from './pages/CustomizeBox';
 import BlogDetails from './components/home/BlogDetails';
 import Blogs from './components/home/Blogs';
 import WhatsAppButton from './components/WhatsAppButton';
+import FAQPage from './pages/FAQPage';
+import NotFound from './pages/NotFound';
 
 
 function RootLayout() {
@@ -72,6 +74,8 @@ const router = createBrowserRouter([
   {path:"/customize-box", element:<CustomizeBox/>},
   {path:"/blogs/:id",element:<BlogDetails/>},
   {path:"/blog",element:<Blogs/>},
+  {path:"/faq",element:<FAQPage/>},
+  {path:"*", element:<NotFound/>},
   // ADMIN ROUTES
   {path:"/admin",element:<AdminRoute><AdminDashboard/></AdminRoute>},
   {

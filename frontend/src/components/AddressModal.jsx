@@ -15,6 +15,7 @@ const EMPTY_FORM = {
 export default function AddressModal({ isOpen, onClose, onSave, initialData }) {
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const isEditing = Boolean(initialData);
 
@@ -34,6 +35,7 @@ export default function AddressModal({ isOpen, onClose, onSave, initialData }) {
           }
         : EMPTY_FORM
     );
+    setErrors({});
   }, [isOpen, initialData]);
 
   useEffect(() => {
@@ -53,12 +55,39 @@ export default function AddressModal({ isOpen, onClose, onSave, initialData }) {
 
   if (!isOpen) return null;
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  const handleSubmit = async (e) => {
+    if (name === "phone") {
+        setFormData({ ...formData, phone: value.replace(/\D/g, "").slice(0, 10) });
+        return;
+    }
+
+    if (name === "pincode") {
+        setFormData({ ...formData, pincode: value.replace(/\D/g, "").slice(0, 6) });
+        return;
+    }
+
+    setFormData({ ...formData, [name]: value });
+};
+
+const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const newErrors = {};
+    if (formData.phone.length !== 10) {
+      newErrors.phone = "Phone number must be exactly 10 digits";
+    }
+    if (formData.pincode.length !== 6) {
+      newErrors.pincode = "Pincode must be exactly 6 digits";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
     setSaving(true);
     try {
       await onSave(formData, initialData?._id);
@@ -123,17 +152,23 @@ export default function AddressModal({ isOpen, onClose, onSave, initialData }) {
               />
             </div>
 
-            <div>
+<div>
               <label className="block font-body text-sm text-gray-500 mb-2">
                 Phone Number
               </label>
               <input
                 name="phone"
+                type="tel"
+                inputMode="numeric"
+                maxLength={10}
                 value={formData.phone}
                 onChange={handleChange}
                 required
                 className="w-full border-b border-gray-300 pb-2 font-body text-sm focus:outline-none focus:border-brand-orange transition bg-transparent"
               />
+              {errors.phone && (
+                <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+              )}
             </div>
 
             <div>
@@ -142,11 +177,17 @@ export default function AddressModal({ isOpen, onClose, onSave, initialData }) {
               </label>
               <input
                 name="pincode"
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
                 value={formData.pincode}
                 onChange={handleChange}
                 required
                 className="w-full border-b border-gray-300 pb-2 font-body text-sm focus:outline-none focus:border-brand-orange transition bg-transparent"
               />
+              {errors.pincode && (
+                <p className="text-red-500 text-xs mt-1">{errors.pincode}</p>
+              )}
             </div>
 
             <div className="sm:col-span-2">

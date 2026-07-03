@@ -127,7 +127,7 @@ const BlogSection = () => {
 
   return (
     <section className="py-16 px-4">
-      <h2 className="text-center text-3xl font-bold mb-10">
+      <h2 className="text-center text-3xl sm:text-4xl md:text-[56px] mb-10">
         READ OUR LATEST BLOGS
       </h2>
 

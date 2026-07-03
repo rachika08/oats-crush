@@ -4,18 +4,19 @@
   color-scheme: light;
 }
 
+html, body {
+  overflow-x: hidden;
+}
+
 @theme {
   /* Brand */
   --color-brand-orange: #E06318;
   --color-brand-orange-dark: #C45414;
 
   /* Flavour card palettes */
-  --color-flavour-coffee-bg: #e8c9a8;
-  --color-flavour-coffee-text: #4a2c17;
   --color-flavour-rasmalai-bg: #f7d4d9;
   --color-flavour-rasmalai-text: #8b2e3c;
-  --color-flavour-savoury-bg: #d9e4c8;
-  --color-flavour-savoury-text: #3f4a2e;
+  --color-flavour-rasmalai-accent: #FF4A5C;
   --color-green: #4CAF50;
 
   /* Fonts */
@@ -116,4 +117,14 @@ input[type="password"]::-ms-reveal {
 
 .flip-card-back {
   transform: rotateY(180deg);
+}
+
+
+.icon-mask {
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
