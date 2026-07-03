@@ -18,18 +18,33 @@ export default function Signup() {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
+        const { name, value } = e.target;
+
+    if (name === "phone") {
+        const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+        setForm({ ...form, phone: digitsOnly });
+        return;
+    }
+
         setForm({
             ...form,
             [e.target.name]: e.target.value
         });
     };
 
-    // NORMAL SIGNUP
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    
 
-        try {
-            const response = await api.post("/auth/signup", form);
+    // NORMAL SIGNUP
+const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (form.phone.length !== 10) {
+        setMsg("Phone number must be exactly 10 digits");
+        return;
+    }
+
+    try {
+        const response = await api.post("/auth/signup", form);
 
             setMsg(response.data.message);
 
@@ -156,14 +171,19 @@ export default function Signup() {
                         />
 
                         {/* PHONE */}
-                        <input
-                            name="phone"
-                            placeholder="Phone"
-                            value={form.phone}
-                            onChange={handleChange}
-                            required
-                            className="w-full border-b border-gray-300 p-2 outline-none transition-colors duration-300 focus:border-brand-orange"
-                        />
+<input
+    name="phone"
+    type="tel"
+    inputMode="numeric"
+    maxLength={10}
+    placeholder="Phone"
+    value={form.phone}
+    onChange={handleChange}
+    required
+    pattern="\d{10}"
+    title="Enter a valid 10-digit phone number"
+    className="w-full border-b border-gray-300 p-2 outline-none transition-colors duration-300 focus:border-brand-orange"
+/>
 
                         {/* PASSWORD */}
                         <div className="relative">

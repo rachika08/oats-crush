@@ -1,29 +1,11 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const faqs = [
-  {
-    id: 1,
-    question: "How to crush it?",
-    answer:
-      "Mix with 240ml milk or alternative, shake or blend, and you're ready in seconds. No bowls, no spoons, no mess.",
-  },
-  {
-    id: 2,
-    question: "How much protein does one serving contain?",
-    answer:
-      "Each serving packs 30g of protein — more than two whole eggs, in a single pouch.",
-  },
-  {
-    id: 3,
-    question: "Does it contain artificial sweeteners?",
-    answer:
-      "No. We use natural sweetness from oats and monk fruit — zero refined sugar, zero artificial sweeteners.",
-  },
-];
 
 const FAQSection = ({ faqs = [],image }) => {
   const [openId, setOpenId] = useState(null);
+  const navigate = useNavigate();
 
   const toggleFaq = (key) => {
     setOpenId((prev) => (prev === key ? null : key));
@@ -101,6 +83,13 @@ const FAQSection = ({ faqs = [],image }) => {
               );
             })}
           </div>
+
+          <button
+            onClick={() => navigate("/faq")}
+            className="mt-6 w-full bg-brand-orange sm:w-auto  text-white rounded-full px-6 py-2.5 font-heading text-lg font-medium hover:-translate-y-1 transition-all duration-200 shadow-md cursor-pointer"
+          >
+            EXPLORE ALL FAQS
+          </button>
         </div>
       </div>
     </section>
@@ -108,3 +97,7 @@ const FAQSection = ({ faqs = [],image }) => {
 };
 
 export default FAQSection;
+
+
+
+

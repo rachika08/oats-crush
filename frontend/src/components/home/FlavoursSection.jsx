@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { Bell, Check, Coffee, Milk, Wheat, Loader2 } from "lucide-react";
+import { Bell, Check, Loader2 } from "lucide-react";
 import api from "../../api/axios";
 
-
-
-const defaultIcon = Coffee;
+const heroBadges = [
+  { icon: "/images/icon-zero-sugar.svg", label: "Sweetened with monk fruit" },
+  { icon: "/images/icon-drop.svg", label: "No fillers or emulsifiers" },
+  { icon: "/images/icon-flavours.svg", label: "No synthetic flavours" },
+];
 
 const FlavoursSection = () => {
   const [upcomingProducts, setUpcomingProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [flippedId, setFlippedId] = useState(null);
   const [notifyStatus, setNotifyStatus] = useState({});
   const [errorMsg, setErrorMsg] = useState({});
 
@@ -82,117 +83,136 @@ const FlavoursSection = () => {
     return (
       <>
         NOTIFY ME
-        <Bell size={14} />
+        <Bell size={15}  strokeWidth={3} />
       </>
     );
   };
 
- 
   if (!loading && upcomingProducts.length === 0) {
     return null;
   }
 
+const heroProduct = upcomingProducts.find((p) =>
+    p.name?.toLowerCase().includes("rasmalai")
+  ) || upcomingProducts[0];
+
+  const restProducts = upcomingProducts.filter(
+    (p) => p._id !== heroProduct?._id
+  );
+
   return (
-    <section className="py-16 sm:py-20 px-4 sm:px-6">
-      <div className="max-w-7xl mx-auto text-center">
-        <span className="inline-block border border-brand-orange-dark text-brand-orange-dark rounded-full px-4 py-1 text-xs sm:text-sm font-body mb-4">
-          Coming Soon
-        </span>
-
-        <h2 className="font-heading text-3xl sm:text-4xl md:text-[56px] mb-3">
-          NEW FLAVOURS
-        </h2>
-
-        <p className="font-body text-gray-600 text-sm sm:text-base mb-10">
-          New flavours dropping soon. Get notified the second they land.
-        </p>
-
+    <section className="py-12 sm:py-16 px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto">
         {loading ? (
-          <p className="text-gray-500">Loading...</p>
+          <p className="text-gray-500 text-center">Loading...</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {upcomingProducts.map((product) => {
-              const status = notifyStatus[product._id];
+          <>
+          {/* Hero — lead upcoming flavour — full section width */}
+          {heroProduct && (
+<div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14 items-start mb-6">
+    {/* Left - video */}
+    <div className="rounded-3xl overflow-hidden bg-black w-full h-[420px] md:h-[560px]">
+      <video
+        src={heroProduct.videoUrl || "/images/video3.mp4"}
+        className="w-full h-full object-cover"
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
+    </div>
 
-              return (
-                <div
-                  key={product._id}
-                  className={`flip-card h-[420px] sm:h-[440px] ${
-                    flippedId === product._id ? "is-flipped" : ""
-                  }`}
-                  onClick={() =>
-                    setFlippedId(flippedId === product._id ? null : product._id)
-                  }
-                >
-                  <div className="flip-card-inner">
-                    {/* FRONT FACE */}
-                    <div className="flip-card-front bg-gray-50 rounded-2xl p-5 text-left flex flex-col shadow-md">
-                      <div className="relative rounded-xl overflow-hidden mb-4 aspect-square bg-black/5">
-                        <span className="absolute top-3 left-3 bg-black/70 text-white text-xs font-body px-3 py-1 rounded-full">
-                          Dropping soon
-                        </span>
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
+    {/* Right - content */}
+    <div className="text-left">
+                <span className="inline-block border border-flavour-rasmalai-accent text-flavour-rasmalai-accent rounded-full px-4 py-1 text-xs sm:text-sm font-body mb-4">
+                  Dropping Soon
+                </span>
+
+                <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] leading-tight mb-4 uppercase">
+                  {heroProduct.name} IS COMING
+                </h2>
+
+                <p className="font-body text-sm sm:text-base font-semibold text-gray-800 mb-4">
+                  {heroProduct.tagline || "30g protein · Real oats · Real flavour"}
+                </p>
+
+                <p className="font-body text-sm text-gray-600 mb-8 leading-relaxed">
+                  {heroProduct.description}
+                </p>
+
+<div className="grid grid-cols-3 gap-6 mb-8 max-w-sm">
+                    {heroBadges.map(({ icon, label }) => (
+                      <div key={label} className="flex flex-col items-center text-center">
+                        <span
+                          className="icon-mask w-9 h-9 sm:w-10 sm:h-10 mb-3 bg-flavour-rasmalai-accent"
+                          style={{ WebkitMaskImage: `url(${icon})`, maskImage: `url(${icon})` }}
                         />
+                        <p className="font-body text-xs sm:text-sm font-semibold text-gray-800 leading-snug">
+                          {label}
+                        </p>
                       </div>
+                    ))}
+                  </div>
 
-                      <h3 className="font-heading text-xl sm:text-2xl mb-1">
-                        {product.name}
-                      </h3>
+                <button
+                  onClick={() => handleNotify(heroProduct)}
+                  disabled={
+                    notifyStatus[heroProduct._id] === "loading" ||
+                    notifyStatus[heroProduct._id] === "success"
+                  }
+                  className="inline-flex items-center gap-2 border-2 border-flavour-rasmalai-accent text-black rounded-full px-6 py-2.5 font-heading text-lg font-medium transition-all duration-200 hover:-translate-y-1 hover:bg-flavour-rasmalai-accent hover:text-white cursor-pointer disabled:cursor-default disabled:hover:translate-y-0"
+                >
+                  {renderButtonContent(heroProduct)}
+                </button>
 
-                      <p className="font-body text-sm mb-5 text-gray-600">
-                        {product.description}
-                      </p>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleNotify(product);
-                        }}
-                        disabled={status === "loading" || status === "success"}
-                        className="mt-auto bg-white border rounded-full py-2.5 flex items-center justify-center gap-2 font-heading text-base font-medium transition-all duration-200 hover:-translate-y-1 shadow-md cursor-pointer disabled:cursor-default disabled:hover:translate-y-0"
-                      >
-                        {renderButtonContent(product)}
-                      </button>
-                      {status === "error" && errorMsg[product._id] && (
-                        <p className="text-xs text-red-600 mt-2 font-body">
-                          {errorMsg[product._id]}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* BACK FACE — simplified, since benefits/info fields differ per product */}
-                    <div className="flip-card-back bg-gray-50 rounded-2xl overflow-hidden text-left flex flex-col shadow-md p-5 sm:p-6">
-                      <h3 className="font-heading text-xl sm:text-2xl mb-1">
-                        {product.name}
-                      </h3>
-                      <div className="h-px w-10 mb-4 bg-gray-300" />
-                      <p className="font-body text-sm text-gray-600 flex-1">
-                        {product.description}
-                      </p>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleNotify(product);
-                        }}
-                        disabled={status === "loading" || status === "success"}
-                        className="bg-white border rounded-full py-2.5 flex items-center justify-center gap-2 font-heading text-base font-medium transition-all duration-200 hover:-translate-y-1 shadow-md cursor-pointer disabled:cursor-default disabled:hover:translate-y-0"
-                      >
-                        {renderButtonContent(product)}
-                      </button>
-                      {status === "error" && errorMsg[product._id] && (
-                        <p className="text-xs text-red-600 mt-2 font-body">
-                          {errorMsg[product._id]}
-                        </p>
-                      )}
-                    </div>
+                {notifyStatus[heroProduct._id] === "error" && errorMsg[heroProduct._id] && (
+                  <p className="text-xs text-red-600 mt-2 font-body">
+                    {errorMsg[heroProduct._id]}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+{/* Soft-launch strip(s) */}
+          {restProducts.map((product) => {
+            const status = notifyStatus[product._id];
+            return (
+              <div
+                key={product._id}
+                className="flex items-center justify-between gap-4 border border-brand-orange shadow-md rounded-2xl px-4 sm:px-6 py-3 sm:py-4 mt-4"
+              >
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="inline-block bg-brand-orange/10 text-brand-orange-dark rounded-full px-3 py-0.5 text-[10px] sm:text-xs font-body mb-1">
+                      Brewing in the back
+                    </span>
+                    <h3 className="font-heading text-base sm:text-lg uppercase truncate">
+                      {product.name}
+                    </h3>
+                    <p className="font-body text-xs sm:text-sm text-gray-500 truncate">
+                      {product.tagline || product.description}
+                    </p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+
+                <button
+                  onClick={() => handleNotify(product)}
+                  disabled={status === "loading" || status === "success"}
+                  className="flex-shrink-0 bg-brand-orange text-white rounded-full px-5 py-2 flex items-center gap-2 font-heading text-xs sm:text-sm font-medium transition hover:-translate-y-1 shadow-md cursor-pointer disabled:cursor-default disabled:hover:translate-y-0"
+                >
+                  {renderButtonContent(product)}
+                </button>
+              </div>
+            );
+          })}
+          </>
         )}
       </div>
     </section>
@@ -200,4 +220,3 @@ const FlavoursSection = () => {
 };
 
 export default FlavoursSection;
-

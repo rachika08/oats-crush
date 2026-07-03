@@ -13,7 +13,7 @@ import BlogSection from "../components/home/BlogSection";
 import Footer from "../components/home/Footer";
 
 const Home = () => {
-  const faqs = [
+const faqs = [
     {
       id: 1,
       question: "How to crush it?",
@@ -32,14 +32,27 @@ const Home = () => {
       answer:
         "No. We use natural sweetness from oats and monk fruit — zero refined sugar, zero artificial sweeteners.",
     },
+    {
+      id: 4,
+      question: "Is Oats Crush vegan and lactose-free?",
+      answer:
+        "Yes — every flavour is 100% plant-based, dairy-free, and lactose-free, without compromising on taste or protein.",
+    },
+    {
+      id: 5,
+      question: "What's the shelf life and how should I store it?",
+      answer:
+        "Unopened, it stays fresh for up to 9 months in a cool, dry place. No refrigeration needed until opened.",
+    },
   ];
   return (
     <>
       <Navbar />
       <HeroSection />
+      <FeaturedProducts />
       <FlavoursSection />
       <InfoBar />
-      <FeaturedProducts />
+
       <BenefitsSection />
       <ReviewsCarousel />
       <PromoBanner />
