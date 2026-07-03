@@ -33,7 +33,7 @@ const BenefitsSection = () => {
           {benefits.map((benefit, index) => (
             <div key={index} className="flex flex-col items-center md:items-start md:flex-row md:gap-4">
               <div className="w-16 h-16 rounded-full bg-brand-orange flex items-center justify-center mb-3 md:mb-0 flex-shrink-0">
-                <img src={benefit.icon} alt="" className="w-8 h-8 invert" />
+                <img src={benefit.icon} alt="" loading="lazy" className="w-8 h-8 invert" />
               </div>
               <div>
                 <p className="font-body font-semibold text-base md:text-lg mb-1">

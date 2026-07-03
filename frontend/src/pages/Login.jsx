@@ -78,7 +78,7 @@ export default function Login() {
             <div className="relative order-1 md:order-2 h-[300px] md:h-screen w-full md:w-1/2">
                 <div className="absolute inset-0 overflow-hidden md:rounded-tl-[200px] md:rounded-bl-[200px]">
                     <img
-                        src="/images/banner4.jpg"
+                        src="/images/banner4.webp"
                         alt="Login banner"
                         className="w-full h-full object-cover"
                     />
@@ -93,7 +93,7 @@ export default function Login() {
                     {/* LOGO */}
                     <div className="flex justify-center mb-6">
                         <img
-                            src="/images/oats-crush.png"
+                            src="/images/oats-crush.webp"
                             className="h-16"
                             alt="logo"
                         />

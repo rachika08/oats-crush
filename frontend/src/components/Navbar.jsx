@@ -86,7 +86,7 @@ useEffect(() => {
           onClick={() => navigate("/")}
         >
 
-          <img src="/images/oats-crush.png" className="w-19 h-13"/>
+          <img src="/images/oats-crush.webp" className="w-19 h-13"/>
 
         </div>
 

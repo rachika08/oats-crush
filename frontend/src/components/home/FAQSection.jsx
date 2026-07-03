@@ -25,11 +25,18 @@ const FAQSection = ({ faqs = [],image }) => {
 
         {/* Right - heading + accordion */}
         <div>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] leading-tight mb-8">
-            FREQUENTLY
-            <br />
-            ASKED QUESTIONS
-          </h2>
+          <div className="relative inline-block mb-8">
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] leading-tight">
+              FREQUENTLY
+              <br />
+              ASKED QUESTIONS
+            </h2>
+            <img
+              src="/images/arrow-s.svg"
+              alt=""
+              className="hidden md:block absolute -right-25 top-1/2 translate-y-[calc(-50%+50px)] w-14 h-14 pointer-events-none"
+            />
+         </div>
 
           <div className="flex flex-col gap-4">
             {faqs.map((faq, index) => {

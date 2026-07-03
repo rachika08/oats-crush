@@ -8,7 +8,7 @@ import "swiper/css";
 const reviews = [
   {
     id: 1,
-    videoThumbnail: "/images/coffee.png",
+    videoThumbnail: "/images/coffee.webp",
     productName: "RASMALAI OATS SHAKE",
     price: 149,
     productId: "",
@@ -16,7 +16,7 @@ const reviews = [
   },
   {
     id: 2,
-    videoThumbnail: "/images/oat-milk.png",
+    videoThumbnail: "/images/oat-milk.webp",
     productName: "COFFEE OATS SHAKE",
     price: 149,
     productId: "",
@@ -24,7 +24,7 @@ const reviews = [
   },
   {
     id: 3,
-    videoThumbnail: "/images/rasmalai.png",
+    videoThumbnail: "/images/rasmalai.webp",
     productName: "MIDNIGHT LATTE",
     price: 200,
     productId: "",
@@ -32,7 +32,7 @@ const reviews = [
   },
   {
     id: 4,
-    videoThumbnail: "/images/rasmalai.png",
+    videoThumbnail: "/images/rasmalai.webp",
     productName: "MIDNIGHT LATTE",
     price: 200,
     productId: "",
@@ -40,7 +40,7 @@ const reviews = [
   },
   {
     id: 5,
-    videoThumbnail: "/images/rasmalai.png",
+    videoThumbnail: "/images/rasmalai.webp",
     productName: "MIDNIGHT LATTE",
     price: 200,
     productId: "",
@@ -289,7 +289,17 @@ const ReviewsCarousel = () => {
       )}
 
       <section className="py-12 sm:py-16 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto text-center">
+ <div className="relative max-w-7xl mx-auto text-center">
+   <img
+     src="/images/arrow2.svg"
+     alt=""
+     className="hidden sm:block absolute left-4 md:left-40 top-15 w-16 h-12 pointer-events-none"
+   />
+   <img
+     src="/images/arrow3.svg"
+     alt="arrow"
+     className="hidden sm:block absolute right-4 md:right-40 top-15 w-16 h-12 pointer-events-none"
+  />
           <h2 className="font-heading text-3xl sm:text-4xl md:text-[56px] mb-2">
             CRUSH-WORTHY REVIEWS
           </h2>
