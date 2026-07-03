@@ -197,7 +197,7 @@ const AllProducts = () => {
 
     const productId = product._id;
 
-    if (notifyStatus[productId] === "loading" || notifyStatus[productId] === "success") {
+    if (notifyStatus[productId] === "loading") {
       return;
     }
 

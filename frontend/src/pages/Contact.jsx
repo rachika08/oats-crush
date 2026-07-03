@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
+import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 
@@ -19,15 +20,32 @@ export default function Contact() {
         });
     };
 
-    const handleSubmit = (e) => {
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+
+    //     // TODO: wire to a real /contact endpoint once the backend exists.
+    //     // For now this just confirms the message was "sent" on the frontend.
+    //     console.log("Contact form submitted:", form);
+
+    //     setStatus("sent");
+    //     setForm({ name: "", email: "", message: "" });
+    // };
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // TODO: wire to a real /contact endpoint once the backend exists.
-        // For now this just confirms the message was "sent" on the frontend.
-        console.log("Contact form submitted:", form);
+        try {
+            await api.post("/contact", form);
 
-        setStatus("sent");
-        setForm({ name: "", email: "", message: "" });
+            setStatus("sent");
+            setForm({
+                name: "",
+                email: "",
+                message: "",
+            });
+        } catch (err) {
+            console.error(err);
+            alert("Failed to send message");
+        }
     };
 
     return (

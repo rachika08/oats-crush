@@ -2,48 +2,48 @@ import Order from "../models/orderModel.js";
 import razorpay from "../config/razorpay.js";
 import crypto from "crypto";
 
-export const createRazorpayOrder = async (req, res) => {
-    try {
-        const { orderId } = req.body;
+// export const createRazorpayOrder = async (req, res) => {
+//     try {
+//         const { orderId } = req.body;
 
-        if (!orderId) {
-            return res.status(400).json({
-                message: "Order ID is required"
-            });
-        }
+//         if (!orderId) {
+//             return res.status(400).json({
+//                 message: "Order ID is required"
+//             });
+//         }
 
-        const order = await Order.findById(orderId);
+//         const order = await Order.findById(orderId);
 
-        if (!order) {
-            return res.status(404).json({
-                message: "Order not found"
-            });
-        }
+//         if (!order) {
+//             return res.status(404).json({
+//                 message: "Order not found"
+//             });
+//         }
 
-        const options = {
-            amount: order.totalAmount * 100,
-            currency: "INR",
-            receipt: order._id.toString()
-        };
+//         const options = {
+//             amount: order.totalAmount * 100,
+//             currency: "INR",
+//             receipt: order._id.toString()
+//         };
 
-        const razorpayOrder =
-            await razorpay.orders.create(options);
+//         const razorpayOrder =
+//             await razorpay.orders.create(options);
 
-        order.razorpayOrderId = razorpayOrder.id;
-        await order.save();
+//         order.razorpayOrderId = razorpayOrder.id;
+//         await order.save();
 
-        return res.status(200).json({
-            orderId: razorpayOrder.id,
-            amount: razorpayOrder.amount,
-            currency: razorpayOrder.currency
-        });
+//         return res.status(200).json({
+//             orderId: razorpayOrder.id,
+//             amount: razorpayOrder.amount,
+//             currency: razorpayOrder.currency
+//         });
 
-    } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
-    }
-};
+//     } catch (error) {
+//         return res.status(500).json({
+//             message: error.message
+//         });
+//     }
+// };
 
 
 // export const verifyPayment = async (req, res) => {
@@ -101,6 +101,75 @@ export const createRazorpayOrder = async (req, res) => {
 //         });
 //     }
 // };
+
+
+export const createRazorpayOrder = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        const userId = req.user.id;
+
+        if (!orderId) {
+            return res.status(400).json({
+                message: "Order ID is required"
+            });
+        }
+
+        // ✅ ownership check — order must belong to the logged-in user
+        const order = await Order.findOne({ _id: orderId, user: userId });
+
+        if (!order) {
+            return res.status(404).json({
+                message: "Order not found"
+            });
+        }
+
+        if (order.paymentMethod !== "RAZORPAY") {
+            return res.status(400).json({
+                message: "This order is not set up for online payment"
+            });
+        }
+
+        if (order.paymentStatus === "Paid") {
+            return res.status(400).json({
+                message: "Order is already paid"
+            });
+        }
+
+        // ✅ reuse existing razorpay order if one was already created (avoid duplicates on retry)
+        if (order.razorpayOrderId) {
+            const existing = await razorpay.orders.fetch(order.razorpayOrderId);
+            if (existing.status === "created") {
+                return res.status(200).json({
+                    orderId: existing.id,
+                    amount: existing.amount,
+                    currency: existing.currency
+                });
+            }
+        }
+
+        const options = {
+            amount: Math.round(order.totalAmount * 100), // ✅ integer paise, no float drift
+            currency: "INR",
+            receipt: order._id.toString()
+        };
+
+        const razorpayOrder = await razorpay.orders.create(options);
+
+        order.razorpayOrderId = razorpayOrder.id;
+        await order.save();
+
+        return res.status(200).json({
+            orderId: razorpayOrder.id,
+            amount: razorpayOrder.amount,
+            currency: razorpayOrder.currency
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+};
 
 
 export const verifyPayment = async (req, res) => {
