@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import { useNavigate } from "react-router";
 import AddressModal from "../components/AddressModal";
+import { calculatePricing } from "../utils/pricing";
 
 export default function Checkout() {
     const [addresses, setAddresses] = useState([]);
@@ -56,35 +57,46 @@ export default function Checkout() {
     };
 
     // ✅ FIXED TOTAL (supports custom box + normal product)
-    const calculateTotal = () => {
+    // const calculateTotal = () => {
+    //     if (!cart) return 0;
+
+    //     return cart.items.reduce((total, item) => {
+    //         // CUSTOM BOX
+    //         if (item.isCustomBox) {
+    //             return total + (item.customPrice || 0);
+    //         }
+
+    //         // NORMAL PRODUCT
+    //         const packPrice = item.pack?.price || 0;
+    //         return total + packPrice * (item.quantity || 1);
+    //     }, 0);
+    // };
+
+    const calculateSubtotal = () => {
         if (!cart) return 0;
-
         return cart.items.reduce((total, item) => {
-            // CUSTOM BOX
-            if (item.isCustomBox) {
-                return total + (item.customPrice || 0);
-            }
-
-            // NORMAL PRODUCT
-            const packPrice = item.pack?.price || 0;
-            return total + packPrice * (item.quantity || 1);
+            if (item.isCustomBox) return total + (item.customPrice || 0);
+            return total + (item.pack?.price || 0) * (item.quantity || 1);
         }, 0);
     };
 
+    const subtotal = calculateSubtotal();
+    const { shippingFee, discount, grandTotal } = calculatePricing(subtotal, cart?.items?.length || 0);
+
     const handlePlaceOrder = async () => {
-    if (isPlacingOrder) return;
-    setIsPlacingOrder(true);
+        if (isPlacingOrder) return;
+        setIsPlacingOrder(true);
 
-    try {
-        if (!selectedAddress) {
-            alert("Please select an address");
-            return;
-        }
+        try {
+            if (!selectedAddress) {
+                alert("Please select an address");
+                return;
+            }
 
-        const orderRes = await api.post("/order", {
-            addressId: selectedAddress,
-            paymentMethod,
-        });
+            const orderRes = await api.post("/order", {
+                addressId: selectedAddress,
+                paymentMethod,
+            });
 
             const order = orderRes.data.order;
 
@@ -126,11 +138,11 @@ export default function Checkout() {
             razorpay.open();
 
         } catch (error) {
-        alert(error.response?.data?.message || "Failed to place order");
-    } finally {
-        setIsPlacingOrder(false);
-    }
-};
+            alert(error.response?.data?.message || "Failed to place order");
+        } finally {
+            setIsPlacingOrder(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -181,15 +193,15 @@ export default function Checkout() {
                                             Phone: {address.phone}
                                         </label>
                                     </div>
-                                    
+
                                 ))}
                                 <button
-    type="button"
-    onClick={() => setIsAddressModalOpen(true)}
-    className="mt-2 text-brand-orange font-body text-l underline hover:text-orange-600 transition cursor-pointer"
->
-    + Add New Address
-</button>
+                                    type="button"
+                                    onClick={() => setIsAddressModalOpen(true)}
+                                    className="mt-2 text-brand-orange font-body text-l underline hover:text-orange-600 transition cursor-pointer"
+                                >
+                                    + Add New Address
+                                </button>
                             </div>
                         </div>
 
@@ -275,18 +287,41 @@ export default function Checkout() {
                                 ))}
 
                                 {/* TOTAL */}
-                                <div className="flex justify-between mt-4 font-bold">
+                                {/* <div className="flex justify-between mt-4 font-bold">
                                     <span>Total</span>
                                     <span>₹{calculateTotal()}</span>
+                                </div> */}
+                                <div className="flex justify-between mt-4">
+                                    <span>Subtotal</span>
+                                    <span>₹{subtotal.toFixed(0)}</span>
+                                </div>
+
+                                <div className="flex justify-between mt-2">
+                                    <span>Shipping</span>
+                                    <span className={shippingFee === 0 ? "text-green-600 font-medium" : ""}>
+                                        {shippingFee === 0 ? "FREE" : `₹${shippingFee}`}
+                                    </span>
+                                </div>
+
+                                {discount > 0 && (
+                                    <div className="flex justify-between mt-2 text-green-600 font-medium">
+                                        <span>Offer applied</span>
+                                        <span>-₹{discount}</span>
+                                    </div>
+                                )}
+
+                                <div className="flex justify-between mt-2 pt-2 border-t font-bold">
+                                    <span>Total</span>
+                                    <span>₹{grandTotal.toFixed(0)}</span>
                                 </div>
 
                                 <button
-    className="bg-green-500 text-white px-4 py-2 rounded mt-4 w-full disabled:opacity-50 disabled:cursor-not-allowed"
-    onClick={handlePlaceOrder}
-    disabled={isPlacingOrder}
->
-    {isPlacingOrder ? "Placing Order..." : "Place Order"}
-</button>
+                                    className="bg-green-500 text-white px-4 py-2 rounded mt-4 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                                    onClick={handlePlaceOrder}
+                                    disabled={isPlacingOrder}
+                                >
+                                    {isPlacingOrder ? "Placing Order..." : "Place Order"}
+                                </button>
 
                             </div>
                         </div>

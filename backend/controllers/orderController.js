@@ -3,6 +3,7 @@ import Order from "../models/orderModel.js";
 import Cart from "../models/cartModel.js";
 import Product from "../models/Product.js";
 import Address from "../models/addressModel.js";
+import { calculatePricing } from "../utils/pricing.js";
 
 export const placeOrder = async (req, res) => {
     try {
@@ -31,7 +32,8 @@ export const placeOrder = async (req, res) => {
             return res.status(400).json({ message: "Cart is empty" });
         }
 
-        let totalAmount = 0;
+        // let totalAmount = 0;
+        let subtotal = 0;   // renamed from totalAmount
         const orderItems = [];
 
         // ---------------- PROCESS ITEMS ----------------
@@ -67,7 +69,8 @@ export const placeOrder = async (req, res) => {
                     }
                 }
 
-                totalAmount += item.customPrice;
+                // totalAmount += item.customPrice;
+                subtotal += item.customPrice;
                 orderItems.push({
                     isCustomBox: true,
                     packSize: item.packSize,
@@ -103,7 +106,8 @@ export const placeOrder = async (req, res) => {
 
             // 💰 PRICE CALCULATION
             const itemTotal = item.quantity * item.pack.price;
-            totalAmount += itemTotal;
+            subtotal += itemTotal;
+            // totalAmount += itemTotal;
 
             orderItems.push({
                 product: product._id,
@@ -123,12 +127,17 @@ export const placeOrder = async (req, res) => {
                 }
             );
         }
+        // ---------------- APPLY OFFERS ----------------
+        const { shippingFee, discount, totalAmount } = calculatePricing(subtotal);
 
         // ---------------- CREATE ORDER ----------------
         const order = await Order.create({
             user: userId,
             items: orderItems,
             address: addressId,
+            subtotal,
+            shippingFee,
+            discount,
             totalAmount,
             paymentMethod,
             paymentStatus: "Pending",
