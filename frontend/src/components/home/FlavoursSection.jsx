@@ -128,9 +128,16 @@ const heroProduct = upcomingProducts.find((p) =>
                   Dropping Soon
                 </span>
 
-                <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] leading-tight mb-4 uppercase">
-                  {heroProduct.name} IS COMING
-                </h2>
+                <div className="relative inline-block mb-4">
+                <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] leading-tight uppercase">
+                    {heroProduct.name} IS COMING
+                  </h2>
+                  <img
+                    src="/images/mark.svg"
+                    alt=""
+                    className="hidden md:block absolute right-10 top-1/2 text-flavour-rasmalai-accent w-14 h-14 pointer-events-none"
+                  />
+                </div>
 
                 <p className="font-body text-sm sm:text-base font-semibold text-gray-800 mb-4">
                   {heroProduct.tagline || "30g protein · Real oats · Real flavour"}
@@ -185,6 +192,7 @@ const heroProduct = upcomingProducts.find((p) =>
                   <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
                     <img
                       src={product.image}
+                      loading="lazy"
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />

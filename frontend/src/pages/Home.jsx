@@ -57,7 +57,7 @@ const faqs = [
       <ReviewsCarousel />
       <PromoBanner />
       <ConsumerReviews />
-      <FAQSection faqs={faqs} image="/images/coffee.png" />
+      <FAQSection faqs={faqs} image="/images/coffee.webp" />
       <HowToCrushSection />
       <BlogSection />
       <Footer />

@@ -205,7 +205,7 @@ const handleSaveAddress = async (formData, addressId) => {
 
         <div className="relative h-[200px] sm:h-[220px] overflow-hidden">
           <img
-            src="/images/banner2.png"
+            src="/images/banner2.webp"
             alt="Profile"
             className="absolute inset-0 w-full h-full object-cover"
           />

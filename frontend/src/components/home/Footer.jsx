@@ -136,8 +136,9 @@ const Footer = () => {
 
       {/* Full-bleed logo wordmark */}
       <img
-        src="/images/oats-crush-logo2.png"
+        src="/images/oats-crush-logo2.webp"
         alt="Oats Crush"
+        loading="lazy"
         className="w-full select-none pointer-events-none"
       />
     </footer>

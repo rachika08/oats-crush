@@ -6,7 +6,6 @@ import { Navigation, Pagination } from "swiper/modules";
 import { Bell } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import CartToast from "../CartToast";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -15,7 +14,8 @@ import "swiper/css/pagination";
 const FeaturedProducts = ({
   excludeProductId,
   heading = "CRUSH YOUR CRAVINGS",
-  subheading = "Pick your flavour. Same protein punch, different vibe."
+  subheading = "Pick your flavour. Same protein punch, different vibe.",
+  showSquiggle = true,
 }) => {
   const [products, setProducts] = useState([]);
   const [showToast, setShowToast] = useState(false);
@@ -165,7 +165,7 @@ setShowToast(true);
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-end justify-between mb-8 sm:mb-10">
+        <div className="relative flex items-end justify-between mb-8 sm:mb-10">
           <div>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-[56px] mb-2">
               {heading}
@@ -174,7 +174,13 @@ setShowToast(true);
               {subheading}
             </p>
           </div>
-
+{showSquiggle && (
+  <img
+    src="/images/arrow-s.svg"
+    alt=""
+    className="hidden sm:block absolute left-[45%] mt-1 w-30 h-14  pointer-events-none"
+  />
+)}
           <button
             onClick={() => navigate("/products")}
             className="hidden sm:flex items-center gap-2 border border-brand-orange text-brand-orange rounded-full px-5 py-2 font-heading text-lg font-medium shadow-md hover:bg-brand-orange hover:-translate-y-1 hover:text-white transition flex-shrink-0 cursor-pointer"
@@ -239,6 +245,7 @@ setShowToast(true);
                         {/* Sold-out products keep full-color imagery; only the CTA below is muted */}
                         <img
                           src={product.image}
+                          loading="lazy"
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />

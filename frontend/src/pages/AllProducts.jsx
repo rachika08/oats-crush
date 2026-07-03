@@ -373,7 +373,7 @@ const AllProducts = () => {
 
         <div className="relative h-[320px] sm:h-[480px] overflow-hidden">
           <img
-            src="/images/banner4.jpg"
+            src="/images/banner4.webp"
             alt="Crush Every Craving"
             className="absolute inset-0 w-full h-full object-cover"
           />

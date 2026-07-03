@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 // Placeholder paths — swap these with your real banner images.
 const heroBanners = [
-  "/images/banner1.png",
-  "/images/banner2.png",
-  "/images/banner3.png",
-  "/images/banner4.jpg",
-  "/images/banner5.png",
+  "/images/banner1.webp",
+  "/images/banner2.webp",
+  "/images/banner3.webp",
+  "/images/banner4.webp",
+  "/images/banner5.webp",
 ];
 
 const HERO_ROTATE_MS = 2000;
@@ -31,6 +31,7 @@ const HeroSection = () => {
         <img
           key={src}
           src={src}
+          loading={index === 0 ? "eager" : "lazy"}
           alt=""
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
             index === activeIndex ? "opacity-100" : "opacity-0"
