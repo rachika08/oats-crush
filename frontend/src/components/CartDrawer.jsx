@@ -556,7 +556,7 @@ const handleExploreAddToCart = async (product) => {
             <div className="flex justify-between text-sm mt-2">
               <span>Shipping</span>
               <span className={shippingFee === 0 ? "text-green-600 font-medium" : ""}>
-                {shippingFee === 0 ? "FREE" : `₹${SHIPPING_FEE}`}
+                {shippingFee === 0 ? "FREE" : `₹${shippingFee}`}
               </span>
             </div>
 

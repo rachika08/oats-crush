@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-// import LocationPicker from "./LocationPicker";
+import LocationPicker from "./LocationPicker";
+
 
 const EMPTY_FORM = {
   label: "Home",
@@ -17,7 +18,7 @@ export default function AddressModal({ isOpen, onClose, onSave, initialData }) {
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
-
+ 
   const isEditing = Boolean(initialData);
 
   useEffect(() => {
@@ -72,17 +73,17 @@ const handleChange = (e) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // const handleLocationSelect = (loc) => {
-  //       setFormData((prev) => ({
-  //           ...prev,
-  //           addressLine1: loc.addressLine1 || prev.addressLine1,
-  //           city: loc.city || prev.city,
-  //           state: loc.state || prev.state,
-  //           pincode: loc.pincode || prev.pincode,
-  //           lat: loc.lat,
-  //           lng: loc.lng,
-  //       }));
-  //   };
+  const handleLocationSelect = (loc) => {
+    setFormData((prev) => ({
+      ...prev,
+      addressLine1: loc.addressLine1 || prev.addressLine1,
+      addressLine2: loc.addressLine2 || prev.addressLine2,
+      city: loc.city || prev.city,
+      state: loc.state || prev.state,
+      pincode: loc.pincode || prev.pincode,
+    }));
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -133,10 +134,10 @@ const handleChange = (e) => {
             <X size={22} />
           </button>
         </div>
-        {/* <div className="mb-4">
-          <LocationPicker onLocationSelect={handleLocationSelect} />
-        </div> */}
-
+        <div className="mb-4">
+          <LocationPicker  onLocationSelect={handleLocationSelect} />
+        </div>
+        
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6 mb-8">
             <div>
