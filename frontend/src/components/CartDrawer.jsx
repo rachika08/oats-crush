@@ -3,19 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { Trash2, Minus, Plus, X } from "lucide-react";
 import api from "../api/axios";
 import { useCart } from "../context/CartContext";
+import { calculatePricing, REWARD_TIERS, FREE_BLENDER_THRESHOLD } from "../utils/pricing";
 
 
-const SHIPPING_FEE = 60;
-const FREE_SHIPPING_THRESHOLD = 499;
-const DISCOUNT_THRESHOLD = 1499;
-const DISCOUNT_AMOUNT = 50;
-const FREE_BLENDER_THRESHOLD = 2999;
+// const SHIPPING_FEE = 60;
+// const FREE_SHIPPING_THRESHOLD = 499;
+// const DISCOUNT_THRESHOLD = 1499;
+// const DISCOUNT_AMOUNT = 50;
+// // const FREE_BLENDER_THRESHOLD = 2999;
 
-const REWARD_TIERS = [
-  { amount: FREE_SHIPPING_THRESHOLD, label: "Free Shipping" },
-  { amount: DISCOUNT_THRESHOLD, label: "₹50 Off" },
-  { amount: FREE_BLENDER_THRESHOLD, label: "Free Blender" },
-];
+// const REWARD_TIERS = [
+//   { amount: FREE_SHIPPING_THRESHOLD, label: "Free Shipping" },
+//   { amount: DISCOUNT_THRESHOLD, label: "₹50 Off" },
+//   { amount: FREE_BLENDER_THRESHOLD, label: "Free Blender" },
+// ];
 
 
 export default function CartDrawer() {
@@ -266,23 +267,28 @@ const handleExploreAddToCart = async (product) => {
   };
 
   // ---------------- SUBTOTAL ----------------
-  const subtotal = cartItems.reduce((acc, item) => {
-    if (item.isCustomBox) {
-      return acc + (item.customPrice || 0);
-    }
+  // const subtotal = cartItems.reduce((acc, item) => {
+  //   if (item.isCustomBox) {
+  //     return acc + (item.customPrice || 0);
+  //   }
 
+  //   return acc + (item.pack?.price || 0) * (item.quantity || 1);
+  // }, 0);
+
+  // const shippingFee =
+  //   cartItems.length === 0 || subtotal >= FREE_SHIPPING_THRESHOLD
+  //     ? 0
+  //     : SHIPPING_FEE;
+
+  // const discount = subtotal >= DISCOUNT_THRESHOLD ? DISCOUNT_AMOUNT : 0;
+
+  // const grandTotal = cartItems.length > 0 ? subtotal + shippingFee - discount : 0;
+  const subtotal = cartItems.reduce((acc, item) => {
+    if (item.isCustomBox) return acc + (item.customPrice || 0);
     return acc + (item.pack?.price || 0) * (item.quantity || 1);
   }, 0);
 
-  const shippingFee =
-    cartItems.length === 0 || subtotal >= FREE_SHIPPING_THRESHOLD
-      ? 0
-      : SHIPPING_FEE;
-
-  const discount = subtotal >= DISCOUNT_THRESHOLD ? DISCOUNT_AMOUNT : 0;
-
-  const grandTotal = cartItems.length > 0 ? subtotal + shippingFee - discount : 0;
-
+  const { shippingFee, discount, grandTotal } = calculatePricing(subtotal, cartItems.length);
   const handleCheckout = () => {
     closeCart();
     navigate("/checkout");

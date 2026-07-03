@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+// import LocationPicker from "./LocationPicker";
 
 const EMPTY_FORM = {
   label: "Home",
@@ -59,19 +60,31 @@ const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "phone") {
-        setFormData({ ...formData, phone: value.replace(/\D/g, "").slice(0, 10) });
-        return;
+      setFormData({ ...formData, phone: value.replace(/\D/g, "").slice(0, 10) });
+      return;
     }
 
     if (name === "pincode") {
-        setFormData({ ...formData, pincode: value.replace(/\D/g, "").slice(0, 6) });
-        return;
+      setFormData({ ...formData, pincode: value.replace(/\D/g, "").slice(0, 6) });
+      return;
     }
 
     setFormData({ ...formData, [name]: value });
-};
+  };
 
-const handleSubmit = async (e) => {
+  // const handleLocationSelect = (loc) => {
+  //       setFormData((prev) => ({
+  //           ...prev,
+  //           addressLine1: loc.addressLine1 || prev.addressLine1,
+  //           city: loc.city || prev.city,
+  //           state: loc.state || prev.state,
+  //           pincode: loc.pincode || prev.pincode,
+  //           lat: loc.lat,
+  //           lng: loc.lng,
+  //       }));
+  //   };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -120,6 +133,9 @@ const handleSubmit = async (e) => {
             <X size={22} />
           </button>
         </div>
+        {/* <div className="mb-4">
+          <LocationPicker onLocationSelect={handleLocationSelect} />
+        </div> */}
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6 mb-8">

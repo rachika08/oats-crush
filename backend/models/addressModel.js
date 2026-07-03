@@ -53,7 +53,13 @@ const addressSchema = new mongoose.Schema(
       type: String,
       enum: ["Home", "Office", "Other"],
       default: "Home"
-    }
+    },
+    lat: {
+      type: Number,
+    },
+    lng: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

@@ -300,6 +300,59 @@ export const getProductsByCategory=async (req,res) => {
 //     }
 // };
 
+// export const updateProduct = async (req, res) => {
+//     try {
+//         const oldProduct = await Product.findById(req.params.id);
+
+//         if (!oldProduct) {
+//             return res.status(404).json({ message: "Product not found" });
+//         }
+//         console.log("DEBUG oldProduct.isLaunched:", oldProduct.isLaunched);
+//         console.log("DEBUG req.body.isLaunched:", req.body.isLaunched);
+//         const wasOutOfStock = oldProduct.stock === 0 || oldProduct.stock === undefined;
+//         const wasNotLaunched = oldProduct.isLaunched === false;
+//         console.log("DEBUG wasNotLaunched:", wasNotLaunched);
+//         const product = await Product.findByIdAndUpdate(
+//             req.params.id,
+//             req.body,
+//             { new: true }
+//         );
+
+//         const isNowInStock = product.stock > 0;
+//         const isNowLaunched = product.isLaunched === true;
+
+//         const justLaunched = wasNotLaunched && isNowLaunched;
+//         const justRestocked = !wasNotLaunched && wasOutOfStock && isNowInStock;
+
+//         if (justLaunched || justRestocked) {
+//             const subs = await ProductNotification.find({
+//                 product: product._id,
+//                 notified: false
+//             });
+
+//             for (let sub of subs) {
+//                 const subject = justLaunched
+//                     ? `${product.name} is now LIVE 🚀`
+//                     : `${product.name} is back in stock 🎉`;
+
+//                 const html = justLaunched
+//                     ? `<h2>It's here!</h2><p><b>${product.name}</b> has just launched.</p><p>Be one of the first to grab it!</p>`
+//                     : `<h2>Good news!</h2><p><b>${product.name}</b> is now back in stock.</p><p>Go grab it before it runs out again!</p>`;
+
+//                 await sendEmail(sub.email, subject, html);
+
+//                 sub.notified = true;
+//                 await sub.save();
+//             }
+//         }
+
+//         return res.status(200).json(product);
+
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// };
+
 export const updateProduct = async (req, res) => {
     try {
         const oldProduct = await Product.findById(req.params.id);
@@ -307,15 +360,14 @@ export const updateProduct = async (req, res) => {
         if (!oldProduct) {
             return res.status(404).json({ message: "Product not found" });
         }
-        console.log("DEBUG oldProduct.isLaunched:", oldProduct.isLaunched);
-        console.log("DEBUG req.body.isLaunched:", req.body.isLaunched);
-        const wasOutOfStock = oldProduct.stock === 0 || oldProduct.stock === undefined;
+
+        const wasOutOfStock = !oldProduct.stock || oldProduct.stock <= 0;
         const wasNotLaunched = oldProduct.isLaunched === false;
-        console.log("DEBUG wasNotLaunched:", wasNotLaunched);
+
         const product = await Product.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true }
+            { new: true, runValidators: true }
         );
 
         const isNowInStock = product.stock > 0;
@@ -324,13 +376,17 @@ export const updateProduct = async (req, res) => {
         const justLaunched = wasNotLaunched && isNowLaunched;
         const justRestocked = !wasNotLaunched && wasOutOfStock && isNowInStock;
 
+        console.log("DEBUG:", { wasOutOfStock, wasNotLaunched, isNowInStock, isNowLaunched, justLaunched, justRestocked });
+
         if (justLaunched || justRestocked) {
             const subs = await ProductNotification.find({
                 product: product._id,
                 notified: false
             });
 
-            for (let sub of subs) {
+            console.log(`DEBUG: found ${subs.length} subscribers to notify for product ${product._id}`);
+
+            for (const sub of subs) {
                 const subject = justLaunched
                     ? `${product.name} is now LIVE 🚀`
                     : `${product.name} is back in stock 🎉`;
@@ -339,11 +395,17 @@ export const updateProduct = async (req, res) => {
                     ? `<h2>It's here!</h2><p><b>${product.name}</b> has just launched.</p><p>Be one of the first to grab it!</p>`
                     : `<h2>Good news!</h2><p><b>${product.name}</b> is now back in stock.</p><p>Go grab it before it runs out again!</p>`;
 
-                await sendEmail(sub.email, subject, html);
-
-                sub.notified = true;
-                await sub.save();
+                try {
+                    await sendEmail(sub.email, subject, html);
+                    // delete instead of marking notified, so the user can re-subscribe later
+                    await ProductNotification.deleteOne({ _id: sub._id });
+                } catch (emailErr) {
+                    console.error(`Failed to email ${sub.email} for product ${product._id}:`, emailErr.message);
+                    // don't delete — leave it so it can be retried on the next restock/launch,
+                    // and don't let one failure block the rest of the batch
+                }
             }
+            
         }
 
         return res.status(200).json(product);
