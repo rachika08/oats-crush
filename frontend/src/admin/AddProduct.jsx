@@ -49,7 +49,9 @@ export default function AddProduct() {
         );
         formData.append("stock", form.stock);
         formData.append("description", form.description);
-        formData.append("category", form.category);
+        if (form.category) {
+            formData.append("category", form.category);
+        }
         formData.append("featured", form.featured);
 
         const benefitsArray = form.benefits
@@ -210,7 +212,7 @@ export default function AddProduct() {
 
                     <input
                         name="category"
-                        placeholder="Category ID"
+                        placeholder="Category ID (optional)"
                         value={form.category}
                         onChange={handleChange}
                         className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
