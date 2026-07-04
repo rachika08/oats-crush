@@ -817,6 +817,92 @@ const isSoldOut = product.stock <= 0;
                 subheading="Discover more delicious options you'll love."
             />
             <FAQSection faqs={product.faqs} image={product.image}/>
+            {product.nutrition && product.nutrition.nutrients?.length > 0 && (
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+        
+        <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] mb-10 text-center">
+            NUTRITION INFORMATION
+        </h2>
+
+        {/* Header Info */}
+        <div className="mb-8 text-center">
+            <p className="font-body text-sm text-gray-600">
+                Serving Size:{" "}
+                <span className="font-semibold text-black">
+                    {product.nutrition.servingSize || "—"}
+                </span>
+            </p>
+
+            <p className="font-body text-sm text-gray-600">
+                Servings Per Pack:{" "}
+                <span className="font-semibold text-black">
+                    {product.nutrition.servingsPerPack || "—"}
+                </span>
+            </p>
+
+            {product.nutrition.note && (
+                <p className="font-body text-xs text-gray-500 mt-2 italic">
+                    {product.nutrition.note}
+                </p>
+            )}
+        </div>
+
+        {/* Table Header */}
+        <div className="hidden sm:grid grid-cols-5 font-body text-xs font-semibold text-gray-500 border-b pb-2 mb-4">
+            <span>NUTRIENT</span>
+            <span>PER SERVING</span>
+            <span>PER 100g</span>
+            <span>UNIT</span>
+            <span>% DAILY VALUE</span>
+        </div>
+
+        {/* Nutrients List */}
+        <div className="space-y-4">
+            {product.nutrition.nutrients.map((n, index) => (
+                <div
+                    key={index}
+                    className="grid grid-cols-1 sm:grid-cols-5 gap-2 sm:gap-4 items-center border-b pb-4"
+                >
+                    {/* Name */}
+                    <span className="font-body font-medium text-sm">
+                        {n.name}
+                    </span>
+
+                    {/* Per Serving */}
+                    <span className="font-body text-sm text-gray-600">
+                        {n.perServing} {n.unit}
+                    </span>
+
+                    {/* Per 100g */}
+                    <span className="font-body text-sm text-gray-600">
+                        {n.per100g} {n.unit}
+                    </span>
+
+                    {/* Unit */}
+                    <span className="font-body text-sm text-gray-600 uppercase">
+                        {n.unit}
+                    </span>
+
+                    {/* Daily Value Bar */}
+                    <div className="flex items-center gap-2">
+                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-brand-orange"
+                                style={{
+                                    width: `${Math.min(n.dailyValue || 0, 100)}%`
+                                }}
+                            />
+                        </div>
+
+                        <span className="text-xs font-body text-gray-600 min-w-[35px]">
+                            {n.dailyValue || 0}%
+                        </span>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </section>
+)}
             <Footer />
             <CartToast show={showToast} onClose={() => setShowToast(false)} />
         </>

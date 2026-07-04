@@ -11,7 +11,13 @@ export default function AddProduct() {
         category: "",
         featured: false,
         benefits: "",
-        ingredients: ""
+        ingredients: "",
+        nutrition: {
+            servingSize: "",
+            servingsPerPack: "",
+            note: "",
+            nutrients: []
+        }
     });
 
     const [mainImage, setMainImage] = useState(null);
@@ -73,6 +79,25 @@ export default function AddProduct() {
             "ingredients",
             JSON.stringify(ingredientsArray)
         );
+        // formData.append(
+        //     "nutrition",
+        //     JSON.stringify(form.nutrition)
+        // );
+        const formattedNutrition = {
+            ...form.nutrition,
+            servingsPerPack: Number(form.nutrition.servingsPerPack),
+            nutrients: form.nutrition.nutrients.map(n => ({
+                ...n,
+                perServing: Number(n.perServing),
+                per100g: Number(n.per100g),
+                dailyValue: Number(n.dailyValue)
+            }))
+        };
+
+        formData.append(
+            "nutrition",
+            JSON.stringify(formattedNutrition)
+        );
 
         formData.append("image", mainImage);
 
@@ -109,6 +134,59 @@ export default function AddProduct() {
         setPackSizes(
             packSizes.filter((_, i) => i !== index)
         );
+    };
+    const handleNutritionChange = (field, value) => {
+        setForm(prev => ({
+            ...prev,
+            nutrition: {
+                ...prev.nutrition,
+                [field]: value
+            }
+        }));
+    };
+
+    const addNutrient = () => {
+        setForm(prev => ({
+            ...prev,
+            nutrition: {
+                ...prev.nutrition,
+                nutrients: [
+                    ...prev.nutrition.nutrients,
+                    {
+                        name: "",
+                        perServing: "",
+                        per100g: "",
+                        unit: "",
+                        dailyValue: ""
+                    }
+                ]
+            }
+        }));
+    };
+
+    const updateNutrient = (index, field, value) => {
+        setForm(prev => {
+            const nutrients = [...prev.nutrition.nutrients];
+            nutrients[index][field] = value;
+
+            return {
+                ...prev,
+                nutrition: {
+                    ...prev.nutrition,
+                    nutrients
+                }
+            };
+        });
+    };
+
+    const removeNutrient = (index) => {
+        setForm(prev => ({
+            ...prev,
+            nutrition: {
+                ...prev.nutrition,
+                nutrients: prev.nutrition.nutrients.filter((_, i) => i !== index)
+            }
+        }));
     };
 
     return (
@@ -233,6 +311,108 @@ export default function AddProduct() {
                         onChange={handleChange}
                         className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
+                    <h3 className="text-lg font-semibold mt-6">Nutrition Information</h3>
+
+                    <input
+                        type="text"
+                        placeholder="Serving Size (e.g. 75g)"
+                        value={form.nutrition.servingSize}
+                        onChange={(e) =>
+                            handleNutritionChange("servingSize", e.target.value)
+                        }
+                        className="w-full border rounded-lg px-4 py-2"
+                    />
+
+                    <input
+                        type="number"
+                        placeholder="Servings Per Pack"
+                        value={form.nutrition.servingsPerPack}
+                        onChange={(e) =>
+                            handleNutritionChange("servingsPerPack", e.target.value)
+                        }
+                        className="w-full border rounded-lg px-4 py-2"
+                    />
+
+                    <input
+                        type="text"
+                        placeholder="Note (optional)"
+                        value={form.nutrition.note}
+                        onChange={(e) =>
+                            handleNutritionChange("note", e.target.value)
+                        }
+                        className="w-full border rounded-lg px-4 py-2"
+                    />
+
+                    {form.nutrition.nutrients.map((nutrient, index) => (
+                        <div
+                            key={index}
+                            className="border rounded-lg p-4 mt-4 space-y-2"
+                        >
+                            <input
+                                placeholder="Nutrient Name"
+                                value={nutrient.name}
+                                onChange={(e) =>
+                                    updateNutrient(index, "name", e.target.value)
+                                }
+                                className="w-full border rounded-lg px-3 py-2"
+                            />
+
+                            <input
+                                type="number"
+                                placeholder="Per Serving"
+                                value={nutrient.perServing}
+                                onChange={(e) =>
+                                    updateNutrient(index, "perServing", e.target.value)
+                                }
+                                className="w-full border rounded-lg px-3 py-2"
+                            />
+
+                            <input
+                                type="number"
+                                placeholder="Per 100g"
+                                value={nutrient.per100g}
+                                onChange={(e) =>
+                                    updateNutrient(index, "per100g", e.target.value)
+                                }
+                                className="w-full border rounded-lg px-3 py-2"
+                            />
+
+                            <input
+                                placeholder="Unit (g, mg, kcal)"
+                                value={nutrient.unit}
+                                onChange={(e) =>
+                                    updateNutrient(index, "unit", e.target.value)
+                                }
+                                className="w-full border rounded-lg px-3 py-2"
+                            />
+
+                            <input
+                                type="number"
+                                placeholder="Daily Value %"
+                                value={nutrient.dailyValue}
+                                onChange={(e) =>
+                                    updateNutrient(index, "dailyValue", e.target.value)
+                                }
+                                className="w-full border rounded-lg px-3 py-2"
+                            />
+
+                            <button
+                                type="button"
+                                onClick={() => removeNutrient(index)}
+                                className="text-red-500"
+                            >
+                                Remove Nutrient
+                            </button>
+                        </div>
+                    ))}
+
+                    <button
+                        type="button"
+                        onClick={addNutrient}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                    >
+                        Add Nutrient
+                    </button>
 
                     <div>
                         <label className="block text-sm font-medium mb-2">
