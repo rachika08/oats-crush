@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Bell, Check, Loader2 } from "lucide-react";
 import api from "../../api/axios";
 
@@ -13,6 +14,7 @@ const FlavoursSection = () => {
   const [loading, setLoading] = useState(true);
   const [notifyStatus, setNotifyStatus] = useState({});
   const [errorMsg, setErrorMsg] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -111,16 +113,19 @@ const heroProduct = upcomingProducts.find((p) =>
           {heroProduct && (
 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14 items-start mb-6">
     {/* Left - video */}
-    <div className="rounded-3xl overflow-hidden bg-black w-full h-[420px] md:h-[560px]">
-      <video
-        src={heroProduct.videoUrl || "/images/video3.mp4"}
-        className="w-full h-full object-cover"
-        autoPlay
-        loop
-        muted
-        playsInline
-      />
-    </div>
+<div
+  onClick={() => navigate(`/product/${heroProduct._id}`)}
+  className="rounded-3xl overflow-hidden bg-black w-full h-[420px] md:h-[560px] cursor-pointer"
+>
+  <video
+    src={heroProduct.videoUrl || "/images/video3.mp4"}
+    className="w-full h-full object-cover"
+    autoPlay
+    loop
+    muted
+    playsInline
+  />
+</div>
 
     {/* Right - content */}
     <div className="text-left">
@@ -189,14 +194,17 @@ const heroProduct = upcomingProducts.find((p) =>
                 className="flex items-center justify-between gap-4 border border-brand-orange shadow-md rounded-2xl px-4 sm:px-6 py-3 sm:py-4 mt-4"
               >
                 <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
-                    <img
-                      src={product.image}
-                      loading="lazy"
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+<div
+  onClick={() => navigate(`/product/${product._id}`)}
+  className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100 cursor-pointer"
+>
+  <img
+    src={product.image}
+    loading="lazy"
+    alt={product.name}
+    className="w-full h-full object-cover"
+  />
+</div>
                   <div className="min-w-0">
                     <span className="inline-block bg-brand-orange/10 text-brand-orange-dark rounded-full px-3 py-0.5 text-[10px] sm:text-xs font-body mb-1">
                       Brewing in the back

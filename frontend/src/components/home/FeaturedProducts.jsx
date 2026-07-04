@@ -285,7 +285,7 @@ setShowToast(true);
                               "SENDING..."
                             ) : (
                               <>
-                                NOTIFY WHEN BACK <Bell size={14} />
+                                NOTIFY <Bell size={14} />
                               </>
                             )
                           ) : (

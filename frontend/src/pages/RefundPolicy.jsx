@@ -20,10 +20,10 @@ export default function RefundPolicy() {
                     </p>
 
                     <a
-                        href="mailto:contact@oatscrush.co.in"
+                        href="mailto:dm@oatscrush.co.in"
                         className="inline-block mt-3 border-2 border-brand-orange rounded-full px-5 py-2 text-brand-orange-dark hover:bg-brand-orange hover:text-white transition shadow-md"
                     >
-                        Dm@oatscrush.co.in
+                        dm@oatscrush.co.in
                     </a>
 
                     <p className="mt-6 font-semibold">
@@ -68,10 +68,10 @@ export default function RefundPolicy() {
                     </p>
 
                     <a
-                        href="mailto:contact@oatscrush.co.in"
+                        href="mailto:dm@oatscrush.co.in"
                         className="inline-block mt-3 border-2 border-brand-orange rounded-full px-5 py-2 text-brand-orange-dark hover:bg-brand-orange hover:text-white transition shadow-md"
                     >
-                        Dm@oatscrush.co.in
+                        dm@oatscrush.co.in
                     </a>
                 </>
             ),

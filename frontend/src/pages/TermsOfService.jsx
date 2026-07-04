@@ -295,10 +295,10 @@ export default function TermsOfService() {
                     </p>
 
                     <a
-                        href="mailto:contact@oatscrush.co.in"
+                        href="mailto:dm@oatscrush.co.in"
                         className="text-brand-orange-dark font-semibold hover:underline mt-2 inline-block"
                     >
-                        contact@oatscrush.co.in
+                        dm@oatscrush.co.in
                     </a>
 
                     <p className="mt-4">
@@ -315,10 +315,10 @@ export default function TermsOfService() {
                     <p>For any questions regarding these Terms of Service, you may contact us at:</p>
 
                     <a
-                        href="mailto:contact@oatscrush.co.in"
+                        href="mailto:dm@oatscrush.co.in"
                         className="text-brand-orange-dark font-semibold hover:underline mt-2 inline-block"
                     >
-                        contact@oatscrush.co.in
+                        dm@oatscrush.co.in
                     </a>
 
                     <div className="mt-4">

@@ -220,6 +220,8 @@ const handleNotify = async () => {
         );
     }
 const isSoldOut = product.stock <= 0; 
+const isUnlaunched = product.isLaunched === false;
+const isUnavailable = isUnlaunched || isSoldOut;
     const allImages = [
         product.image,
         ...(product.additionalImages || [])
@@ -476,17 +478,17 @@ const isSoldOut = product.stock <= 0;
 
                         {/* Buttons */}
                         <div className="flex gap-4">
-  <button
+<button
     onClick={buyNow}
-    disabled={isSoldOut}
+    disabled={isUnavailable}
     className={`flex-1 border-2 font-heading text-base py-3 rounded-full shadow-md transition ${
-      isSoldOut
+      isUnavailable
         ? "border-gray-300 text-gray-400 cursor-not-allowed"
         : "border-brand-orange text-black hover:-translate-y-1 cursor-pointer"
     }`}
-  >
+>
     BUY NOW
-  </button>
+</button>
 
 <button
     onClick={isSoldOut ? handleNotify : addToCart}
@@ -503,7 +505,7 @@ const isSoldOut = product.stock <= 0;
       ) : notifyStatus === "loading" ? (
         "SENDING..."
       ) : (
-        <>NOTIFY WHEN BACK <Bell size={16} /></>
+        <>NOTIFY <Bell size={16} /></>
       )
     ) : (
       "ADD TO CART"
