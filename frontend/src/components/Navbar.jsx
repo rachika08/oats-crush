@@ -8,8 +8,6 @@ import api from "../api/axios";
 import PromoBar from "./home/PromoBar";
 
 const Navbar = () => {
-  const [categories, setCategories] = useState([]);
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
 
@@ -20,18 +18,6 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const res = await api.get("/category");
-      setCategories(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const fetchProducts = async () => {
   try {
     const res = await api.get("/product"); // adjust endpoint if needed
@@ -96,44 +82,9 @@ useEffect(() => {
             Home
           </Link>
 
-          {/* Category Dropdown */}
-          <div className="relative">
-            <button
-  className="flex items-center gap-1 hover:text-brand-orange-dark transition cursor-pointer"
-  onClick={() => setIsCategoryOpen(!isCategoryOpen)}
->
-  Categories
-  <ChevronDown
-    size={14}
-    className={`transition-transform duration-200 ${
-      isCategoryOpen ? "rotate-180" : ""
-    }`}
-  />
-</button>
-
-            {isCategoryOpen && (
-              <div className="absolute top-8 left-0 bg-white border rounded-xl shadow-md min-w-[200px] py-2 z-50">
-                {categories.length === 0 ? (
-                  <div className="px-4 py-2 text-gray-400 text-sm">
-                    No categories yet
-                  </div>
-                ) : (
-                  categories.map((category) => (
-                    <div
-                      key={category._id}
-                      onClick={() => {
-                        navigate(`/category/${category._id}`);
-                        setIsCategoryOpen(false);
-                      }}
-                      className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm"
-                    >
-                      {category.name}
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
+<Link to="/products" className="hover:text-brand-orange-dark transition">
+  Shop Now
+</Link>
 
           <Link to="/customize-box" className="hover:text-brand-orange-dark transition">
   Customize Box
@@ -156,7 +107,7 @@ useEffect(() => {
          <button
   className="relative flex cursor-pointer hover:text-brand-orange"
   aria-label="Cart"
-  onClick={openCart}
+  onClick={() => openCart()}
 >
   <ShoppingBag size={20} />
   {cartCount > 0 && (
@@ -243,7 +194,7 @@ useEffect(() => {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 flex-shrink-0">
-          <img src="/images/oats-crush.png" className="w-16 h-11" alt="Oats Crush" />
+          <img src="/images/oats-crush.webp" className="w-16 h-11" alt="Oats Crush" />
           <button
             onClick={() => setIsMobileMenuOpen(false)}
             aria-label="Close menu"
@@ -257,7 +208,7 @@ useEffect(() => {
         <nav className="flex-1 overflow-y-auto px-6 py-4 font-body">
           {[
             { to: "/", label: "Home", icon: Home },
-            { to: "/products", label: "Categories", icon: LayoutGrid },
+            { to: "/products", label: "Shop Now", icon: LayoutGrid },
             { to: "/customize-box", label: "Customize Box", icon: PackageOpen },
             { to: "/contact", label: "About Us", icon: Info },
           ].map(({ to, label, icon: Icon }) => (
