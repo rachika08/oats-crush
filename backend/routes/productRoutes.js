@@ -16,7 +16,17 @@ router.post('/',protect,admin,upload.fields([
   { name: "image", maxCount: 1 },
   { name: "additionalImages", maxCount: 6 }
 ]),createProduct);
-router.put('/:id',protect,admin,updateProduct);
+// router.put('/:id',protect,admin,updateProduct);
+router.put(
+  '/:id',
+  protect,
+  admin,
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "additionalImages", maxCount: 6 }
+  ]),
+  updateProduct
+);
 router.delete('/:id',protect,admin,deleteProduct);
 
 
