@@ -16,6 +16,7 @@ export const createProduct = async (req, res) => {
             ingredients,
             faqs,
             howToEnjoy,
+            nutrition,
             isLaunched,
         } = req.body;
         const packSizes = JSON.parse(req.body.packSizes);
@@ -66,6 +67,15 @@ export const createProduct = async (req, res) => {
         const featuredValue =
             featured === true || featured === "true";
 
+        const nutritionObject = nutrition
+        ? JSON.parse(nutrition)
+        : {
+            servingSize: "",
+            servingsPerPack: 1,
+            nutrients: [],
+            note: ""
+        };
+
         const isLaunchedValue =
             isLaunched === undefined ? true : (isLaunched === true || isLaunched === "true");
 
@@ -83,6 +93,7 @@ export const createProduct = async (req, res) => {
             ingredients: ingredientsArray,
             faqs,
             howToEnjoy,
+            nutrition: nutritionObject,
             isLaunched: isLaunchedValue, 
         });
 
@@ -92,6 +103,7 @@ export const createProduct = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             message: error.message
         });
@@ -360,6 +372,22 @@ export const updateProduct = async (req, res) => {
         if (!oldProduct) {
             return res.status(404).json({ message: "Product not found" });
         }
+        
+        const parseIfString = (value) => {
+        if (typeof value === "string") {
+            try {
+            return JSON.parse(value);
+            } catch (e) {
+            return value;
+            }
+        }
+        return value;
+        };
+
+        req.body.nutrition = parseIfString(req.body.nutrition);
+        req.body.faqs = parseIfString(req.body.faqs);
+        req.body.packSizes = parseIfString(req.body.packSizes);
+        req.body.howToEnjoy = parseIfString(req.body.howToEnjoy);
 
         const wasOutOfStock = !oldProduct.stock || oldProduct.stock <= 0;
         const wasNotLaunched = oldProduct.isLaunched === false;

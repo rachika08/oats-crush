@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
-const productSchema=mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
+const productSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
     },
-    description:{
-        type:String,
-        required:true,
+    description: {
+        type: String,
+        required: true,
     },
     packSizes: [
         {
@@ -25,23 +25,23 @@ const productSchema=mongoose.Schema({
             }
         }
     ],
-    category:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Category',
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
     },
-    stock:{
+    stock: {
         type: Number,
         default: 0,
     },
-    image:{
-        type:String,
+    image: {
+        type: String,
     },
     additionalImages: [{
         type: String
     }],
-    featured:{
-        type:Boolean,
-        default:false
+    featured: {
+        type: Boolean,
+        default: false
     },
     benefits: [{
         type: String
@@ -72,11 +72,49 @@ const productSchema=mongoose.Schema({
             },
         },
     ],
+    nutrition: {
+        servingSize: {
+            type: String,
+            default: ""
+        },
+        servingsPerPack: {
+            type: Number,
+            default: 1
+        },
+        nutrients: [
+            {
+                name: {
+                    type: String,
+                    required: true
+                },
+                perServing: {
+                    type: Number,
+                    required: true
+                },
+                per100g: {
+                    type: Number,
+                    required: true
+                },
+                unit: {
+                    type: String,
+                    required: true
+                },
+                dailyValue: {
+                    type: Number,
+                    default: 0
+                }
+            }
+        ],
+        note: {
+            type: String,
+            default: ""
+        }
+    },
     // Product.js
     isLaunched: {
         type: Boolean,
         default: true // existing products are already live
     }
-},{timestamps:true});
+}, { timestamps: true });
 
-export default mongoose.model("Product",productSchema);
+export default mongoose.model("Product", productSchema);
