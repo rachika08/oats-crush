@@ -365,83 +365,83 @@ export const getProductsByCategory=async (req,res) => {
 //     }
 // };
 
-export const updateProduct = async (req, res) => {
-    try {
-        const oldProduct = await Product.findById(req.params.id);
+// export const updateProduct = async (req, res) => {
+//     try {
+//         const oldProduct = await Product.findById(req.params.id);
 
-        if (!oldProduct) {
-            return res.status(404).json({ message: "Product not found" });
-        }
+//         if (!oldProduct) {
+//             return res.status(404).json({ message: "Product not found" });
+//         }
         
-        const parseIfString = (value) => {
-        if (typeof value === "string") {
-            try {
-            return JSON.parse(value);
-            } catch (e) {
-            return value;
-            }
-        }
-        return value;
-        };
+//         const parseIfString = (value) => {
+//         if (typeof value === "string") {
+//             try {
+//             return JSON.parse(value);
+//             } catch (e) {
+//             return value;
+//             }
+//         }
+//         return value;
+//         };
 
-        req.body.nutrition = parseIfString(req.body.nutrition);
-        req.body.faqs = parseIfString(req.body.faqs);
-        req.body.packSizes = parseIfString(req.body.packSizes);
-        req.body.howToEnjoy = parseIfString(req.body.howToEnjoy);
+//         req.body.nutrition = parseIfString(req.body.nutrition);
+//         req.body.faqs = parseIfString(req.body.faqs);
+//         req.body.packSizes = parseIfString(req.body.packSizes);
+//         req.body.howToEnjoy = parseIfString(req.body.howToEnjoy);
 
-        const wasOutOfStock = !oldProduct.stock || oldProduct.stock <= 0;
-        const wasNotLaunched = oldProduct.isLaunched === false;
+//         const wasOutOfStock = !oldProduct.stock || oldProduct.stock <= 0;
+//         const wasNotLaunched = oldProduct.isLaunched === false;
 
-        const product = await Product.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true }
-        );
+//         const product = await Product.findByIdAndUpdate(
+//             req.params.id,
+//             req.body,
+//             { new: true, runValidators: true }
+//         );
 
-        const isNowInStock = product.stock > 0;
-        const isNowLaunched = product.isLaunched === true;
+//         const isNowInStock = product.stock > 0;
+//         const isNowLaunched = product.isLaunched === true;
 
-        const justLaunched = wasNotLaunched && isNowLaunched;
-        const justRestocked = !wasNotLaunched && wasOutOfStock && isNowInStock;
+//         const justLaunched = wasNotLaunched && isNowLaunched;
+//         const justRestocked = !wasNotLaunched && wasOutOfStock && isNowInStock;
 
-        console.log("DEBUG:", { wasOutOfStock, wasNotLaunched, isNowInStock, isNowLaunched, justLaunched, justRestocked });
+//         console.log("DEBUG:", { wasOutOfStock, wasNotLaunched, isNowInStock, isNowLaunched, justLaunched, justRestocked });
 
-        if (justLaunched || justRestocked) {
-            const subs = await ProductNotification.find({
-                product: product._id,
-                notified: false
-            });
+//         if (justLaunched || justRestocked) {
+//             const subs = await ProductNotification.find({
+//                 product: product._id,
+//                 notified: false
+//             });
 
-            console.log(`DEBUG: found ${subs.length} subscribers to notify for product ${product._id}`);
+//             console.log(`DEBUG: found ${subs.length} subscribers to notify for product ${product._id}`);
 
-            for (const sub of subs) {
-                const subject = justLaunched
-                    ? `${product.name} is now LIVE 🚀`
-                    : `${product.name} is back in stock 🎉`;
+//             for (const sub of subs) {
+//                 const subject = justLaunched
+//                     ? `${product.name} is now LIVE 🚀`
+//                     : `${product.name} is back in stock 🎉`;
 
-                const html = justLaunched
-                    ? `<h2>It's here!</h2><p><b>${product.name}</b> has just launched.</p><p>Be one of the first to grab it!</p>`
-                    : `<h2>Good news!</h2><p><b>${product.name}</b> is now back in stock.</p><p>Go grab it before it runs out again!</p>`;
+//                 const html = justLaunched
+//                     ? `<h2>It's here!</h2><p><b>${product.name}</b> has just launched.</p><p>Be one of the first to grab it!</p>`
+//                     : `<h2>Good news!</h2><p><b>${product.name}</b> is now back in stock.</p><p>Go grab it before it runs out again!</p>`;
 
-                try {
-                    await sendEmail(sub.email, subject, html);
-                    // delete instead of marking notified, so the user can re-subscribe later
-                    await ProductNotification.deleteOne({ _id: sub._id });
-                } catch (emailErr) {
-                    console.error(`Failed to email ${sub.email} for product ${product._id}:`, emailErr.message);
-                    // don't delete — leave it so it can be retried on the next restock/launch,
-                    // and don't let one failure block the rest of the batch
-                }
-            }
+//                 try {
+//                     await sendEmail(sub.email, subject, html);
+//                     // delete instead of marking notified, so the user can re-subscribe later
+//                     await ProductNotification.deleteOne({ _id: sub._id });
+//                 } catch (emailErr) {
+//                     console.error(`Failed to email ${sub.email} for product ${product._id}:`, emailErr.message);
+//                     // don't delete — leave it so it can be retried on the next restock/launch,
+//                     // and don't let one failure block the rest of the batch
+//                 }
+//             }
             
-        }
+//         }
 
-        return res.status(200).json(product);
+//         return res.status(200).json(product);
 
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-};
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// };
 
 export const getUpcomingProducts = async (req, res) => {
     try {
@@ -450,4 +450,131 @@ export const getUpcomingProducts = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+};
+
+export const updateProduct = async (req, res) => {
+  try {
+    const oldProduct = await Product.findById(req.params.id);
+
+    if (!oldProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // -----------------------------
+    // SAFE JSON PARSER
+    // -----------------------------
+    const parseIfString = (value) => {
+      if (typeof value === "string") {
+        try {
+          return JSON.parse(value);
+        } catch {
+          return value;
+        }
+      }
+      return value;
+    };
+
+    req.body.nutrition = parseIfString(req.body.nutrition);
+    req.body.faqs = parseIfString(req.body.faqs);
+    req.body.packSizes = parseIfString(req.body.packSizes);
+    req.body.howToEnjoy = parseIfString(req.body.howToEnjoy);
+
+    // -----------------------------
+    // STOCK / LAUNCH FLAGS
+    // -----------------------------
+    const wasOutOfStock = !oldProduct.stock || oldProduct.stock <= 0;
+    const wasNotLaunched = oldProduct.isLaunched === false;
+
+    // // -----------------------------
+    // HANDLE IMAGE UPDATE (MAIN IMAGE)
+    // -----------------------------
+   if (req.files?.image?.[0]) {
+    const mainImageResult = await uploadToCloudinary(req.files.image[0].buffer);
+    req.body.image = mainImageResult.secure_url;
+    } else if (req.body.removeMainImage === "true") {
+    req.body.image = "";
+    }
+
+    // -----------------------------
+    // HANDLE ADDITIONAL IMAGES
+    // -----------------------------
+    const keptImages = req.body.existingAdditionalImages !== undefined
+    ? parseIfString(req.body.existingAdditionalImages)
+    : (oldProduct.additionalImages || []);
+
+    let newImages = [];
+    if (req.files?.additionalImages?.length > 0) {
+    for (const file of req.files.additionalImages) {
+        const result = await uploadToCloudinary(file.buffer);
+        newImages.push(result.secure_url);
+    }
+    }
+
+    req.body.additionalImages = [...keptImages, ...newImages];
+
+    // -----------------------------
+    // UPDATE PRODUCT
+    // -----------------------------
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    // -----------------------------
+    // STATUS CHECK
+    // -----------------------------
+    const isNowInStock = product.stock > 0;
+    const isNowLaunched = product.isLaunched === true;
+
+    const justLaunched = wasNotLaunched && isNowLaunched;
+    const justRestocked =
+      !wasNotLaunched && wasOutOfStock && isNowInStock;
+
+    console.log("DEBUG:", {
+      wasOutOfStock,
+      wasNotLaunched,
+      isNowInStock,
+      isNowLaunched,
+      justLaunched,
+      justRestocked
+    });
+
+    // -----------------------------
+    // EMAIL NOTIFICATIONS
+    // -----------------------------
+    if (justLaunched || justRestocked) {
+      const subs = await ProductNotification.find({
+        product: product._id,
+        notified: false
+      });
+
+      for (const sub of subs) {
+        const subject = justLaunched
+          ? `${product.name} is now LIVE 🚀`
+          : `${product.name} is back in stock 🎉`;
+
+        const html = justLaunched
+          ? `<h2>It's here!</h2><p><b>${product.name}</b> has just launched.</p>`
+          : `<h2>Good news!</h2><p><b>${product.name}</b> is back in stock.</p>`;
+
+        try {
+          await sendEmail(sub.email, subject, html);
+
+          await ProductNotification.deleteOne({
+            _id: sub._id
+          });
+        } catch (err) {
+          console.error(
+            `Email failed for ${sub.email}:`,
+            err.message
+          );
+        }
+      }
+    }
+
+    return res.status(200).json(product);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
