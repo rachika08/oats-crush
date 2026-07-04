@@ -550,12 +550,12 @@ const isSoldOut = product.stock <= 0;
                 {showViewCart && (
     <div className="fixed bottom-3 left-0 w-full z-50 bg-brand-orange text-white px-8 py-4 flex justify-between items-center shadow-lg rounded-full">
         <span>Item added to cart</span>
-        <button
-            onClick={openCart}
-            className="bg-white font-heading text-brand-orange px-8 py-2 rounded hover:translate-y-[-2px] transition cursor-pointer rounded-full shadow-md"
-        >
-            VIEW CART
-        </button>
+<button
+    onClick={() => openCart()}
+    className="bg-white font-heading text-brand-orange px-8 py-2 rounded hover:translate-y-[-2px] transition cursor-pointer rounded-full shadow-md"
+>
+    VIEW CART
+</button>
     </div>
 )}
 
@@ -815,6 +815,7 @@ const isSoldOut = product.stock <= 0;
                 excludeProductId={product._id}
                 heading="EXPLORE SIMILAR PRODUCTS"
                 subheading="Discover more delicious options you'll love."
+                showSquiggle={false}
             />
             <FAQSection faqs={product.faqs} image={product.image}/>
             {product.nutrition && product.nutrition.nutrients?.length > 0 && (

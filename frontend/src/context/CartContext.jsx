@@ -4,12 +4,28 @@ const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [checkoutStep, setCheckoutStep] = useState("cart"); // "cart" | "shipping" | "order"
 
-  const openCart = () => setIsCartOpen(true);
-  const closeCart = () => setIsCartOpen(false);
+  const openCart = (step = "cart") => {
+    setCheckoutStep(step);
+    setIsCartOpen(true);
+  };
+
+  const closeCart = () => {
+    setIsCartOpen(false);
+    setCheckoutStep("cart");
+  };
 
   return (
-    <CartContext.Provider value={{ isCartOpen, openCart, closeCart }}>
+    <CartContext.Provider
+      value={{
+        isCartOpen,
+        openCart,
+        closeCart,
+        checkoutStep,
+        setCheckoutStep,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
