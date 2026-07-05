@@ -10,7 +10,7 @@ const cleanupPendingOrders = () => {
             );
 
             const thirtyMinutesAgo = new Date(
-                Date.now() - 1 * 60 * 1000
+                Date.now() - 30 * 60 * 1000
             );
 
             const expiredOrders = await Order.find({
