@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, ChevronDown, Plus } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 
@@ -94,6 +94,7 @@ const faqCategories = [
 const FAQPage = () => {
   const [activeCategoryId, setActiveCategoryId] = useState(faqCategories[0].id);
   const [openIndex, setOpenIndex] = useState(0);
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
 
   const activeCategory =
     faqCategories.find((c) => c.id === activeCategoryId) || faqCategories[0];
@@ -101,6 +102,7 @@ const FAQPage = () => {
   const selectCategory = (id) => {
     setActiveCategoryId(id);
     setOpenIndex(0);
+    setIsCategoryMenuOpen(false);
   };
 
   const toggleFaq = (index) => {
@@ -122,8 +124,42 @@ const FAQPage = () => {
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 md:gap-10">
-          {/* Left - category list */}
-          <div className="flex flex-col gap-3">
+{/* Left - category selector */}
+          {/* Mobile: collapsible dropdown showing only the active category */}
+          <div className="md:hidden relative">
+            <button
+              onClick={() => setIsCategoryMenuOpen((prev) => !prev)}
+              className="w-full flex items-center justify-between px-5 py-4 rounded-xl text-left font-body text-sm font-medium bg-black text-white cursor-pointer"
+            >
+              {activeCategory.label}
+              <ChevronDown
+                size={18}
+                className={`transition-transform duration-300 ${
+                  isCategoryMenuOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {isCategoryMenuOpen && (
+              <div className="absolute left-0 right-0 top-full mt-2 z-20 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                {faqCategories
+                  .filter((category) => category.id !== activeCategoryId)
+                  .map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => selectCategory(category.id)}
+                      className="w-full flex items-center justify-between px-5 py-4 text-left font-body text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
+                    >
+                      {category.label}
+                      <ChevronRight size={18} className="text-gray-400" />
+                    </button>
+                  ))}
+              </div>
+            )}
+          </div>
+
+          {/* Desktop: full stacked list */}
+          <div className="hidden md:flex flex-col gap-3">
             {faqCategories.map((category) => {
               const isActive = category.id === activeCategoryId;
               return (

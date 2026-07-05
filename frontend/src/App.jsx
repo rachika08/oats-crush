@@ -32,6 +32,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import ShippingPolicy from './pages/ShippingPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Contact from './pages/Contact';
+import AboutUs from './pages/AboutUs';
 import CustomizeBox from './pages/CustomizeBox';
 import BlogDetails from './components/home/BlogDetails';
 import Blogs from './components/home/Blogs';
@@ -71,6 +72,7 @@ const router = createBrowserRouter([
   {path:"/shippingpolicy",element:<ShippingPolicy/>},
   {path:"/terms",element:<TermsOfService/>},
   {path:"/contact",element:<Contact/>},
+  {path:"/about-us",element:<AboutUs/>},
   {path:"/customize-box", element:<CustomizeBox/>},
   {path:"/blogs/:id",element:<BlogDetails/>},
   {path:"/blog",element:<Blogs/>},

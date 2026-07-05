@@ -63,6 +63,13 @@ const FlavoursSection = () => {
     }
   };
 
+  const getFlavourImage = (name = "") => {
+  const lower = name.toLowerCase();
+  if (lower.includes("rasmalai")) return "/images/rasmalai-flip.webp";
+  if (lower.includes("coffee")) return "/images/coffee-flip.webp";
+  return "/images/rasmalai.webp"; // fallback
+};
+
   const renderButtonContent = (product) => {
     const status = notifyStatus[product._id];
 
@@ -112,19 +119,29 @@ const heroProduct = upcomingProducts.find((p) =>
           {/* Hero — lead upcoming flavour — full section width */}
           {heroProduct && (
 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14 items-start mb-6">
-    {/* Left - video */}
 <div
   onClick={() => navigate(`/product/${heroProduct._id}`)}
-  className="rounded-3xl overflow-hidden bg-black w-full h-[420px] md:h-[560px] cursor-pointer"
+  className="flip-card rounded-3xl bg-black w-full h-[420px] md:h-[560px] cursor-pointer"
 >
-  <video
-    src={heroProduct.videoUrl || "/images/video3.mp4"}
-    className="w-full h-full object-cover"
-    autoPlay
-    loop
-    muted
-    playsInline
-  />
+  <div className="flip-card-inner">
+    <div className="flip-card-front rounded-3xl overflow-hidden">
+      <video
+        src={heroProduct.videoUrl || "/images/video3.mp4"}
+        className="w-full h-full object-cover"
+        autoPlay
+       loop
+        muted
+        playsInline
+      />
+    </div>
+    <div className="flip-card-back rounded-3xl overflow-hidden">
+      <img
+        src={getFlavourImage(heroProduct.name)}
+        alt={heroProduct.name}
+        className="w-full h-full object-cover"
+      />
+    </div>
+  </div>
 </div>
 
     {/* Right - content */}
@@ -191,25 +208,35 @@ const heroProduct = upcomingProducts.find((p) =>
             return (
               <div
                 key={product._id}
-                className="flex items-center justify-between gap-4 border border-brand-orange shadow-md rounded-2xl px-4 sm:px-6 py-3 sm:py-4 mt-4"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between  cursor-pointer gap-3 sm:gap-4 border border-brand-orange transition hover:-translate-y-1 shadow-md rounded-2xl px-4 sm:px-6 py-3 sm:py-4 mt-4"
+                  onClick={() => navigate(`/product/${product._id}`)}
               >
-                <div className="flex items-center gap-4 min-w-0">
-<div
-  onClick={() => navigate(`/product/${product._id}`)}
-  className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100 cursor-pointer"
->
-  <img
-    src={product.image}
-    loading="lazy"
-    alt={product.name}
-    className="w-full h-full object-cover"
-  />
+                <div className="flex items-center gap-4 min-w-0" >
+<div className="flip-card w-24 h-24 sm:w-28 sm:h-28 rounded-xl flex-shrink-0 bg-gray-100">
+  <div className="flip-card-inner">
+    <div className="flip-card-front rounded-xl overflow-hidden">
+      <img
+        src={product.image}
+        loading="lazy"
+        alt={product.name}
+        className="w-full h-full object-cover"
+      />
+    </div>
+    <div className="flip-card-back rounded-xl overflow-hidden">
+      <img
+        src={getFlavourImage(product.name)}
+        loading="lazy"
+        alt=""
+        className="w-full h-full object-cover"
+      />
+    </div>
+  </div>
 </div>
                   <div className="min-w-0">
                     <span className="inline-block bg-brand-orange/10 text-brand-orange-dark rounded-full px-3 py-0.5 text-[10px] sm:text-xs font-body mb-1">
                       Brewing in the back
                     </span>
-                    <h3 className="font-heading text-base sm:text-lg uppercase truncate">
+                    <h3 className="font-heading text-xl sm:text-2xl uppercase truncate">
                       {product.name}
                     </h3>
                     <p className="font-body text-xs sm:text-sm text-gray-500 truncate">
@@ -221,7 +248,7 @@ const heroProduct = upcomingProducts.find((p) =>
                 <button
                   onClick={() => handleNotify(product)}
                   disabled={status === "loading" || status === "success"}
-                  className="flex-shrink-0 bg-brand-orange text-white rounded-full px-5 py-2 flex items-center gap-2 font-heading text-xs sm:text-sm font-medium transition hover:-translate-y-1 shadow-md cursor-pointer disabled:cursor-default disabled:hover:translate-y-0"
+                  className="w-full sm:w-auto flex-shrink-0 bg-brand-orange text-white rounded-full px-5 py-2 flex items-center justify-center gap-2 font-heading text-xs sm:text-sm font-medium transition hover:-translate-y-1 shadow-md cursor-pointer disabled:cursor-default disabled:hover:translate-y-0"
                 >
                   {renderButtonContent(product)}
                 </button>

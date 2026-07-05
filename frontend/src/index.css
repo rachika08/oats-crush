@@ -5,7 +5,7 @@
 }
 
 html, body {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 @theme {
@@ -127,4 +127,14 @@ input[type="password"]::-ms-reveal {
   mask-position: center;
   -webkit-mask-size: contain;
   mask-size: contain;
+}
+
+/* ---------- Blog carousel: force equal card heights per row ---------- */
+.blog-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+.blog-swiper .swiper-slide {
+  height: auto;
+  align-self: stretch;
 }
