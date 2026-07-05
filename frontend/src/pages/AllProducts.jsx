@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import InfoBar from "../components/home/InfoBar";
 import CartToast from "../components/CartToast";
+import PageFade from "../components/PageFade";
 
 const PRODUCTS_PER_PAGE = 6;
 
@@ -366,6 +367,7 @@ const AllProducts = () => {
   };
 
   return (
+    <PageFade>
     <>
       {/* Hero banner */}
       <section className="relative">
@@ -723,6 +725,7 @@ const AllProducts = () => {
       <Footer />
       <CartToast show={showToast} onClose={() => setShowToast(false)} />
     </>
+    </PageFade>
   );
 };
 

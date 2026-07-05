@@ -9,6 +9,7 @@ import FAQSection from "./FAQSection";
 import FeaturedProducts from "./FeaturedProducts";
 import CartToast from "../CartToast";
 import { useCart } from "../../context/CartContext";
+import PageFade from "../PageFade";
 
 import {
  
@@ -287,7 +288,8 @@ const isUnavailable = isUnlaunched || isSoldOut;
     const { openCart } = useCart();
 
     return (
-        <><Navbar />
+        <PageFade>
+        <Navbar />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 pb-10">
 
                 <div className="grid md:grid-cols-2 gap-8 md:gap-12">
@@ -841,6 +843,7 @@ const isUnavailable = isUnlaunched || isSoldOut;
                             </div>
                         )}
                     </>
+                    
                 )}
 
             </div>
@@ -939,6 +942,6 @@ const isUnavailable = isUnlaunched || isSoldOut;
 )}
             <Footer />
             <CartToast show={showToast} onClose={() => setShowToast(false)} />
-        </>
+</PageFade>
     );
 }

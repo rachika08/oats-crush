@@ -13,6 +13,7 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import AddressModal from "../components/AddressModal";
+import PageFade from "../components/PageFade";
 
 const TABS = [
   {
@@ -159,6 +160,7 @@ const handleSaveAddress = async (formData, addressId) => {
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
+    <PageFade>
     <>
       {/* Hero */}
       <section className="relative">
@@ -447,5 +449,6 @@ const handleSaveAddress = async (formData, addressId) => {
   initialData={editingAddress}
 />
     </>
+    </PageFade>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronRight, ChevronDown, Plus } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
+import PageFade from "../components/PageFade";
 
 const faqCategories = [
   {
@@ -110,7 +111,7 @@ const FAQPage = () => {
   };
 
   return (
-    <>
+<PageFade>
       <Navbar />
 
       <section className="px-4 sm:px-6 pt-32 sm:pt-40 pb-16 sm:pb-24 bg-white">
@@ -236,7 +237,7 @@ const FAQPage = () => {
       </section>
 
       <Footer />
-    </>
+    </PageFade>
   );
 };
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
+import PageFade from "../components/PageFade";
 import api from "../api/axios.js";
 
 export default function Login() {
@@ -72,6 +73,7 @@ export default function Login() {
     };
 
     return (
+        <PageFade>
         <div className="min-h-screen w-full flex flex-col md:flex-row bg-white">
 
             {/* IMAGE SIDE */}
@@ -166,5 +168,6 @@ export default function Login() {
                 </div>
             </div>
         </div>
+        </PageFade>
     );
 }

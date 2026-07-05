@@ -3,6 +3,7 @@ import { Mail, Phone, MapPin } from "lucide-react";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
+import PageFade from "../components/PageFade";
 
 export default function Contact() {
     const [form, setForm] = useState({
@@ -49,7 +50,7 @@ export default function Contact() {
     };
 
     return (
-        <>
+        <PageFade>
             <Navbar />
 
             <div className="max-w-7xl mx-auto px-6 sm:px-10 pt-32 sm:pt-40 pb-16 sm:pb-20">
@@ -192,6 +193,6 @@ export default function Contact() {
             </div>
 
             <Footer />
-        </>
+        </PageFade>
     );
 }

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
+import PageFade from "../components/PageFade";
+
 
 export default function TermsOfService() {
     const sections = [
@@ -378,7 +380,7 @@ export default function TermsOfService() {
     };
 
     return (
-        <>
+        <PageFade>
             <Navbar />
 
             {/* Hero band */}
@@ -457,6 +459,7 @@ export default function TermsOfService() {
             </div>
 
             <Footer />
-        </>
+
+        </PageFade>
     );
 }

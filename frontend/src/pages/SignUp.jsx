@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import api from "../api/axios";
+import PageFade from "../components/PageFade";
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -97,6 +98,7 @@ const handleSubmit = async (e) => {
     };
 
     return (
+    <PageFade>
         <div className="min-h-screen md:h-screen w-full flex flex-col md:flex-row bg-white md:overflow-hidden">
 
             {/* IMAGE SIDE */}
@@ -235,5 +237,6 @@ const handleSubmit = async (e) => {
                 </div>
             </div>
         </div>
+        </PageFade>
     );
 }
