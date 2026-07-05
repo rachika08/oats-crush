@@ -18,6 +18,8 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
+
+
   const fetchProducts = async () => {
   try {
     const res = await api.get("/product"); // adjust endpoint if needed
@@ -58,6 +60,14 @@ useEffect(() => {
     setSuggestions(filtered.slice(0, 5));
   }, [search, products]);
 
+    const [showLoginToast, setShowLoginToast] = useState(false);
+
+  useEffect(() => {
+    if (!showLoginToast) return;
+    const t = setTimeout(() => setShowLoginToast(false), 3000);
+    return () => clearTimeout(t);
+  }, [showLoginToast]);
+
   const token = localStorage.getItem("token");
   const { openCart } = useCart();
 
@@ -90,7 +100,7 @@ useEffect(() => {
   Customize Box
 </Link>
 
-<Link to="/contact" className="hover:text-brand-orange-dark transition">
+<Link to="/about-us" className="hover:text-brand-orange-dark transition">
   About Us
 </Link>
         </div>
@@ -107,7 +117,13 @@ useEffect(() => {
          <button
   className="relative flex cursor-pointer hover:text-brand-orange"
   aria-label="Cart"
-  onClick={() => openCart()}
+  onClick={() => {
+    if (!token) {
+      setShowLoginToast(true);
+     return;
+    }
+    openCart();
+  }}
 >
   <ShoppingBag size={20} />
   {cartCount > 0 && (
@@ -210,7 +226,7 @@ useEffect(() => {
             { to: "/", label: "Home", icon: Home },
             { to: "/products", label: "Shop Now", icon: LayoutGrid },
             { to: "/customize-box", label: "Customize Box", icon: PackageOpen },
-            { to: "/contact", label: "About Us", icon: Info },
+            { to: "/about-us", label: "About Us", icon: Info },
           ].map(({ to, label, icon: Icon }) => (
             <Link
               key={to}
@@ -345,6 +361,26 @@ useEffect(() => {
 )}
 
     </header>
+    {showLoginToast && (
+  <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[110] bg-white border border-gray-200 rounded-2xl shadow-xl px-6 py-4 flex items-center gap-4 min-w-[280px]">
+    <div className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+    <p className="font-body text-sm text-black flex-1">
+      Please log in to view your cart
+    </p>
+    <button
+      onClick={() => { setShowLoginToast(false); navigate("/login"); }}
+      className="bg-brand-orange text-white font-heading text-xs px-4 py-1.5 rounded-full hover:-translate-y-0.5 transition cursor-pointer"
+    >
+      LOG IN
+    </button>
+    <button
+      onClick={() => setShowLoginToast(false)}
+      className="text-gray-400 hover:text-black text-lg leading-none cursor-pointer"
+    >
+      ×
+    </button>
+  </div>
+)}
     </>
   );
 };
