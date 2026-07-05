@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import api from "../../api/axios";
+import { Reveal } from "../Reveal";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -48,9 +49,11 @@ const BlogSection = () => {
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
-        <h2 className="font-heading text-3xl sm:text-4xl md:text-[56px] text-center mb-10 sm:mb-12">
-          READ OUR LATEST BLOGS
-        </h2>
+        <Reveal variant="subtle">
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-[56px] text-center mb-10 sm:mb-12">
+            READ OUR LATEST BLOGS
+          </h2>
+        </Reveal>
 
         <div className="relative">
           {/* Custom nav arrows, matching FeaturedProducts / CustomizeBox */}
@@ -81,45 +84,47 @@ const BlogSection = () => {
               1024: { slidesPerView: 3.3 },
             }}
           >
-            {blogs.map((blog) => {
+            {blogs.map((blog, index) => {
               const count = commentCounts[blog._id] ?? 0;
               const eyebrow = blog.tags?.[0] || blog.category;
 
               return (
                 <SwiperSlide key={blog._id}>
-                  <div
-                    onClick={() => navigate(`/blogs/${blog._id}`)}
-                    className="h-full flex flex-col bg-white border border-brand-orange/10 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-brand-orange/30 transition-all duration-300"
-                  >
-                    <div className="aspect-[16/9] overflow-hidden flex-shrink-0">
-                      <img
-                        src={blog.coverImage}
-                        alt={blog.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                  <Reveal variant="subtle" delay={index * 0.1} className="h-full">
+                    <div
+                      onClick={() => navigate(`/blogs/${blog._id}`)}
+                      className="h-full flex flex-col bg-white border border-brand-orange/10 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-brand-orange/30 transition-all duration-300"
+                    >
+                      <div className="aspect-[16/9] overflow-hidden flex-shrink-0">
+                        <img
+                          src={blog.coverImage}
+                          alt={blog.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
 
-                    <div className="px-4 pb-4 pt-4 flex-1 flex flex-col bg-gradient-to-b from-white to-brand-orange/5">
-                      {eyebrow && (
-                        <span className="inline-block w-fit font-body text-[10px] font-semibold uppercase tracking-wide px-3 py-1 rounded-full bg-brand-orange/10 text-brand-orange-dark mb-2">
-                          {eyebrow}
-                        </span>
-                      )}
+                      <div className="px-4 pb-4 pt-4 flex-1 flex flex-col bg-gradient-to-b from-white to-brand-orange/5">
+                        {eyebrow && (
+                          <span className="inline-block w-fit font-body text-[10px] font-semibold uppercase tracking-wide px-3 py-1 rounded-full bg-brand-orange/10 text-brand-orange-dark mb-2">
+                            {eyebrow}
+                          </span>
+                        )}
 
-                      <h3 className="font-heading uppercase text-base sm:text-lg mb-1 leading-snug">
-                        {blog.title}
-                      </h3>
-                      <p className="font-body text-sm text-gray-500 line-clamp-2 mb-3">
-                        {blog.shortDescription}
-                      </p>
+                        <h3 className="font-heading uppercase text-base sm:text-lg mb-1 leading-snug">
+                          {blog.title}
+                        </h3>
+                        <p className="font-body text-sm text-gray-500 line-clamp-2 mb-3">
+                          {blog.shortDescription}
+                        </p>
 
-                      <div className="mt-auto pt-8 border-t border-brand-orange/15">
-                        <span className="font-body text-xs text-gray-500">
-                          {count} comment{count !== 1 ? "s" : ""}
-                        </span>
+                        <div className="mt-auto pt-8 border-t border-brand-orange/15">
+                          <span className="font-body text-xs text-gray-500">
+                            {count} comment{count !== 1 ? "s" : ""}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Reveal>
                 </SwiperSlide>
               );
             })}

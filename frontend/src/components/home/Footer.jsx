@@ -1,5 +1,6 @@
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { Reveal, RevealGroup, RevealItem } from "../Reveal";
 
 const Footer = () => {
   return (
@@ -9,9 +10,9 @@ const Footer = () => {
         <div className="border-t border-gray-200" />
 
         {/* Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 py-10 gap-10">
+        <RevealGroup staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-3 py-10 gap-10">
           {/* Quick Links */}
-          <div className="md:border-r border-gray-200 md:pr-10">
+          <RevealItem variant="subtle" className="md:border-r border-gray-200 md:pr-10">
             <h3 className="font-heading text-brand-orange-dark text-lg tracking-wide mb-4">
               QUICK LINKS
             </h3>
@@ -39,10 +40,10 @@ const Footer = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </RevealItem>
 
           {/* Support */}
-          <div className="md:border-r border-gray-200 md:pr-10">
+          <RevealItem variant="subtle" className="md:border-r border-gray-200 md:pr-10">
             <h3 className="font-heading text-brand-orange-dark text-lg tracking-wide mb-4">
               SUPPORT
             </h3>
@@ -89,26 +90,26 @@ const Footer = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </RevealItem>
 
           {/* Connect */}
-          <div>
+          <RevealItem variant="subtle">
             <p className="font-body text-sm mb-2">Connect With Us</p>
-
-            <a
+<a
+            
               href="mailto:dm@oatscrush.co.in"
               className="font-heading text-brand-orange text-2xl sm:text-2xl break-all hover:translate-y-1 transition"
             >
               DM@OATSCRUSH.CO.IN
             </a>
-          </div>
-        </div>
+          </RevealItem>
+        </RevealGroup>
 
         {/* Bottom divider */}
         <div className="border-t border-gray-200" />
 
         {/* Bottom strip */}
-        <div className="flex items-center justify-between py-5 font-body text-sm">
+        <Reveal variant="subtle" delay={0.3} className="flex items-center justify-between py-5 font-body text-sm">
           <p>© {new Date().getFullYear()} Oats Crush. All Rights Reserved.</p>
 
           <div className="flex gap-3">
@@ -131,16 +132,18 @@ const Footer = () => {
               <FaLinkedin size={25} />
             </a>
           </div>
-        </div>
+        </Reveal>
       </div>
 
       {/* Full-bleed logo wordmark */}
-      <img
-        src="/images/oats-crush-logo2.webp"
-        alt="Oats Crush"
-        loading="lazy"
-        className="w-full select-none pointer-events-none"
-      />
+      <Reveal variant="noticeable" delay={0.4}>
+        <img
+          src="/images/oats-crush-logo2.webp"
+          alt="Oats Crush"
+          loading="lazy"
+          className="w-full select-none pointer-events-none"
+        />
+      </Reveal>
     </footer>
   );
 };

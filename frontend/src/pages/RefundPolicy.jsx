@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
+import PageFade from "../components/PageFade";
 
 export default function RefundPolicy() {
     const sections = [
@@ -148,7 +149,7 @@ export default function RefundPolicy() {
     };
 
     return (
-        <>
+        <PageFade>
             <Navbar />
 
             {/* Hero band */}
@@ -248,6 +249,6 @@ export default function RefundPolicy() {
             </div>
 
             <Footer />
-        </>
+        </PageFade>
     );
 }

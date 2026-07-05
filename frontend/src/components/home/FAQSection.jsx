@@ -1,31 +1,31 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Reveal, RevealGroup, RevealItem } from "../Reveal";
 
-
-const FAQSection = ({ faqs = [],image }) => {
+const FAQSection = ({ faqs = [], image }) => {
   const [openId, setOpenId] = useState(null);
   const navigate = useNavigate();
 
   const toggleFaq = (key) => {
     setOpenId((prev) => (prev === key ? null : key));
-};
+  };
 
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
         {/* Left image */}
-        <div className="rounded-3xl overflow-hidden aspect-[4/5]">
+        <Reveal variant="subtle" className="rounded-3xl overflow-hidden aspect-[4/5]">
           <img
             src={image}
             alt="Oats Crush Coffee"
             className="w-full h-full object-cover"
           />
-        </div>
+        </Reveal>
 
         {/* Right - heading + accordion */}
         <div>
-          <div className="relative inline-block mb-8">
+          <Reveal variant="noticeable" className="relative inline-block mb-8">
             <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] leading-tight">
               FREQUENTLY
               <br />
@@ -36,26 +36,27 @@ const FAQSection = ({ faqs = [],image }) => {
               alt=""
               className="hidden md:block absolute -right-25 top-1/2 translate-y-[calc(-50%+50px)] w-14 h-14 pointer-events-none"
             />
-         </div>
+          </Reveal>
 
-          <div className="flex flex-col gap-4">
+          <RevealGroup staggerDelay={0.12} className="flex flex-col gap-4">
             {faqs.map((faq, index) => {
-  const faqKey = faq.id ?? faq._id ?? index;
-  const isOpen = openId === faqKey;
+              const faqKey = faq.id ?? faq._id ?? index;
+              const isOpen = openId === faqKey;
 
-  return (
-    <div
-      key={faqKey}
-      className={`rounded-xl border overflow-hidden transition-colors duration-300 ${
-        isOpen
-          ? "bg-brand-orange border-brand-orange"
-          : "bg-white border-brand-orange shadow-sm"
-      }`}
-    >
-      <button
-        onClick={() => toggleFaq(faqKey)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left"
-      >
+              return (
+                <RevealItem
+                  key={faqKey}
+                  variant="subtle"
+                  className={`rounded-xl border overflow-hidden transition-colors duration-300 ${
+                    isOpen
+                      ? "bg-brand-orange border-brand-orange"
+                      : "bg-white border-brand-orange shadow-sm"
+                  }`}
+                >
+                  <button
+                    onClick={() => toggleFaq(faqKey)}
+                    className="w-full flex items-center justify-between px-5 py-4 text-left"
+                  >
                     <span
                       className={`font-body text-sm sm:text-base font-medium transition-colors duration-300 ${
                         isOpen ? "text-white" : "text-black"
@@ -86,17 +87,19 @@ const FAQSection = ({ faqs = [],image }) => {
                       </p>
                     </div>
                   </div>
-                </div>
+                </RevealItem>
               );
             })}
-          </div>
+          </RevealGroup>
 
-          <button
-            onClick={() => navigate("/faq")}
-            className="mt-6 w-full bg-brand-orange sm:w-auto  text-white rounded-full px-6 py-2.5 font-heading text-lg font-medium hover:-translate-y-1 transition-all duration-200 shadow-md cursor-pointer"
-          >
-            EXPLORE ALL FAQS
-          </button>
+          <Reveal variant="subtle" delay={faqs.length * 0.12}>
+            <button
+              onClick={() => navigate("/faq")}
+              className="mt-6 w-full bg-brand-orange sm:w-auto  text-white rounded-full px-6 py-2.5 font-heading text-lg font-medium hover:-translate-y-1 transition-all duration-200 shadow-md cursor-pointer"
+            >
+              EXPLORE ALL FAQS
+            </button>
+          </Reveal>
         </div>
       </div>
     </section>
@@ -104,7 +107,3 @@ const FAQSection = ({ faqs = [],image }) => {
 };
 
 export default FAQSection;
-
-
-
-

@@ -31,7 +31,7 @@ export default function AboutUs() {
     <motion.div
       initial={{ x: "100%" }}
       animate={controls}
-      className="relative bg-brand-orange overflow-x-hidden"
+      className="relative bg-brand-orange overflow-x-clip"
     >
       {/* Back / page-label pill — replaces the Navbar on this page */}
       <button

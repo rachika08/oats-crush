@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
+import PageFade from "../components/PageFade";
 
 export default function PrivacyPolicy() {
     const sections = [
@@ -385,7 +386,7 @@ export default function PrivacyPolicy() {
     };
 
     return (
-        <>
+        <PageFade>
             <Navbar />
 
             {/* Hero band */}
@@ -499,6 +500,6 @@ export default function PrivacyPolicy() {
             </div>
 
             <Footer />
-        </>
+        </PageFade>
     );
 }

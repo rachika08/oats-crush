@@ -1,10 +1,12 @@
 import Navbar from "../components/Navbar";
+import PageFade from "../components/PageFade";
 import Footer from "../components/home/Footer";
 import { Truck } from "lucide-react";
 
 export default function ShippingPolicy() {
     return (
-        <>
+        <PageFade>
+
             <Navbar />
 
             {/* Hero band */}
@@ -32,6 +34,7 @@ export default function ShippingPolicy() {
             </div>
 
             <Footer />
-        </>
+</PageFade>
+        
     );
 }

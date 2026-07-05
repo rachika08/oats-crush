@@ -6,6 +6,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import { Bell } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import CartToast from "../CartToast";
+import { Reveal } from "../Reveal";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -166,6 +167,7 @@ setShowToast(true);
     <section className="py-16 sm:py-20 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         <div className="relative flex items-end justify-between mb-8 sm:mb-10">
+          <Reveal variant="subtle">
           <div>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-[56px] mb-2">
               {heading}
@@ -174,6 +176,7 @@ setShowToast(true);
               {subheading}
             </p>
           </div>
+          </Reveal>
 {showSquiggle && (
   <img
     src="/images/arrow-s.svg"
@@ -225,12 +228,13 @@ setShowToast(true);
                 1024: { slidesPerView: 3 },
               }}
             >
-              {products.map((product) => {
+              {products.map((product, index) => {
                 const isSoldOut = product.stock <= 0;
                 const status = notifyStatus[product._id];
 
                 return (
                   <SwiperSlide key={product._id}>
+                    <Reveal variant="subtle">
                     <div
                       onClick={() => navigate(`/product/${product._id}`)}
                       className="bg-white border border-gray-200 rounded-2xl overflow-hidden cursor-pointer transition shadow-md hover:-translate-y-1"
@@ -294,6 +298,7 @@ setShowToast(true);
                         </button>
                       </div>
                     </div>
+                     </Reveal>
                   </SwiperSlide>
                 );
               })}

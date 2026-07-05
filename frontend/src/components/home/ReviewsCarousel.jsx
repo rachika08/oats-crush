@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Play, X, Volume2, VolumeX, Heart, Share2 } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import { Reveal } from "../Reveal";
 
 import "swiper/css";
 
@@ -47,61 +48,11 @@ const reviews = [
     videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
   },
 ];
-// const handleAddToCart = async (e, product) => {
-//   e.stopPropagation();
 
-//   try {
-//     const token = localStorage.getItem("token");
-
-//     if (!token) {
-//       alert("Please login to add items to your cart");
-//       navigate("/login");
-//       return;
-//     }
-
-//     const defaultPack =
-//       product.packSizes?.find((p) => Number(p.units) === 1) ||
-//       product.packSizes?.[0];
-
-//     if (!defaultPack) {
-//       alert("Product pack missing");
-//       return;
-//     }
-
-//     const price = Number(defaultPack.price);
-
-//     if (isNaN(price)) {
-//       alert("Invalid product price");
-//       return;
-//     }
-
-//     await api.post(
-//       "/cart/add",
-//       {
-//         productId: product._id,
-//         quantity: 1,
-//         pack: {
-//           label: defaultPack.label,
-//           units: Number(defaultPack.units) || 1,
-//           price: price, // ✅ ALWAYS NUMBER
-//         },
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-
-//     alert("Added to cart!");
-//   } catch (error) {
-//     console.log(error.response?.data || error.message);
-//   }
-// };
 const ReelModal = ({ review, onClose }) => {
   const videoRef = useRef(null);
-  const [muted, setMuted] = useState(false); // start as false — we won't autoplay
-  const [isPlaying, setIsPlaying] = useState(false); // start as false
+  const [muted, setMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount] = useState(Math.floor(Math.random() * 900 + 100));
   const [progress, setProgress] = useState(0);
@@ -113,7 +64,6 @@ const ReelModal = ({ review, onClose }) => {
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  // Reset on video change — but DON'T autoplay
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -131,7 +81,6 @@ const ReelModal = ({ review, onClose }) => {
     setProgress((video.currentTime / video.duration) * 100);
   }, []);
 
-  // The key: user clicks play → start with sound, no muting needed
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -200,7 +149,6 @@ const ReelModal = ({ review, onClose }) => {
           <X size={18} />
         </button>
 
-        {/* No autoPlay, no muted prop */}
         <video
           ref={videoRef}
           key={review.id}
@@ -222,7 +170,6 @@ const ReelModal = ({ review, onClose }) => {
           </div>
         )}
 
-        {/* Always show play button when not playing */}
         {!isPlaying && (
           <div className="absolute inset-0 flex items-center justify-center z-10" onClick={togglePlay}>
             <span className="w-14 h-14 rounded-full bg-black/50 flex items-center justify-center cursor-pointer">
@@ -274,7 +221,6 @@ const ReelModal = ({ review, onClose }) => {
   );
 };
 
-// ─── Main Carousel ────────────────────────────────────────────────────────────
 const ReviewsCarousel = () => {
   const [openReview, setOpenReview] = useState(null);
 
@@ -289,41 +235,43 @@ const ReviewsCarousel = () => {
       )}
 
       <section className="py-12 sm:py-16 px-4 sm:px-6">
- <div className="relative max-w-7xl mx-auto text-center">
-   <img
-     src="/images/arrow2.svg"
-     alt=""
-     className="hidden sm:block absolute left-4 md:left-40 top-15 w-16 h-12 pointer-events-none"
-   />
-   <img
-     src="/images/arrow3.svg"
-     alt="arrow"
-     className="hidden sm:block absolute right-4 md:right-40 top-15 w-16 h-12 pointer-events-none"
-  />
+        <Reveal variant="subtle" className="relative max-w-7xl mx-auto text-center">
+          <img
+            src="/images/arrow2.svg"
+            alt=""
+            className="hidden sm:block absolute left-4 md:left-40 top-15 w-16 h-12 pointer-events-none"
+          />
+          <img
+            src="/images/arrow3.svg"
+            alt="arrow"
+            className="hidden sm:block absolute right-4 md:right-40 top-15 w-16 h-12 pointer-events-none"
+          />
           <h2 className="font-heading text-3xl sm:text-4xl md:text-[56px] mb-2">
             CRUSH-WORTHY REVIEWS
           </h2>
           <p className="font-body text-gray-600 text-sm sm:text-base mb-12">
             Watch what people have to say
           </p>
+        </Reveal>
 
-          <div className="relative">
-            <button className="reviews-prev hidden sm:flex absolute -left-2 sm:-left-4 md:-left-6 ..." aria-label="Previous">‹</button>
-            <button className="reviews-next hidden sm:flex absolute -right-2 sm:-right-4 md:-right-6 ..." aria-label="Next">›</button>
+        <div className="relative max-w-7xl mx-auto">
+          <button className="reviews-prev hidden sm:flex absolute -left-2 sm:-left-4 md:-left-6 ..." aria-label="Previous">‹</button>
+          <button className="reviews-next hidden sm:flex absolute -right-2 sm:-right-4 md:-right-6 ..." aria-label="Next">›</button>
 
-            <Swiper
-              modules={[Navigation]}
-              navigation={{ prevEl: ".reviews-prev", nextEl: ".reviews-next" }}
-              spaceBetween={16}
-              slidesPerView={1.6}
-              breakpoints={{
-                640: { slidesPerView: 2.2, spaceBetween: 20 },
-                1024: { slidesPerView: 3, spaceBetween: 28 },
-              }}
-              className="reviews-swiper !py-4"
-            >
-              {reviews.map((review) => (
-                <SwiperSlide key={review.id}>
+          <Swiper
+            modules={[Navigation]}
+            navigation={{ prevEl: ".reviews-prev", nextEl: ".reviews-next" }}
+            spaceBetween={16}
+            slidesPerView={1.6}
+            breakpoints={{
+              640: { slidesPerView: 2.2, spaceBetween: 20 },
+              1024: { slidesPerView: 3, spaceBetween: 28 },
+            }}
+            className="reviews-swiper !py-4"
+          >
+            {reviews.map((review, index) => (
+              <SwiperSlide key={review.id}>
+                <Reveal variant="subtle" delay={index * 0.1}>
                   <div className="text-left">
                     <div className="relative rounded-2xl overflow-hidden shadow-lg bg-gray-200" style={{ aspectRatio: "9 / 11" }}>
                       <img src={review.videoThumbnail} alt={review.productName} className="absolute inset-0 w-full h-full object-cover" />
@@ -350,10 +298,10 @@ const ReviewsCarousel = () => {
                       ADD TO CART
                     </button>
                   </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+                </Reveal>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       </section>
     </>
