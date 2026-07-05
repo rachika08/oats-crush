@@ -103,7 +103,7 @@ const FlavoursSection = () => {
 
 const heroProduct = upcomingProducts.find((p) =>
     p.name?.toLowerCase().includes("rasmalai")
-  ) || upcomingProducts[0];
+  );
 
   const restProducts = upcomingProducts.filter(
     (p) => p._id !== heroProduct?._id

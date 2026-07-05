@@ -81,11 +81,10 @@ export default function OrderDetails() {
         }
     };
 
-    const subtotal = order.items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-    );
-    const grandTotal = subtotal;
+const subtotal = order.subtotal ?? 0;
+const shippingFee = order.shippingFee ?? 0;
+const discount = order.discount ?? 0;
+const grandTotal = order.totalAmount ?? subtotal;
 
     return (
         <>
@@ -231,8 +230,16 @@ export default function OrderDetails() {
                                 </div>
                                 <div className="flex justify-between">
                                     <span>Shipping</span>
-                                    <span className="text-green-600 font-semibold">FREE</span>
+                                    <span className={shippingFee === 0 ? "text-green-600 font-semibold" : ""}>
+                                        {shippingFee === 0 ? "FREE" : `₹${shippingFee}`}
+                                   </span>
                                 </div>
+                                {discount > 0 && (
+                                    <div className="flex justify-between text-green-600 font-medium">
+                                        <span>Offer applied</span>
+                                        <span>-₹{discount}</span>
+                                   </div>
+                                )}
                             </div>
 
                             <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">

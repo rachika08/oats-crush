@@ -5,7 +5,6 @@ import {
   Home,
   ClipboardList,
   ChevronRight,
-  Pencil,
   Plus,
   Edit2,
   Trash2,
@@ -57,9 +56,6 @@ export default function Profile() {
   );
 
   const [user, setUser] = useState(storedUser);
-  const [isEditingOverview, setIsEditingOverview] = useState(false);
-  const [overviewForm, setOverviewForm] = useState({ name: "", phone: "" });
-
   const [addresses, setAddresses] = useState([]);
   const [addressesLoaded, setAddressesLoaded] = useState(false);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
@@ -84,16 +80,8 @@ export default function Profile() {
     try {
       const res = await api.get("/auth/me");
       setUser(res.data);
-      setOverviewForm({
-        name: res.data.name || "",
-        phone: res.data.phone || "",
-      });
     } catch (error) {
       console.log(error);
-      setOverviewForm({
-        name: storedUser.name || "",
-        phone: storedUser.phone || "",
-      });
     }
   };
 
@@ -128,34 +116,7 @@ export default function Profile() {
     setSearchParams({ tab: id });
   };
 
-  const handleOverviewChange = (e) => {
-    setOverviewForm({ ...overviewForm, [e.target.name]: e.target.value });
-  };
 
-  const handleOverviewSave = async () => {
-    try {
-      const res = await api.put("/auth/update", {
-        name: overviewForm.name,
-        phone: overviewForm.phone,
-      });
-
-      const updatedUser = { ...storedUser, name: res.data.name };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-
-      setUser(res.data);
-      setIsEditingOverview(false);
-    } catch (error) {
-      alert(error.response?.data?.message || "Failed to update profile");
-    }
-  };
-
-  const handleOverviewCancel = () => {
-    setOverviewForm({
-      name: user?.name || storedUser?.name || "",
-      phone: user?.phone || "",
-    });
-    setIsEditingOverview(false);
-  };
 
 const handleAddAddress = () => {
   setEditingAddress(null);
@@ -262,92 +223,27 @@ const handleSaveAddress = async (formData, addressId) => {
         </div>
 
         {/* OVERVIEW */}
-        {activeTab === "overview" && (
+{activeTab === "overview" && (
           <div className="border border-gray-200 rounded-2xl p-6 sm:p-8">
-            <div className="flex items-center justify-between mb-4">
-              <p className="font-body font-semibold text-lg sm:text-xl">Overview</p>
-
-              {!isEditingOverview && (
-                <button
-                  onClick={() => setIsEditingOverview(true)}
-                  className="text-brand-orange cursor-pointer"
-                  aria-label="Edit profile"
-                >
-                  <Pencil size={18} />
-                </button>
-              )}
-            </div>
+            <p className="font-body font-semibold text-lg sm:text-xl mb-4">Overview</p>
 
             <div className="border-t border-gray-200 mb-6" />
 
-            {!isEditingOverview ? (
-              <div className="space-y-6">
-                <div>
-                  <p className="font-body text-sm text-gray-400 mb-1">Name</p>
-                  <p className="font-body font-semibold text-base">
-                    {user?.name || storedUser?.name}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="font-body text-sm text-gray-400 mb-1">Email</p>
-                  <p className="font-body font-semibold text-base">
-                    {user?.email || storedUser?.email}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="font-body text-sm text-gray-400 mb-1">
-                    Contact Number
-                  </p>
-                  <p className="font-body font-semibold text-base">
-                    {user?.phone || "Not added"}
-                  </p>
-                </div>
+            <div className="space-y-6">
+              <div>
+                <p className="font-body text-sm text-gray-400 mb-1">Name</p>
+                <p className="font-body font-semibold text-base">
+                  {user?.name || storedUser?.name}
+                </p>
               </div>
-            ) : (
-              <div className="space-y-5 max-w-md">
-                <div>
-                  <label className="block font-body text-sm text-gray-500 mb-2">
-                    Name
-                  </label>
-                  <input
-                    name="name"
-                    value={overviewForm.name}
-                    onChange={handleOverviewChange}
-                    className="w-full border-b border-gray-300 pb-2 font-body text-sm focus:outline-none focus:border-brand-orange transition bg-transparent"
-                  />
-                </div>
 
-                <div>
-                  <label className="block font-body text-sm text-gray-500 mb-2">
-                    Contact Number
-                  </label>
-                  <input
-                    name="phone"
-                    value={overviewForm.phone}
-                    onChange={handleOverviewChange}
-                    className="w-full border-b border-gray-300 pb-2 font-body text-sm focus:outline-none focus:border-brand-orange transition bg-transparent"
-                  />
-                </div>
-
-                <div className="flex gap-3 pt-2">
-                  <button
-                    onClick={handleOverviewSave}
-                    className="bg-brand-orange text-white font-heading text-sm px-6 py-2.5 rounded-full shadow-md hover:-translate-y-1 transition cursor-pointer"
-                  >
-                    SAVE
-                  </button>
-
-                  <button
-                    onClick={handleOverviewCancel}
-                    className="border-2 border-gray-300 font-heading text-sm px-6 py-2.5 rounded-full hover:-translate-y-1 transition cursor-pointer"
-                  >
-                    CANCEL
-                  </button>
-                </div>
+              <div>
+                <p className="font-body text-sm text-gray-400 mb-1">Email</p>
+                <p className="font-body font-semibold text-base">
+                  {user?.email || storedUser?.email}
+                </p>
               </div>
-            )}
+            </div>
           </div>
         )}
 

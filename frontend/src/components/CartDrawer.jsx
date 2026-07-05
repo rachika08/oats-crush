@@ -845,7 +845,7 @@ const couponBadge = discount > 0 && (
             {checkoutStep === "cart" && (
               <button
                 onClick={handleProceedToCheckout}
-                className="w-full mt-4 bg-brand-orange font-heading text-white py-3 rounded-full"
+                className="w-full mt-4 bg-brand-orange font-heading cursor-pointer text-white py-3 rounded-full"
               >
                 PROCEED TO CHECKOUT
               </button>
@@ -854,7 +854,7 @@ const couponBadge = discount > 0 && (
             {checkoutStep === "shipping" && (
               <button
                 onClick={handleViewOrderDetails}
-                className="w-full mt-4 bg-brand-orange font-heading text-white py-3 rounded-full"
+                className="w-full mt-4 bg-brand-orange font-heading cursor-pointer text-white py-3 rounded-full"
               >
                 VIEW ORDER DETAILS
               </button>
@@ -865,7 +865,7 @@ const couponBadge = discount > 0 && (
                 <button
                   onClick={handlePlaceOrder}
                   disabled={isPlacingOrder}
-                  className="w-full bg-brand-orange font-heading text-white py-3 rounded-full disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full bg-brand-orange cursor-pointer font-heading text-white py-3 rounded-full disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isPlacingOrder ? "PROCESSING..." : "PAY NOW"}
                 </button>
