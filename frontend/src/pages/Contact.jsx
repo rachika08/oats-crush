@@ -76,7 +76,7 @@ export default function Contact() {
                                 className="flex items-center gap-3 font-body text-sm sm:text-base hover:text-brand-orange transition"
                             >
                                 <Mail size={18} className="text-brand-orange flex-shrink-0" />
-                                Dm@oatscrush.co.in
+                                dm@oatscrush.co.in
                             </a>
 
                             <a
