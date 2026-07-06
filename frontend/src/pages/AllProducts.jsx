@@ -292,7 +292,9 @@ const handleAddToCart = async (e, product) => {
   };
 
 const ProductCardItem = ({ product }) => {
-    const isSoldOut = product.stock <= 0;
+    const isComingSoon = product.isLaunched === false;
+    const isSoldOut = !isComingSoon && product.stock <= 0;
+    const isUnavailable = isComingSoon || isSoldOut;
     const status = notifyStatus[product._id];
     const cartState = cartStatus[product._id];
 
@@ -302,7 +304,12 @@ const ProductCardItem = ({ product }) => {
         onClick={() => navigate(`/product/${product._id}`)}
         className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer hover:shadow-md transition"
       >
-        <div className="relative aspect-square m-2 sm:m-3 rounded-lg sm:rounded-xl overflow-hidden">
+<div className="relative aspect-square m-2 sm:m-3 rounded-lg sm:rounded-xl overflow-hidden">
+          {isComingSoon && (
+            <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-brand-orange/10 text-brand-orange-dark text-[10px] sm:text-xs font-body font-medium px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
+              Coming Soon
+            </span>
+          )}
           {isSoldOut && (
             <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-white text-black text-[10px] sm:text-xs font-body font-medium px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
               Sold Out
@@ -332,19 +339,19 @@ const ProductCardItem = ({ product }) => {
 
 <button
   onClick={(e) =>
-    isSoldOut ? handleNotify(e, product) : handleAddToCart(e, product)
+    isUnavailable ? handleNotify(e, product) : handleAddToCart(e, product)
   }
   disabled={
-    isSoldOut
+    isUnavailable
       ? status === "loading" || status === "success"
       : cartState === "loading"
   }
-  className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${isSoldOut
+  className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${isUnavailable
     ? "bg-gray-500 text-white cursor-pointer disabled:cursor-default"
     : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-default"
     }`}
 >
-  {isSoldOut ? (
+  {isUnavailable ? (
     status === "success" ? (
       "SUBSCRIBED ✓"
     ) : status === "loading" ? (

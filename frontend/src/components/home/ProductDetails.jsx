@@ -525,19 +525,19 @@ const submitReview = async () => {
 </button>
 
 <button
-    onClick={isSoldOut ? handleNotify : addToCart}
+    onClick={isUnavailable ? handleNotify : addToCart}
     disabled={
-      isSoldOut
+      isUnavailable
         ? notifyStatus === "loading" || notifyStatus === "success"
         : addToCartLoading
     }
     className={`flex-1 font-heading text-base py-3 rounded-full shadow-md transition flex items-center justify-center gap-2 ${
-      isSoldOut
+      isUnavailable
         ? "bg-gray-400 text-white cursor-pointer disabled:cursor-default"
         : "bg-brand-orange text-white hover:-translate-y-1 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
     }`}
   >
-    {isSoldOut ? (
+    {isUnavailable ? (
       notifyStatus === "success" ? (
         "SUBSCRIBED ✓"
       ) : notifyStatus === "loading" ? (
