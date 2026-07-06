@@ -31,23 +31,24 @@ export default function Contact() {
     //     setStatus("sent");
     //     setForm({ name: "", email: "", message: "" });
     // };
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+const [sending, setSending] = useState(false);
 
-        try {
-            await api.post("/contact", form);
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSending(true);
 
-            setStatus("sent");
-            setForm({
-                name: "",
-                email: "",
-                message: "",
-            });
-        } catch (err) {
-            console.error(err);
-            alert("Failed to send message");
-        }
-    };
+    try {
+        await api.post("/contact", form);
+
+        setStatus("sent");
+        setForm({ name: "", email: "", message: "" });
+    } catch (err) {
+        console.error(err);
+        alert("Failed to send message");
+    } finally {
+        setSending(false);
+    }
+};
 
     return (
         <PageFade>
@@ -180,12 +181,13 @@ export default function Contact() {
                                     We aim to respond to inquiries within 24 hours.
                                 </p>
 
-                                <button
-                                    type="submit"
-                                    className="block mx-auto bg-brand-orange text-white font-heading text-base px-8 py-3 rounded-full border border-brand-orange border-2  shadow-md hover:bg-white hover:text-brand-orange hover:-translate-y-1 transition cursor-pointer"
-                                >
-                                    SEND
-                                </button>
+<button
+    type="submit"
+    disabled={sending}
+    className="block mx-auto bg-brand-orange text-white font-heading text-base px-8 py-3 rounded-full border border-brand-orange border-2 shadow-md hover:bg-white hover:text-brand-orange hover:-translate-y-1 transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:bg-brand-orange disabled:hover:text-white"
+>
+    {sending ? "SENDING..." : "SEND"}
+</button>
                             </form>
                         )}
                     </div>

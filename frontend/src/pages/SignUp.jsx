@@ -36,6 +36,8 @@ export default function Signup() {
     
 
     // NORMAL SIGNUP
+const [loading, setLoading] = useState(false);
+
 const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -44,29 +46,26 @@ const handleSubmit = async (e) => {
         return;
     }
 
+    setLoading(true);
+
     try {
         const response = await api.post("/auth/signup", form);
+        setMsg(response.data.message);
 
-            setMsg(response.data.message);
+        setTimeout(() => {
+            navigate("/login");
+        }, 1000);
+    } catch (error) {
+        console.log(error);
+        const errorMsg = error.response?.data?.message || "An error occurred";
+        setMsg(errorMsg);
 
-            setTimeout(() => {
-                navigate("/login");
-            }, 1000);
-
-        } catch (error) {
-            console.log(error);
-
-            const errorMsg =
-                error.response?.data?.message ||
-                "An error occurred";
-
-            setMsg(errorMsg);
-
-            if (errorMsg === "User already exists") {
-                navigate("/login");
-            }
+        if (errorMsg === "User already exists") {
+            navigate("/login");
         }
-    };
+        setLoading(false);
+    }
+};
 
     // GOOGLE SIGNUP / LOGIN
     const handleGoogleLogin = async (credentialResponse) => {
@@ -215,12 +214,13 @@ const handleSubmit = async (e) => {
                         </div>
 
                         {/* SUBMIT */}
-                        <button
-                            type="submit"
-                            className="w-full font-heading text-xl bg-brand-orange text-white py-3 rounded-full cursor-pointer"
-                        >
-                            SIGN UP
-                        </button>
+<button
+    type="submit"
+    disabled={loading}
+    className="w-full font-heading text-xl bg-brand-orange text-white py-3 rounded-full cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+>
+    {loading ? "SIGNING YOU UP..." : "SIGN UP"}
+</button>
                     </form>
 
                     {/* LOGIN LINK */}

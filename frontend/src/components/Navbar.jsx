@@ -18,11 +18,18 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
+const [isScrolled, setIsScrolled] = useState(false);
 
+useEffect(() => {
+  const handleScroll = () => setIsScrolled(window.scrollY > 10);
+  window.addEventListener("scroll", handleScroll);
+  handleScroll(); 
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
 
   const fetchProducts = async () => {
   try {
-    const res = await api.get("/product"); // adjust endpoint if needed
+    const res = await api.get("/product");
     console.log(res);
     setProducts(res.data);
   } catch (error) {
@@ -74,7 +81,11 @@ useEffect(() => {
   return (
     <>
     <PromoBar />
-    <header className="absolute top-0 left-0 right-0 z-20 px-4 sm:px-6 py-15">
+    <header
+  className={`fixed top-0 left-0 right-0 z-20 px-4 sm:px-6 transition-all duration-300 ${
+    isScrolled ? "py-3" : "py-15"
+  }`}
+>
       <nav className="max-w-7xl mx-auto flex items-center justify-between bg-white rounded-full px-8 sm:px-10 py-1.5 shadow-sm">
         {/* Logo */}
         <div

@@ -12,14 +12,16 @@ import { useCart } from "../../context/CartContext";
 import PageFade from "../PageFade";
 
 import {
- 
   Moon,
   GlassWater,
   Snowflake,
   Coffee,
   IceCreamCone,
   Soup,
-  Bell
+  Bell,
+  Cuboid,
+  Droplet,
+  FlaskConical
 } from "lucide-react";
 
 const iconMap = {
@@ -64,7 +66,12 @@ export default function ProductDetails() {
         }
     }, [product]);
     
+const [addToCartLoading, setAddToCartLoading] = useState(false);
+const [buyNowLoading, setBuyNowLoading] = useState(false);
+const [submittingReview, setSubmittingReview] = useState(false);
+
 const addToCart = async () => {
+    if (addToCartLoading) return;
     try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -72,6 +79,8 @@ const addToCart = async () => {
             navigate("/login");
             return;
         }
+
+        setAddToCartLoading(true);
 
         const res = await api.post(
             "/cart/add",
@@ -84,55 +93,56 @@ const addToCart = async () => {
                     price: selectedPack.price
                 }
             },
-            {
-                headers: { Authorization: `Bearer ${token}` }
-            }
+            { headers: { Authorization: `Bearer ${token}` } }
         );
 
         const updatedItems = res.data.items || [];
         localStorage.setItem("cartItems", JSON.stringify(updatedItems));
-        localStorage.setItem("cartCount", updatedItems.length); 
+        localStorage.setItem("cartCount", updatedItems.length);
 
-            setShowViewCart(true);
-            window.dispatchEvent(new Event("cartUpdated"));
-            setShowToast(true);
-        } catch (error) {
-            console.log(error.response?.data || error.message);
+        setShowViewCart(true);
+        window.dispatchEvent(new Event("cartUpdated"));
+        setShowToast(true);
+    } catch (error) {
+        console.log(error.response?.data || error.message);
+    } finally {
+        setAddToCartLoading(false);
+    }
+};
+
+const buyNow = async () => {
+    if (buyNowLoading) return;
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Please login to add items to your cart");
+            navigate("/login");
+            return;
         }
-    };
-    const buyNow = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("Please login to add items to your cart");
-                navigate("/login");
-                return;
-            }
-            
-            const res = await api.post(
-                "/cart/add",
-                {
-                    productId: product._id,
-                    quantity: quantity,
-                    pack: {
-                        label: selectedPack.label,
-                        units: selectedPack.units,
-                        price: selectedPack.price
-                    }
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+
+        setBuyNowLoading(true);
+
+        const res = await api.post(
+            "/cart/add",
+            {
+                productId: product._id,
+                quantity: quantity,
+                pack: {
+                    label: selectedPack.label,
+                    units: selectedPack.units,
+                    price: selectedPack.price
                 }
-            );
-            console.log("Cart updated:", res.data);
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        console.log("Cart updated:", res.data);
 
-            navigate("/checkout")
-        } catch (error) {
-            console.log(error.response?.data || error.message);
-        }
-    };
+        navigate("/checkout");
+    } catch (error) {
+        console.log(error.response?.data || error.message);
+        setBuyNowLoading(false);
+    }
+};
 
     const fetchProduct = async () => {
         try {
@@ -236,43 +246,38 @@ const isUnavailable = isUnlaunched || isSoldOut;
                 ) / reviews.length
             ).toFixed(1)
             : 0;
-    const submitReview = async () => {
-        try {
-            const token = localStorage.getItem("token");
 
-            if (!token) {
-                alert("Please login to add a review");
-                navigate("/login");
-                return;
-            }
+const submitReview = async () => {
+    if (submittingReview) return;
+    setSubmittingReview(true);
+    try {
+        const token = localStorage.getItem("token");
 
-            await api.post(
-                `/reviews/${id}`,
-                {
-                    rating,
-                    comments
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            alert("Review added successfully");
-
-            setRating(5);
-            setComments("");
-
-            fetchReviews();
-
-        } catch (error) {
-            alert(
-                error.response?.data?.message ||
-                "Failed to add review"
-            );
+        if (!token) {
+            alert("Please login to add a review");
+            navigate("/login");
+            return;
         }
-    };
+
+        await api.post(
+            `/reviews/${id}`,
+            { rating, comments },
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        alert("Review added successfully");
+
+        setRating(5);
+        setComments("");
+
+        fetchReviews();
+    } catch (error) {
+        alert(error.response?.data?.message || "Failed to add review");
+    } finally {
+        setSubmittingReview(false);
+    }
+};
+
     const handleWriteReview = () => {
         if (!token) {
             alert("Please login to write a review");
@@ -509,23 +514,27 @@ const isUnavailable = isUnlaunched || isSoldOut;
                         <div className="flex gap-4">
 <button
     onClick={buyNow}
-    disabled={isUnavailable}
+    disabled={isUnavailable || buyNowLoading}
     className={`flex-1 border-2 font-heading text-base py-3 rounded-full shadow-md transition ${
       isUnavailable
         ? "border-gray-300 text-gray-400 cursor-not-allowed"
-        : "border-brand-orange text-black hover:-translate-y-1 cursor-pointer"
+        : "border-brand-orange text-black hover:-translate-y-1 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
     }`}
 >
-    BUY NOW
+    {buyNowLoading ? "PROCESSING..." : "BUY NOW"}
 </button>
 
 <button
     onClick={isSoldOut ? handleNotify : addToCart}
-    disabled={isSoldOut && (notifyStatus === "loading" || notifyStatus === "success")}
+    disabled={
+      isSoldOut
+        ? notifyStatus === "loading" || notifyStatus === "success"
+        : addToCartLoading
+    }
     className={`flex-1 font-heading text-base py-3 rounded-full shadow-md transition flex items-center justify-center gap-2 ${
       isSoldOut
         ? "bg-gray-400 text-white cursor-pointer disabled:cursor-default"
-        : "bg-brand-orange text-white hover:-translate-y-1 cursor-pointer"
+        : "bg-brand-orange text-white hover:-translate-y-1 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
     }`}
   >
     {isSoldOut ? (
@@ -536,6 +545,8 @@ const isUnavailable = isUnlaunched || isSoldOut;
       ) : (
         <>NOTIFY <Bell size={16} /></>
       )
+    ) : addToCartLoading ? (
+      "ADDING..."
     ) : (
       "ADD TO CART"
     )}
@@ -577,6 +588,75 @@ const isUnavailable = isUnlaunched || isSoldOut;
                         </p>
                     </div>
                 </div>
+
+
+{/* Nutritional Value */}
+{product.nutrition && product.nutrition.nutrients?.length > 0 && (
+<div className="mt-12 sm:mt-16 max-w-xl mx-auto">
+        <h2 className="font-heading text-2xl sm:text-3xl mb-6 uppercase">
+            Nutritional Value
+        </h2>
+
+        <div className="space-y-5">
+            {product.nutrition.nutrients.map((n, index) => (
+                <div key={index}>
+                    <div className="flex items-baseline justify-between gap-2 mb-1.5">
+                        <span className="font-body text-sm font-semibold text-black">
+                            {n.name}{" "}
+                            <span className="font-body text-xs font-normal text-gray-400">
+                                {n.perServing} / {n.per100g} {n.unit}
+                            </span>
+                        </span>
+                        <span className="font-body text-sm font-semibold text-black flex-shrink-0">
+                            {n.dailyValue}%
+                        </span>
+                    </div>
+                    <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                        <div
+                            className={`h-full rounded-full ${index === 0 ? "bg-brand-orange" : "bg-gray-300"}`}
+                            style={{ width: `${Math.min(n.dailyValue || 0, 100)}%` }}
+                        />
+                    </div>
+                </div>
+            ))}
+        </div>
+
+        {product.nutrition.note && (
+            <p className="font-body text-xs text-gray-500 italic mt-4">
+                *{product.nutrition.note}
+            </p>
+        )}
+
+        <hr className="border-gray-200 my-8" />
+
+        {/* Static claims — same on every product */}
+        <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="flex flex-col items-center">
+                <span className="w-14 h-14 rounded-full border-2 border-brand-orange flex items-center justify-center mb-2">
+                    <Cuboid size={24} className="text-brand-orange" />
+                </span>
+                <p className="font-heading text-base uppercase">Zero</p>
+                <p className="font-body text-xs text-gray-500">Refined Sugar</p>
+            </div>
+
+            <div className="flex flex-col items-center">
+                <span className="w-14 h-14 rounded-full border-2 border-brand-orange flex items-center justify-center mb-2">
+                    <Droplet size={24} className="text-brand-orange" />
+                </span>
+                <p className="font-heading text-base uppercase">Zero</p>
+                <p className="font-body text-xs text-gray-500">Trans Fat</p>
+            </div>
+
+            <div className="flex flex-col items-center">
+                <span className="w-14 h-14 rounded-full border-2 border-brand-orange flex items-center justify-center mb-2">
+                    <FlaskConical size={24} className="text-brand-orange" />
+                </span>
+                <p className="font-heading text-base uppercase">No</p>
+                <p className="font-body text-xs text-gray-500">Preservatives or Fillers</p>
+            </div>
+        </div>
+    </div>
+)}
 
                 {showViewCart && (
     <div className="fixed bottom-3 left-0 w-full z-50 bg-brand-orange text-white px-8 py-4 flex justify-between items-center shadow-lg rounded-full">
@@ -751,12 +831,13 @@ const isUnavailable = isUnlaunched || isSoldOut;
                         />
 
                         <div className="flex gap-4">
-                            <button
-                                onClick={submitReview}
-                                className="bg-brand-orange font-body text-white px-6 py-2 rounded-full cursor-pointer hover-transition hover:-translate-y-1 shadow-md transition"
-                            >
-                                Submit Review
-                            </button>
+<button
+    onClick={submitReview}
+    disabled={submittingReview}
+    className="bg-brand-orange font-body text-white px-6 py-2 rounded-full cursor-pointer hover-transition hover:-translate-y-1 shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+>
+    {submittingReview ? "SUBMITTING..." : "Submit Review"}
+</button>
 
                             <button
                                 onClick={() => setShowReviewForm(false)}
@@ -850,92 +931,7 @@ const isUnavailable = isUnlaunched || isSoldOut;
                 showSquiggle={false}
             />
             <FAQSection faqs={product.faqs} image={product.image}/>
-            {product.nutrition && product.nutrition.nutrients?.length > 0 && (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
-        
-        <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] mb-10 text-center">
-            NUTRITION INFORMATION
-        </h2>
 
-        {/* Header Info */}
-        <div className="mb-8 text-center">
-            <p className="font-body text-sm text-gray-600">
-                Serving Size:{" "}
-                <span className="font-semibold text-black">
-                    {product.nutrition.servingSize || "—"}
-                </span>
-            </p>
-
-            <p className="font-body text-sm text-gray-600">
-                Servings Per Pack:{" "}
-                <span className="font-semibold text-black">
-                    {product.nutrition.servingsPerPack || "—"}
-                </span>
-            </p>
-
-            {product.nutrition.note && (
-                <p className="font-body text-xs text-gray-500 mt-2 italic">
-                    {product.nutrition.note}
-                </p>
-            )}
-        </div>
-
-        {/* Table Header */}
-        <div className="hidden sm:grid grid-cols-5 font-body text-xs font-semibold text-gray-500 border-b pb-2 mb-4">
-            <span>NUTRIENT</span>
-            <span>PER SERVING</span>
-            <span>PER 100g</span>
-            <span>UNIT</span>
-            <span>% DAILY VALUE</span>
-        </div>
-
-        {/* Nutrients List */}
-        <div className="space-y-4">
-            {product.nutrition.nutrients.map((n, index) => (
-                <div
-                    key={index}
-                    className="grid grid-cols-1 sm:grid-cols-5 gap-2 sm:gap-4 items-center border-b pb-4"
-                >
-                    {/* Name */}
-                    <span className="font-body font-medium text-sm">
-                        {n.name}
-                    </span>
-
-                    {/* Per Serving */}
-                    <span className="font-body text-sm text-gray-600">
-                        {n.perServing} {n.unit}
-                    </span>
-
-                    {/* Per 100g */}
-                    <span className="font-body text-sm text-gray-600">
-                        {n.per100g} {n.unit}
-                    </span>
-
-                    {/* Unit */}
-                    <span className="font-body text-sm text-gray-600 uppercase">
-                        {n.unit}
-                    </span>
-
-                    {/* Daily Value Bar */}
-                    <div className="flex items-center gap-2">
-                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-brand-orange"
-                                style={{
-                                    width: `${Math.min(n.dailyValue || 0, 100)}%`
-                                }}
-                            />
-                        </div>
-
-                        <span className="text-xs font-body text-gray-600 min-w-[35px]">
-                            {n.dailyValue || 0}%
-                        </span>
-                    </div>
-                </div>
-            ))}
-        </div>
-    </section>
-)}
             <Footer />
             <CartToast show={showToast} onClose={() => setShowToast(false)} />
 </PageFade>

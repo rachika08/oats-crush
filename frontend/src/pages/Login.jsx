@@ -22,31 +22,32 @@ export default function Login() {
         });
     };
 
-    // NORMAL LOGIN
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+const [loading, setLoading] = useState(false);
 
-        try {
-            const res = await api.post("/auth/login", form);
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-            const user = res.data.userFound;
+    try {
+        const res = await api.post("/auth/login", form);
+        const user = res.data.userFound;
 
-            localStorage.setItem("user", JSON.stringify(user));
-            localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", res.data.token);
 
-            setMsg("Login successful!");
-            setTimeout(() => {
-                if (user.role === "admin") {
-                    navigate("/admin");
-                } else {
-                    navigate("/");
-                }
-            }, 800);
-
-        } catch (error) {
-            setMsg(error.response?.data?.message || "Login failed");
-        }
-    };
+        setMsg("Login successful!");
+        setTimeout(() => {
+            if (user.role === "admin") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
+        }, 800);
+    } catch (error) {
+        setMsg(error.response?.data?.message || "Login failed");
+        setLoading(false);
+    }
+};
 
     // GOOGLE LOGIN
     const handleGoogleLogin = async (credentialResponse) => {
@@ -156,12 +157,13 @@ export default function Login() {
                         </div>
 
                         {/* BUTTON */}
-                        <button
-                            type="submit"
-                            className="w-full font-heading text-xl bg-brand-orange text-white py-3 rounded-full cursor-pointer"
-                        >
-                            LOGIN
-                        </button>
+<button
+    type="submit"
+    disabled={loading}
+    className="w-full font-heading text-xl bg-brand-orange text-white py-3 rounded-full cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+>
+    {loading ? "LOGGING YOU IN..." : "LOGIN"}
+</button>
 
                     </form>
 

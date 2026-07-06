@@ -115,7 +115,11 @@ export default function CartDrawer() {
   };
 
   // ---------------- EFFECTS ----------------
-  const handleExploreAddToCart = async (product) => {
+  const [exploreCartStatus, setExploreCartStatus] = useState({});
+
+const handleExploreAddToCart = async (product) => {
+    if (exploreCartStatus[product._id] === "loading") return;
+
     try {
       const token = localStorage.getItem("token");
 
@@ -141,6 +145,8 @@ export default function CartDrawer() {
         return;
       }
 
+      setExploreCartStatus((prev) => ({ ...prev, [product._id]: "loading" }));
+
       await api.post(
         "/cart/add",
         {
@@ -156,11 +162,17 @@ export default function CartDrawer() {
       );
 
       await fetchCart();
+      setExploreCartStatus((prev) => ({ ...prev, [product._id]: "success" }));
+
+      setTimeout(() => {
+        setExploreCartStatus((prev) => ({ ...prev, [product._id]: "idle" }));
+      }, 1500);
     } catch (error) {
       console.log(error.response?.data || error.message);
       alert(error.response?.data?.message || "Could not add item to cart");
+      setExploreCartStatus((prev) => ({ ...prev, [product._id]: "idle" }));
     }
-  };
+};
 
   const fetchExploreProducts = async () => {
     try {
@@ -657,12 +669,19 @@ const couponBadge = discount > 0 && (
                           <span className="font-heading text-xs">
                             ₹{p.packSizes?.[0]?.price ?? p.price}
                           </span>
-                          <button
-                            onClick={() => handleExploreAddToCart(p)}
-                            className="text-brand-orange border border-brand-orange rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none hover:bg-brand-orange hover:text-white transition"
-                          >
-                            +
-                          </button>
+<button
+  onClick={() => handleExploreAddToCart(p)}
+  disabled={exploreCartStatus[p._id] === "loading"}
+  className="text-brand-orange border border-brand-orange rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none hover:bg-brand-orange hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {exploreCartStatus[p._id] === "loading" ? (
+    <span className="w-2 h-2 rounded-full border-2 border-current border-t-transparent animate-spin" />
+  ) : exploreCartStatus[p._id] === "success" ? (
+    "✓"
+  ) : (
+    "+"
+  )}
+</button>
                         </div>
                       </div>
                     ))}
@@ -860,20 +879,35 @@ const couponBadge = discount > 0 && (
               </button>
             )}
 
-            {checkoutStep === "order" && (
-              <>
-                <button
-                  onClick={handlePlaceOrder}
-                  disabled={isPlacingOrder}
-                  className="w-full bg-brand-orange cursor-pointer font-heading text-white py-3 rounded-full disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {isPlacingOrder ? "PROCESSING..." : "PAY NOW"}
-                </button>
-                <p className="text-center font-body text-xs text-gray-500 mt-2">
-                  *You will be redirected to Razorpay to complete your payment
-                </p>
-              </>
-            )}
+{checkoutStep === "order" && (
+  <>
+    <button
+      onClick={handlePlaceOrder}
+      disabled={isPlacingOrder}
+      className="relative w-full bg-brand-orange cursor-pointer font-heading text-white py-3 rounded-full disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden"
+    >
+      <span>{isPlacingOrder ? "PROCESSING..." : "PAY NOW"}</span>
+
+{!isPlacingOrder && (
+  <span className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
+    <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-sm  ring-brand-orange z-10">
+      <img src="/images/paytm.webp" alt="Paytm" className="h-3.5 w-auto" />
+    </span>
+    <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-sm ring-brand-orange -ml-2 z-20">
+      <img src="/images/phonepe.webp" alt="PhonePe" className="h-3.5 w-auto" />
+    </span>
+    <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-sm ring-brand-orange -ml-2 z-30">
+      <img src="/images/gpay.webp" alt="Google Pay" className="h-3.5 w-auto" />
+    </span>
+  </span>
+)}
+    </button>
+
+    <p className="text-center font-body text-xs text-gray-500 mt-2">
+      *You will be redirected to Razorpay to complete your payment
+    </p>
+  </>
+)}
           </div>
         )}
       </aside>
