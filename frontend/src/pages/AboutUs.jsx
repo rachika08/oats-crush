@@ -47,16 +47,16 @@ export default function AboutUs() {
       <section className="relative px-4 sm:px-6 pt-24 sm:pt-32 pb-16 sm:pb-24">
         {/* Decorative side image - replace src with actual asset path */}
         <img
-          src="/images/about-bottle-splash.webp"
+          src="/images/oat-milk.webp"
           alt=""
           aria-hidden="true"
-          className="hidden lg:block absolute top-0 left-0 w-48 xl:w-56 rounded-b-3xl object-cover"
+          className="hidden lg:block absolute top-0 left-0 w-48 xl:w-56 rounded-r-3xl object-cover"
         />
         <img
-          src="/images/about-mix-red.webp"
+          src="/images/latte.webp"
           alt=""
           aria-hidden="true"
-          className="hidden lg:block absolute top-20 right-0 w-40 xl:w-48 rounded-l-3xl object-cover"
+          className="hidden lg:block absolute top-100 right-0 w-48 xl:w-56 rounded-l-3xl object-cover"
         />
 
         <div className="max-w-3xl mx-auto text-center">
@@ -102,7 +102,7 @@ export default function AboutUs() {
       {/* ---------------- SECTION 2: MISSION + STAND FOR ---------------- */}
       <section className="relative px-4 sm:px-6 pb-16 sm:pb-24">
         <img
-          src="/images/about-bottle-splash-2.webp"
+          src="/images/oat-milk.webp"
           alt=""
           aria-hidden="true"
           className="hidden lg:block absolute top-0 left-0 w-48 xl:w-56 rounded-r-3xl object-cover"
@@ -166,10 +166,10 @@ export default function AboutUs() {
       {/* ---------------- SECTION 3: WHY OATS CRUSH + CTA ---------------- */}
       <section className="relative px-4 sm:px-6 pb-16 sm:pb-24">
         <img
-          src="/images/about-mix-red-2.webp"
+          src="/images/latte.webp"
           alt=""
           aria-hidden="true"
-          className="hidden lg:block absolute top-10 right-0 w-40 xl:w-48 rounded-l-3xl object-cover"
+          className="hidden lg:block absolute top-10 right-0 w-48 xl:w-56 rounded-l-3xl object-cover"
         />
 
         <div className="max-w-3xl mx-auto text-center">
