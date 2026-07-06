@@ -145,21 +145,21 @@ const heroProduct = upcomingProducts.find((p) =>
 </div>
 
     {/* Right - content */}
-    <div className="text-left">
-                <span className="inline-block border border-flavour-rasmalai-accent text-flavour-rasmalai-accent rounded-full px-4 py-1 text-xs sm:text-sm font-body mb-4">
-                  Dropping Soon
-                </span>
+<div className="text-left relative">
+  <span className="inline-block border border-flavour-rasmalai-accent text-flavour-rasmalai-accent rounded-full px-4 py-1 text-xs sm:text-sm font-body mb-4">
+    Dropping Soon
+  </span>
 
-                <div className="relative inline-block mb-4">
-                <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] leading-tight uppercase">
-                    {heroProduct.name} IS COMING
-                  </h2>
-                  <img
-                    src="/images/mark.svg"
-                    alt=""
-                    className="hidden md:block absolute right-10 top-1/2 text-flavour-rasmalai-accent w-14 h-14 pointer-events-none"
-                  />
-                </div>
+  <div className="mb-4">
+    <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] leading-tight uppercase">
+      {heroProduct.name} IS COMING
+    </h2>
+    <img
+      src="/images/mark.svg"
+      alt=""
+      className="hidden md:block absolute right-10 top-1/3 text-flavour-rasmalai-accent w-14 h-14 pointer-events-none"
+    />
+  </div>
 
                 <p className="font-body text-sm sm:text-base font-semibold text-gray-800 mb-4">
                   {heroProduct.tagline || "30g protein · Real oats · Real flavour"}

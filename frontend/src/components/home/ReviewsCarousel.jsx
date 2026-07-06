@@ -1,56 +1,51 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Play, X, Volume2, VolumeX, Heart, Share2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Play, X, Volume2, VolumeX, Heart, Share2, Eye } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { Reveal } from "../Reveal";
+import api from "../../api/axios";
+import CartToast from "../CartToast";
+import { slugify } from "../../utils/slugify";
 
 import "swiper/css";
+
+
+
+const getVideoPoster = (videoUrl, atSeconds = 0.5) => {
+  if (!videoUrl) return "";
+  return videoUrl
+    .replace("/upload/", `/upload/so_${atSeconds}/`)
+    .replace(/\.(mp4|mov|webm)$/i, ".jpg");
+};
 
 const reviews = [
   {
     id: 1,
-    videoThumbnail: "/images/coffee.webp",
     productName: "RASMALAI OATS SHAKE",
     price: 149,
-    productId: "",
-    videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
+    productId: "6a33d8cefba92e569fc33a9a", 
+    videoUrl: "https://res.cloudinary.com/imzegfzz/video/upload/v1783316335/review2_zehzq4.mp4",
   },
   {
     id: 2,
-    videoThumbnail: "/images/oat-milk.webp",
-    productName: "COFFEE OATS SHAKE",
+    productName: "RASMALAI OATS SHAKE",
     price: 149,
-    productId: "",
-    videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
+    productId: "6a33d8cefba92e569fc33a9a",
+    videoUrl: "https://res.cloudinary.com/imzegfzz/video/upload/v1783316339/review3_mwk8hj.mp4",
   },
   {
     id: 3,
-    videoThumbnail: "/images/rasmalai.webp",
     productName: "MIDNIGHT LATTE",
     price: 200,
-    productId: "",
-    videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
-  },
-  {
-    id: 4,
-    videoThumbnail: "/images/rasmalai.webp",
-    productName: "MIDNIGHT LATTE",
-    price: 200,
-    productId: "",
-    videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
-  },
-  {
-    id: 5,
-    videoThumbnail: "/images/rasmalai.webp",
-    productName: "MIDNIGHT LATTE",
-    price: 200,
-    productId: "",
-    videoUrl: "https://res.cloudinary.com/dg9uyzo0b/video/upload/v1782654214/WhatsApp_Video_2026-06-28_at_7.11.05_PM_jwwjqd.mp4",
+    productId: "6a33d647fba92e569fc33a98", 
+    videoUrl: "https://res.cloudinary.com/imzegfzz/video/upload/v1783316344/review1_tvqqyv.mp4",
   },
 ];
 
-const ReelModal = ({ review, onClose }) => {
+const ReelModal = ({ review, onClose, onAddToCart, cartStatus }) => {
   const videoRef = useRef(null);
+  const navigate = useNavigate();
   const [muted, setMuted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -74,6 +69,8 @@ const ReelModal = ({ review, onClose }) => {
     setIsPlaying(false);
     setProgress(0);
   }, [review.videoUrl]);
+
+  
 
   const handleTimeUpdate = useCallback(() => {
     const video = videoRef.current;
@@ -121,14 +118,27 @@ const ReelModal = ({ review, onClose }) => {
     lastTap.current = now;
   }, [togglePlay]);
 
-  const handleShare = useCallback((e) => {
-    e.stopPropagation();
-    if (navigator.share) {
-      navigator.share({ title: review.productName, text: `Check out ${review.productName}!` });
-    } else {
-      navigator.clipboard?.writeText(window.location.href);
-    }
-  }, [review.productName]);
+
+const handleViewProduct = useCallback((e) => {
+  e.stopPropagation();
+  navigate(`/product/${review.productId}/${slugify(review.productName)}`);
+}, [review.productId, review.productName, navigate]);
+
+const handleShare = useCallback((e) => {
+  e.stopPropagation();
+
+  const productUrl = `${window.location.origin}/product/${review.productId}/${slugify(review.productName)}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: review.productName,
+      text: `Check out ${review.productName}!`,
+      url: productUrl,
+    });
+  } else {
+    navigator.clipboard?.writeText(productUrl);
+  }
+}, [review.productName, review.productId]);
 
   const handleBackdropClick = useCallback((e) => {
     if (e.target === e.currentTarget) onClose();
@@ -153,7 +163,7 @@ const ReelModal = ({ review, onClose }) => {
           ref={videoRef}
           key={review.id}
           src={review.videoUrl}
-          poster={review.videoThumbnail}
+          poster={getVideoPoster(review.videoUrl)}
           playsInline
           loop
           preload="auto"
@@ -178,10 +188,19 @@ const ReelModal = ({ review, onClose }) => {
           </div>
         )}
 
-        <div className="absolute right-3 bottom-20 z-30 flex flex-col items-center gap-5">
+        <div className="absolute right-3 bottom-20 z-40 flex flex-col items-center gap-5">
           <button onClick={handleLike} aria-label="Like" className="flex flex-col items-center gap-1 cursor-pointer group">
             <Heart size={28} className={`transition-transform group-active:scale-125 ${liked ? "fill-red-500 text-red-500" : "text-white"}`} />
             <span className="text-white text-xs font-medium">{likeCount + (liked ? 1 : 0)}</span>
+          </button>
+
+          <button
+            onClick={handleViewProduct}
+            aria-label="View product"
+            className="flex flex-col items-center gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <Eye size={26} className="text-white" />
+            <span className="text-white text-xs font-medium">View</span>
           </button>
 
           <button onClick={handleShare} aria-label="Share" className="flex flex-col items-center gap-1 cursor-pointer">
@@ -206,10 +225,11 @@ const ReelModal = ({ review, onClose }) => {
           <h3 className="text-white font-heading text-base uppercase mb-0.5">{review.productName}</h3>
           <p className="text-white/80 font-body text-sm mb-3">₹{review.price}.00</p>
           <button
-            onClick={(e) => { e.stopPropagation(); console.log("Add to cart:", review.productName); }}
-            className="w-full bg-white text-black rounded-full py-2.5 font-heading text-sm font-semibold hover:bg-brand-orange hover:text-white transition cursor-pointer"
+            onClick={(e) => { e.stopPropagation(); onAddToCart(review); }}
+            disabled={cartStatus === "loading"}
+            className="w-full bg-white text-black rounded-full py-2.5 font-heading text-sm font-semibold hover:bg-brand-orange hover:text-white transition cursor-pointer disabled:opacity-60"
           >
-            ADD TO CART
+            {cartStatus === "success" ? "ADDED ✓" : cartStatus === "loading" ? "ADDING..." : "ADD TO CART"}
           </button>
         </div>
 
@@ -223,14 +243,129 @@ const ReelModal = ({ review, onClose }) => {
 
 const ReviewsCarousel = () => {
   const [openReview, setOpenReview] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [showToast, setShowToast] = useState(false);
+  const [cartStatus, setCartStatus] = useState({});
+  const [toast, setToast] = useState({ show: false, message: "", variant: "success" });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await api.get("/product");
+      setProducts(res.data.products || res.data || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const resolvedReviews = reviews.map((review) => {
+    const matchedProduct = products.find((p) => p._id === review.productId);
+
+    if (!matchedProduct) {
+      return { ...review, product: null };
+    }
+
+    const unitPrice =
+      matchedProduct.packSizes?.find((p) => p.units === 1)?.price ??
+      matchedProduct.packSizes?.[0]?.price ??
+      review.price;
+
+    return {
+      ...review,
+      productName: matchedProduct.name,
+      price: unitPrice,
+      product: matchedProduct,
+    };
+  });
+
+const handleAddToCart = async (review) => {
+  if (!review.product) {
+    setToast({
+      show: true,
+      message: "This flavour is coming soon — stay tuned!",
+      variant: "info",
+    });
+    return;
+  }
+
+  if ((review.product.stock ?? 0) <= 0) {
+    setToast({
+      show: true,
+      message: "This flavour is currently out of stock.",
+      variant: "info",
+    });
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Please login to add items to your cart");
+    navigate("/login");
+    return;
+  }
+
+  if (cartStatus[review.id] === "loading") return;
+
+  const defaultPack =
+    review.product.packSizes?.find((p) => Number(p.units) === 1) ||
+    review.product.packSizes?.[0];
+
+  if (!defaultPack) {
+    alert("Product pack missing");
+    return;
+  }
+
+  setCartStatus((prev) => ({ ...prev, [review.id]: "loading" }));
+
+  try {
+    const res = await api.post(
+      "/cart/add",
+      {
+        productId: review.product._id,
+        quantity: 1,
+        pack: {
+          label: defaultPack.label,
+          units: Number(defaultPack.units) || 1,
+          price: Number(defaultPack.price),
+        },
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const updatedItems = res.data.items || [];
+    localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+    localStorage.setItem("cartCount", updatedItems.length);
+    window.dispatchEvent(new Event("cartUpdated"));
+
+    setCartStatus((prev) => ({ ...prev, [review.id]: "success" }));
+    setToast({ show: true, message: "Added to cart successfully!", variant: "success" });
+
+    setTimeout(() => {
+      setCartStatus((prev) => ({ ...prev, [review.id]: "idle" }));
+    }, 2000);
+  } catch (error) {
+    console.log(error.response?.data || error.message);
+    setCartStatus((prev) => ({ ...prev, [review.id]: "idle" }));
+  }
+};
+
+  const openReviewResolved = openReview
+    ? resolvedReviews.find((r) => r.id === openReview.id)
+    : null;
 
   return (
     <>
-      {openReview && (
+      {openReviewResolved && (
         <ReelModal
-          key={openReview.id}
-          review={openReview}
+          key={openReviewResolved.id}
+          review={openReviewResolved}
           onClose={() => setOpenReview(null)}
+          onAddToCart={handleAddToCart}
+          cartStatus={cartStatus[openReviewResolved.id]}
         />
       )}
 
@@ -269,41 +404,57 @@ const ReviewsCarousel = () => {
             }}
             className="reviews-swiper !py-4"
           >
-            {reviews.map((review, index) => (
-              <SwiperSlide key={review.id}>
-                <Reveal variant="subtle" delay={index * 0.1}>
-                  <div className="text-left">
-                    <div className="relative rounded-2xl overflow-hidden shadow-lg bg-gray-200" style={{ aspectRatio: "9 / 11" }}>
-                      <img src={review.videoThumbnail} alt={review.productName} className="absolute inset-0 w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/40" />
+            {resolvedReviews.map((review, index) => {
+              const status = cartStatus[review.id];
+
+              return (
+                <SwiperSlide key={review.id}>
+                  <Reveal variant="subtle" delay={index * 0.1}>
+                    <div className="text-left">
+                      <div className="relative rounded-2xl overflow-hidden shadow-lg bg-gray-200" style={{ aspectRatio: "9 / 11" }}>
+                        <img
+                          src={getVideoPoster(review.videoUrl)}
+                          alt={review.productName}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/40" />
+                        <button
+                          aria-label="Play reel"
+                          onClick={() => setOpenReview(review)}
+                          className="absolute inset-0 flex items-center justify-center group cursor-pointer"
+                        >
+                          <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black flex items-center justify-center group-hover:bg-brand-orange transition">
+                            <Play size={16} className="text-white fill-white ml-0.5" />
+                          </span>
+                        </button>
+                      </div>
+
+                      <h3 className="font-heading text-sm sm:text-base uppercase mt-4 mb-1">
+                        {review.productName}
+                      </h3>
+                      <p className="font-body text-sm text-gray-700 mb-3">₹{review.price}.00</p>
                       <button
-                        aria-label="Play reel"
-                        onClick={() => setOpenReview(review)}
-                        className="absolute inset-0 flex items-center justify-center group cursor-pointer"
+                        onClick={() => handleAddToCart(review)}
+                        disabled={status === "loading"}
+                        className="w-full bg-black text-white rounded-full py-2.5 font-heading text-sm font-medium hover:bg-brand-orange transition cursor-pointer disabled:opacity-60"
                       >
-                        <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black flex items-center justify-center group-hover:bg-brand-orange transition">
-                          <Play size={16} className="text-white fill-white ml-0.5" />
-                        </span>
+                        {status === "success" ? "ADDED ✓" : status === "loading" ? "ADDING..." : "ADD TO CART"}
                       </button>
                     </div>
-
-                    <h3 className="font-heading text-sm sm:text-base uppercase mt-4 mb-1">
-                      {review.productName}
-                    </h3>
-                    <p className="font-body text-sm text-gray-700 mb-3">₹{review.price}.00</p>
-                    <button
-                      onClick={() => console.log("Add to cart:", review.productName)}
-                      className="w-full bg-black text-white rounded-full py-2.5 font-heading text-sm font-medium hover:bg-brand-orange transition cursor-pointer"
-                    >
-                      ADD TO CART
-                    </button>
-                  </div>
-                </Reveal>
-              </SwiperSlide>
-            ))}
+                  </Reveal>
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
         </div>
       </section>
+
+      <CartToast
+  show={toast.show}
+  onClose={() => setToast((prev) => ({ ...prev, show: false }))}
+  message={toast.message}
+  variant={toast.variant}
+/>
     </>
   );
 };
