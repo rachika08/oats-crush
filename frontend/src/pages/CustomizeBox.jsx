@@ -70,8 +70,10 @@ export default function CustomizeBox() {
   const remaining = packSize - selectedItems.length;
   const emptySlots = Math.max(packSize - selectedItems.length, 0);
 
-  const handleAddBoxToCart = async () => {
-    if (!isComplete) return;
+const [addingBox, setAddingBox] = useState(false);
+
+const handleAddBoxToCart = async () => {
+    if (!isComplete || addingBox) return;
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -80,15 +82,12 @@ export default function CustomizeBox() {
       return;
     }
 
-    // const payload = {
-    //   packSize,
-    //   price: PACK_CONFIG[packSize].price,
-    //   items: selectedItems.map((item) => item.product._id),
-    // };
     const payload = {
       packSize,
       items: selectedItems.map(item => item.product._id),
     };
+
+    setAddingBox(true);
     try {
         await api.post("/cart/add-custom-box", payload, {
             headers: { Authorization: `Bearer ${token}` },
@@ -97,23 +96,10 @@ export default function CustomizeBox() {
         openCart();
     } catch (error) {
         alert(error?.response?.data?.message || "Could not add box to cart. Please try again.");
+    } finally {
+        setAddingBox(false);
     }
-
-    // try {
-    //   // Backend endpoint not built yet — see contract notes for Rachika.
-    //   await api.post("/cart/add-custom-box", payload, {
-    //     headers: { Authorization: `Bearer ${token}` },
-    //   });
-    // } catch (error) {
-    //   console.log(
-    //     "Custom box backend not ready yet:",
-    //     payload,
-    //     error?.response?.data || error.message
-    //   );
-    // }
-
-    // openCart();
-  };
+};
 
   return (
     <>
@@ -266,20 +252,21 @@ export default function CustomizeBox() {
               </div>
             ))}
           </div>
-
-          <button
-            onClick={handleAddBoxToCart}
-            disabled={!isComplete}
-            className={`flex-shrink-0 font-heading text-sm sm:text-base px-6 py-2.5 rounded-full border-2 whitespace-nowrap transition ${
-              isComplete
-                ? "bg-brand-orange text-white border-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
-                : "bg-white text-gray-400 border-gray-200 cursor-not-allowed"
-            }`}
-          >
-            {isComplete
-              ? `ADD BOX TO CART · ₹${PACK_CONFIG[packSize].price}`
-              : `ADD ${remaining} MORE ITEM${remaining === 1 ? "" : "S"}`}
-          </button>
+<button
+    onClick={handleAddBoxToCart}
+    disabled={!isComplete || addingBox}
+    className={`flex-shrink-0 font-heading text-sm sm:text-base px-6 py-2.5 rounded-full border-2 whitespace-nowrap transition ${
+      isComplete
+        ? "bg-brand-orange text-white border-brand-orange hover:-translate-y-1 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+        : "bg-white text-gray-400 border-gray-200 cursor-not-allowed"
+    }`}
+  >
+    {addingBox
+      ? "ADDING..."
+      : isComplete
+      ? `ADD BOX TO CART · ₹${PACK_CONFIG[packSize].price}`
+      : `ADD ${remaining} MORE ITEM${remaining === 1 ? "" : "S"}`}
+  </button>
         </div>
       </section>
 

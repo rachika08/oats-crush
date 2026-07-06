@@ -75,6 +75,7 @@ const AllProducts = () => {
   const [price, setPrice] = useState("");
   const [sortBy, setSortBy] = useState("Most Popular");
   const [notifyStatus, setNotifyStatus] = useState({});
+  const [cartStatus, setCartStatus] = useState({});
 
     // ---------------- MOBILE FILTER DRAWER ----------------
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -135,8 +136,10 @@ const AllProducts = () => {
     }
   };
 
-  const handleAddToCart = async (e, product) => {
+const handleAddToCart = async (e, product) => {
     e.stopPropagation();
+
+    if (cartStatus[product._id] === "loading") return;
 
     try {
       const token = localStorage.getItem("token");
@@ -163,6 +166,8 @@ const AllProducts = () => {
         return;
       }
 
+      setCartStatus((prev) => ({ ...prev, [product._id]: "loading" }));
+
       const res = await api.post(
         "/cart/add",
         {
@@ -187,9 +192,15 @@ const AllProducts = () => {
 
       window.dispatchEvent(new Event("cartUpdated"));
 
+      setCartStatus((prev) => ({ ...prev, [product._id]: "success" }));
       setShowToast(true);
+
+      setTimeout(() => {
+        setCartStatus((prev) => ({ ...prev, [product._id]: "idle" }));
+      }, 2000);
     } catch (error) {
       console.log(error.response?.data || error.message);
+      setCartStatus((prev) => ({ ...prev, [product._id]: "idle" }));
     }
   };
 
@@ -280,9 +291,10 @@ const AllProducts = () => {
     setCurrentPage(page);
   };
 
-  const ProductCardItem = ({ product }) => {
+const ProductCardItem = ({ product }) => {
     const isSoldOut = product.stock <= 0;
     const status = notifyStatus[product._id];
+    const cartState = cartStatus[product._id];
 
 
     return (
@@ -318,49 +330,38 @@ const AllProducts = () => {
             ₹{product.packSizes?.find(p => p.units === 1)?.price || "N/A"}
           </p>
 
-          {/* <button
-            onClick={(e) =>
-              isSoldOut ? e.stopPropagation() : handleAddToCart(e, product)
-            }
-            disabled={isSoldOut}
-            className={`w-full rounded-full py-1.5 sm:py-2.5 font-heading text-xs sm:text-lg font-medium transition flex items-center justify-center gap-1 sm:gap-2 border-2 ${
-              isSoldOut
-                ? "bg-gray-500 text-white cursor-not-allowed"
-                : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
-            }`}
-          >
-            {isSoldOut ? (
-                            <>
-                              NOTIFY WHEN BACK <Bell size={14} />
-                            </>
-                          ) : (
-                            "ADD TO CART"
-                          )}
-          </button> */}
-          <button
-            onClick={(e) =>
-              isSoldOut ? handleNotify(e, product) : handleAddToCart(e, product)
-            }
-            disabled={isSoldOut && (status === "loading" || status === "success")}
-            className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${isSoldOut
-              ? "bg-gray-500 text-white cursor-pointer disabled:cursor-default"
-              : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
-              }`}
-          >
-            {isSoldOut ? (
-              status === "success" ? (
-                "SUBSCRIBED ✓"
-              ) : status === "loading" ? (
-                "SENDING..."
-              ) : (
-                <>
-                  NOTIFY <Bell size={14} />
-                </>
-              )
-            ) : (
-              "ADD TO CART"
-            )}
-          </button>
+<button
+  onClick={(e) =>
+    isSoldOut ? handleNotify(e, product) : handleAddToCart(e, product)
+  }
+  disabled={
+    isSoldOut
+      ? status === "loading" || status === "success"
+      : cartState === "loading"
+  }
+  className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${isSoldOut
+    ? "bg-gray-500 text-white cursor-pointer disabled:cursor-default"
+    : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-default"
+    }`}
+>
+  {isSoldOut ? (
+    status === "success" ? (
+      "SUBSCRIBED ✓"
+    ) : status === "loading" ? (
+      "SENDING..."
+    ) : (
+      <>
+        NOTIFY <Bell size={14} />
+      </>
+    )
+  ) : cartState === "success" ? (
+    "ADDED ✓"
+  ) : cartState === "loading" ? (
+    "ADDING..."
+  ) : (
+    "ADD TO CART"
+  )}
+</button>
         </div>
       </div>
     );

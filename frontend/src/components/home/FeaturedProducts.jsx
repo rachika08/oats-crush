@@ -65,8 +65,12 @@ const FeaturedProducts = ({
   //     console.log(error.response?.data || error.message);
   //   }
   // };
-  const handleAddToCart = async (e, product) => {
+const [cartStatus, setCartStatus] = useState({});
+
+const handleAddToCart = async (e, product) => {
   e.stopPropagation();
+
+  if (cartStatus[product._id] === "loading") return;
 
   try {
     const token = localStorage.getItem("token");
@@ -93,33 +97,36 @@ const FeaturedProducts = ({
       return;
     }
 
+    setCartStatus((prev) => ({ ...prev, [product._id]: "loading" }));
+
     const res = await api.post(
-  "/cart/add",
-  {
-    productId: product._id,
-    quantity: 1,
-    pack: {
-      label: defaultPack.label,
-      units: Number(defaultPack.units) || 1,
-      price: price,
-    },
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-);
+      "/cart/add",
+      {
+        productId: product._id,
+        quantity: 1,
+        pack: {
+          label: defaultPack.label,
+          units: Number(defaultPack.units) || 1,
+          price: price,
+        },
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-const updatedItems = res.data.items || [];
-localStorage.setItem("cartItems", JSON.stringify(updatedItems));
-localStorage.setItem("cartCount", updatedItems.length);
+    const updatedItems = res.data.items || [];
+    localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+    localStorage.setItem("cartCount", updatedItems.length);
+    window.dispatchEvent(new Event("cartUpdated"));
 
-window.dispatchEvent(new Event("cartUpdated"));
+    setCartStatus((prev) => ({ ...prev, [product._id]: "success" }));
+    setShowToast(true);
 
-setShowToast(true);
+    setTimeout(() => {
+      setCartStatus((prev) => ({ ...prev, [product._id]: "idle" }));
+    }, 2000);
   } catch (error) {
     console.log(error.response?.data || error.message);
+    setCartStatus((prev) => ({ ...prev, [product._id]: "idle" }));
   }
 };
 
@@ -270,32 +277,36 @@ setShowToast(true);
                         </p>
 
                         <button
-                          onClick={(e) =>
-                            isSoldOut
-                              ? handleNotify(e, product)
-                              : handleAddToCart(e, product)
-                          }
-                          disabled={isSoldOut && (status === "loading" || status === "success")}
-                          className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${
-                            isSoldOut
-                              ? "bg-gray-500 text-white cursor-pointer disabled:cursor-default"
-                              : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
-                          }`}
-                        >
-                          {isSoldOut ? (
-                            status === "success" ? (
-                              "SUBSCRIBED ✓"
-                            ) : status === "loading" ? (
-                              "SENDING..."
-                            ) : (
-                              <>
-                                NOTIFY <Bell size={14} />
-                              </>
-                            )
-                          ) : (
-                            "ADD TO CART"
-                          )}
-                        </button>
+  onClick={(e) =>
+    isSoldOut ? handleNotify(e, product) : handleAddToCart(e, product)
+  }
+  disabled={
+    isSoldOut
+      ? status === "loading" || status === "success"
+      : cartStatus[product._id] === "loading"
+  }
+  className={`w-full rounded-full py-2.5 font-heading text-lg font-medium transition flex items-center justify-center gap-2 border-2 ${
+    isSoldOut
+      ? "bg-gray-500 text-white cursor-pointer disabled:cursor-default"
+      : "bg-brand-orange text-white border-transparent hover:border-brand-orange hover:bg-white hover:text-brand-orange hover:-translate-y-1 shadow-md cursor-pointer disabled:cursor-default disabled:opacity-60"
+  }`}
+>
+  {isSoldOut ? (
+    status === "success" ? (
+      "SUBSCRIBED ✓"
+    ) : status === "loading" ? (
+      "SENDING..."
+    ) : (
+      <>NOTIFY <Bell size={14} /></>
+    )
+  ) : cartStatus[product._id] === "success" ? (
+    "ADDED ✓"
+  ) : cartStatus[product._id] === "loading" ? (
+    "ADDING..."
+  ) : (
+    "ADD TO CART"
+  )}
+</button>
                       </div>
                     </div>
                      </Reveal>
