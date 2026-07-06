@@ -10,7 +10,7 @@ const faqCategories = [
     label: "General Questions",
     faqs: [
       {
-        question: "How to crush it?",
+        question: "How to Crush it?",
         answer:
           "Mix with 240ml milk or alternative, shake or blend, and you're ready in seconds. No bowls, no spoons, no mess.",
       },
