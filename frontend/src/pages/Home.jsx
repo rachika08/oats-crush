@@ -49,9 +49,9 @@ const faqs = [
     <>
       <Navbar />
       <HeroSection />
+      <InfoBar />
       <FeaturedProducts />
       <FlavoursSection />
-      <InfoBar />
 
       <BenefitsSection />
       <ReviewsCarousel />
