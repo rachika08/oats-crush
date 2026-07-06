@@ -294,36 +294,42 @@ const isUnavailable = isUnlaunched || isSoldOut;
 
                 <div className="grid md:grid-cols-2 gap-8 md:gap-12">
 
-                    {/* Mobile: hero image on top, swipeable thumbnail row below */}
-                    <div className="md:hidden">
-                       <div className="rounded-2xl overflow-hidden aspect-square mb-3">
-                            <img
-                                src={selectedImage}
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
+{/* Mobile: hero image on top, swipeable thumbnail row below */}
+<div className="md:hidden">
+  <div className="rounded-2xl overflow-hidden aspect-square mb-3">
+    <img
+      src={selectedImage}
+      alt={product.name}
+      className="w-full h-full object-cover"
+    />
+  </div>
 
-                        <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            {allImages.map((img, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setSelectedImage(img)}
-                                    className={`snap-center flex-shrink-0 w-16 aspect-square rounded-lg overflow-hidden border-2 transition cursor-pointer ${
-                                        selectedImage === img
-                                            ? "border-brand-orange"
-                                            : "border-gray-200"
-                                    }`}
-                                >
-                                    <img
-                                        src={img}
-                                        alt={`thumbnail-${index}`}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+  <div className="relative">
+    <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {allImages.map((img, index) => (
+        <button
+          key={index}
+          onClick={() => setSelectedImage(img)}
+          className={`snap-center flex-shrink-0 w-16 aspect-square rounded-lg overflow-hidden border-2 transition cursor-pointer ${
+            selectedImage === img
+              ? "border-brand-orange"
+              : "border-gray-200"
+          }`}
+        >
+          <img
+            src={img}
+            alt={`thumbnail-${index}`}
+            className="w-full h-full object-cover"
+          />
+        </button>
+      ))}
+    </div>
+
+    {allImages.length > 4 && (
+      <div className="pointer-events-none absolute right-0 top-0 bottom-1 w-10 bg-gradient-to-l from-white to-transparent" />
+    )}
+  </div>
+</div>
 
                     {/* Desktop: vertical thumbnail column beside the main image */}
                     <div className="hidden md:flex gap-3 sm:gap-4">
