@@ -122,7 +122,7 @@ export const createProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
     try {
-        const products = await Product.find({ isLaunched: true }).populate("category");
+        const products = await Product.find().populate("category");
         res.status(200).json(products);
     } catch (error) {
         return res.status(500).json({ message: error.message });
