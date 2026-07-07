@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
 import { ArrowLeft, Leaf, Heart, Flag } from "lucide-react";
 import Footer from "../components/home/Footer";
+import { Reveal, RevealGroup, RevealItem } from "../components/Reveal";
 
 const SLIDE_TRANSITION = { duration: 0.45, ease: [0.65, 0, 0.35, 1] };
 
@@ -59,7 +60,8 @@ export default function AboutUs() {
           className="hidden lg:block absolute top-100 right-0 w-48 xl:w-56 rounded-l-3xl object-cover"
         />
 
-        <div className="max-w-3xl mx-auto text-center">
+<div className="max-w-3xl mx-auto text-center">
+          <Reveal variant="noticeable">
           <span className="inline-block bg-white text-brand-orange-dark font-heading text-xs px-5 py-2 rounded-full mb-6">
             Our Story
           </span>
@@ -67,8 +69,9 @@ export default function AboutUs() {
           <h1 className="font-heading text-white text-3xl sm:text-4xl md:text-5xl leading-tight mb-8">
             Protein shouldn't taste like punishment. So we fixed it.
           </h1>
+          </Reveal>
 
-          <div className="space-y-5 font-body text-white/90 text-sm sm:text-base leading-relaxed">
+          <Reveal variant="subtle" delay={0.15} className="space-y-5 font-body text-white/90 text-sm sm:text-base leading-relaxed">
             <p>
               Real fuel. That's what we always wanted. To eat something that
               actually works — packed with protein, made from real oats, and
@@ -81,21 +84,25 @@ export default function AboutUs() {
               harder. Something with real flavour. Real protein. Real
               ingredients you can pronounce.
             </p>
-            <p>
+<p>
               Because that's who Oats Crush is for. The early risers. The
               late grinders. The ones skipping breakfast because nothing was
               worth eating. The ones who wanted protein without the powder-y
               guilt. It's for you.
             </p>
-          </div>
+          </Reveal>
 
+          <Reveal variant="subtle" delay={0.3}>
           <p className="font-heading italic text-white text-2xl sm:text-3xl mt-10 leading-snug">
             "Oats Crush is for crushers, by crushers."
           </p>
+          </Reveal>
 
+          <Reveal variant="subtle" delay={0.4}>
           <p className="font-body text-white/70 text-xs mt-4">
             — Founded in India · 2023
           </p>
+          </Reveal>
         </div>
       </section>
 
@@ -108,7 +115,8 @@ export default function AboutUs() {
           className="hidden lg:block absolute top-0 left-0 w-48 xl:w-56 rounded-r-3xl object-cover"
         />
 
-        <div className="max-w-3xl mx-auto text-center">
+<div className="max-w-3xl mx-auto text-center">
+          <Reveal variant="noticeable">
           <span className="inline-block bg-white text-brand-orange-dark font-heading text-xs px-5 py-2 rounded-full mb-6">
             Our Story
           </span>
@@ -116,20 +124,25 @@ export default function AboutUs() {
           <h2 className="font-heading text-white text-3xl sm:text-4xl md:text-5xl leading-tight mb-6">
             Make real protein accessible to every Indian household.
           </h2>
+          </Reveal>
 
+          <Reveal variant="subtle" delay={0.15}>
           <p className="font-body text-white/90 text-sm sm:text-base leading-relaxed mb-12 sm:mb-16">
             We believe nutrition shouldn't be complicated, expensive, or
             tasteless. Oats Crush was built to bring high-protein, clean-label
             food to everyone — from the gym-goer to the busy parent, the
             student to the working professional. One pouch. Total freedom.
           </p>
+          </Reveal>
 
+          <Reveal variant="subtle" delay={0.25}>
           <h3 className="font-heading text-white text-2xl sm:text-3xl mb-8">
             What We Stand For?
           </h3>
+          </Reveal>
         </div>
 
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6">
+        <RevealGroup staggerDelay={0.12} className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6">
           {[
             {
               icon: Leaf,
@@ -146,9 +159,10 @@ export default function AboutUs() {
               title: "No Compromises",
               desc: "Real protein numbers, real nutrition labels — nothing rounded up or hidden in fine print.",
             },
-          ].map(({ icon: Icon, title, desc }) => (
-            <div
+].map(({ icon: Icon, title, desc }) => (
+            <RevealItem
               key={title}
+              variant="subtle"
               className="border border-white/40 rounded-2xl p-6 sm:p-8 text-center"
             >
               <div className="w-11 h-11 mx-auto mb-4 rounded-lg bg-white flex items-center justify-center text-brand-orange">
@@ -158,9 +172,9 @@ export default function AboutUs() {
               <p className="font-body text-white/80 text-sm leading-relaxed">
                 {desc}
               </p>
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
 
       {/* ---------------- SECTION 3: WHY OATS CRUSH + CTA ---------------- */}
@@ -172,28 +186,34 @@ export default function AboutUs() {
           className="hidden lg:block absolute top-10 right-0 w-48 xl:w-56 rounded-l-3xl object-cover"
         />
 
-        <div className="max-w-3xl mx-auto text-center">
+<div className="max-w-3xl mx-auto text-center">
+          <Reveal variant="noticeable">
           <span className="inline-block bg-white text-brand-orange-dark font-heading text-xs px-5 py-2 rounded-full mb-6">
-            why Oats Crush
+            Why Oats Crush?
           </span>
 
           <h2 className="font-heading text-white text-3xl sm:text-4xl md:text-5xl leading-tight mb-6">
             Because you deserve better than boring protein.
           </h2>
+          </Reveal>
 
+          <Reveal variant="subtle" delay={0.15}>
           <p className="font-body text-white/90 text-sm sm:text-base leading-relaxed mb-10">
             Skip the labels, the cooking, the cleanup. Oats Crush is built for
             the version of you that's already running late, hits the gym in
             under a minute, 30g of real protein, real oats, zero compromise.
             No bowls. No spoons. No excuses.
           </p>
+          </Reveal>
 
+          <Reveal variant="subtle" delay={0.25}>
           <Link
             to="/products"
             className="inline-block bg-white text-black font-heading text-sm px-10 py-3.5 rounded-full hover:bg-gray-100 transition"
           >
             Shop The Crush
           </Link>
+          </Reveal>
         </div>
       </section>
 

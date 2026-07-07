@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import { useCart } from "../context/CartContext";
 import CartToast from "../components/CartToast";
+import { Reveal, RevealGroup, RevealItem } from "../components/Reveal";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -107,11 +108,14 @@ const handleAddBoxToCart = async () => {
     <>
       <Navbar />
 
-      <section className="pt-40 sm:pt-48 px-4 sm:px-6 text-center">
+<section className="pt-40 sm:pt-48 px-4 sm:px-6 text-center">
+        <Reveal variant="noticeable">
         <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl text-black mb-8">
           CUSTOMIZE YOUR OWN BOX
         </h1>
+        </Reveal>
 
+        <Reveal variant="subtle" delay={0.15}>
         <div className="flex items-center justify-center gap-4 mb-10">
           <button
             onClick={() => switchPackSize(20)}
@@ -133,14 +137,17 @@ const handleAddBoxToCart = async () => {
           >
             PACK OF 30
           </button>
-        </div>
+</div>
+        </Reveal>
       </section>
 
+      <Reveal variant="subtle" delay={0.25}>
       <div className="bg-brand-orange/10 py-3 px-4 text-center mb-10">
-        <p className="font-body text-sm sm:text-base text-black">
+<p className="font-body text-sm sm:text-base text-black">
           Select any {packSize} at only ₹{PACK_CONFIG[packSize].price}
         </p>
       </div>
+      </Reveal>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
         {loading ? (
@@ -187,7 +194,8 @@ const handleAddBoxToCart = async () => {
   const isUnavailable = isComingSoon || isSoldOut;
 
   return (
-    <SwiperSlide key={product._id}>
+<SwiperSlide key={product._id}>
+      <Reveal variant="subtle" delay={0.05}>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="relative aspect-square">
           <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
@@ -223,8 +231,9 @@ const handleAddBoxToCart = async () => {
           >
             {isComingSoon ? "COMING SOON" : isSoldOut ? "SOLD OUT" : isComplete ? "BOX FULL" : "ADD TO CART"}
           </button>
-                      </div>
+</div>
                     </div>
+                    </Reveal>
                   </SwiperSlide>
                 );
               })}

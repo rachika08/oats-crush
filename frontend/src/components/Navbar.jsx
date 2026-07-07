@@ -327,7 +327,7 @@ useEffect(() => {
           placeholder="Search products..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 py-2.5 outline-none bg-transparent text-sm"
+          className="flex-1 py-2.5 outline-none bg-transparent text-[16px] sm:text-sm"
           autoFocus
         />
 

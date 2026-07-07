@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
+import { FREE_BLENDER_THRESHOLD } from "../utils/pricing";
 
 export default function AdminOrderDetails() {
     const { id } = useParams();
@@ -151,12 +152,23 @@ export default function AdminOrderDetails() {
                     ))}
                 </div>
 
-                {/* Summary */}
+{/* Summary */}
 
                 <div className="bg-white shadow rounded-lg p-6 mb-6">
                     <h4 className="text-xl font-semibold mb-4">
                         Order Summary
                     </h4>
+
+                    {(order.subtotal ?? 0) >= FREE_BLENDER_THRESHOLD && (
+                        <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg px-4 py-3 mb-4">
+                            <p className="font-semibold text-yellow-800">
+                                🎁 Include Free Electric Juice Blender
+                            </p>
+                            <p className="text-sm text-yellow-700 mt-1">
+                                Order subtotal (₹{order.subtotal}) qualifies for the ₹2999+ free blender reward — make sure it's packed with this shipment.
+                            </p>
+                        </div>
+                    )}
 
                     <p className="mb-2">
                         <strong>Total:</strong> ₹

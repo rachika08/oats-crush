@@ -4,6 +4,7 @@ import { Calendar, Star, ChevronDown } from "lucide-react";
 import api from "../../api/axios";
 import Navbar from "../Navbar";
 import Footer from "./Footer";
+import { Reveal, RevealGroup, RevealItem } from "../Reveal";
 
 const RATING_OPTIONS = [5, 4, 3, 2, 1];
 
@@ -148,12 +149,14 @@ export default function BlogDetails() {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36 pb-16 sm:pb-20">
-        {/* Cover image */}
+{/* Cover image */}
+        <Reveal variant="subtle">
         <img
           src={blog.coverImage}
           alt={blog.title}
           className="w-full h-64 sm:h-80 md:h-[420px] object-cover rounded-2xl sm:rounded-3xl"
         />
+        </Reveal>
 
         {/* ---------------- CONTENT + STICKY SIDEBAR ---------------- */}
         {/* This grid's height = title + tags + content only. The aside's
@@ -162,10 +165,12 @@ export default function BlogDetails() {
             outside the grid, full width). */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10 lg:gap-14 mt-10 sm:mt-12 items-start">
           {/* ---------------- LEFT: BLOG CONTENT ---------------- */}
-          <div>
+<div>
+            <Reveal variant="noticeable">
             <h1 className="font-heading text-3xl md:text-4xl leading-tight mb-4 uppercase">
               {blog.title}
             </h1>
+            </Reveal>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4">
               <span className="font-body text-sm font-semibold text-brand-orange">
@@ -195,13 +200,13 @@ export default function BlogDetails() {
               </div>
             )}
 
-            <div className="font-body text-sm sm:text-base text-gray-700 leading-relaxed space-y-6">
+<Reveal variant="subtle" delay={0.15} className="font-body text-sm sm:text-base text-gray-700 leading-relaxed space-y-6">
               {paragraphs.length > 0 ? (
                 paragraphs.map((para, i) => <p key={i}>{para.trim()}</p>)
-              ) : (
+) : (
                 <p>{blog.content}</p>
               )}
-            </div>
+            </Reveal>
           </div>
 
           {/* ---------------- RIGHT: RELATED PRODUCTS (STICKY) ---------------- */}
@@ -210,13 +215,13 @@ export default function BlogDetails() {
               RELATED <span className="text-brand-orange">PRODUCTS</span>
             </h2>
 
-            <div className="space-y-5">
+<div className="space-y-5">
               {relatedProducts.length === 0 ? (
                 <p className="font-body text-sm text-gray-500">
                   No products in stock right now.
                 </p>
               ) : (
-                relatedProducts.map((product) => (
+relatedProducts.map((product) => (
                   <div
                     key={product._id}
                     className="flex items-center gap-4 pb-5 border-b border-gray-100 last:border-0"
@@ -241,8 +246,8 @@ export default function BlogDetails() {
                         className="bg-brand-orange text-white font-heading text-xs px-4 py-1.5 rounded-full hover:bg-orange-600 transition cursor-pointer"
                       >
                         {addedToCartId === product._id ? "ADDED ✓" : "ADD TO CART"}
-                      </button>
-                    </div>
+</button>
+</div>
                   </div>
                 ))
               )}
@@ -251,10 +256,12 @@ export default function BlogDetails() {
         </div>
 
         {/* ---------------- COMMENTS (FULL WIDTH, OUTSIDE THE GRID) ---------------- */}
-        <div className="mt-16 pt-10 border-t border-gray-200">
+<div className="mt-16 pt-10 border-t border-gray-200">
+          <Reveal variant="subtle">
           <h2 className="font-heading text-2xl sm:text-3xl mb-1">
             YOUR <span className="text-brand-orange">COMMENTS</span>
           </h2>
+          </Reveal>
           <p className="font-body text-sm text-gray-500 mb-6">
             {comments.length} comment{comments.length !== 1 ? "s" : ""}
           </p>
