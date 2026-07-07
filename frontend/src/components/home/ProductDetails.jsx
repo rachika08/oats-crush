@@ -10,6 +10,7 @@ import FeaturedProducts from "./FeaturedProducts";
 import CartToast from "../CartToast";
 import { useCart } from "../../context/CartContext";
 import PageFade from "../PageFade";
+import { Reveal, RevealGroup, RevealItem } from "../Reveal";
 
 import {
   Moon,
@@ -301,7 +302,7 @@ const handleWriteReview = () => {
                 <div className="grid md:grid-cols-2 gap-8 md:gap-12">
 
 {/* Mobile: hero image on top, swipeable thumbnail row below */}
-<div className="md:hidden min-w-0">
+<Reveal variant="subtle" className="md:hidden min-w-0">
   <div className="rounded-2xl overflow-hidden aspect-square mb-3">
     <img src={selectedImage} alt={product.name} className="w-full h-full object-cover" />
   </div>
@@ -324,11 +325,11 @@ const handleWriteReview = () => {
     {allImages.length > 4 && (
       <div className="pointer-events-none absolute right-0 top-0 bottom-1 w-10 bg-gradient-to-l from-white to-transparent" />
     )}
-  </div>
 </div>
+</Reveal>
 
                     {/* Desktop: vertical thumbnail column beside the main image */}
-                    <div className="hidden md:flex gap-3 sm:gap-4">
+                    <Reveal variant="subtle" className="hidden md:flex gap-3 sm:gap-4">
                         <div className="flex flex-col gap-3 w-16 sm:w-20 flex-shrink-0">
                             {allImages.map((img, index) => (
                                 <button
@@ -349,16 +350,17 @@ const handleWriteReview = () => {
                             ))}
                         </div>
 
-                        <div className="flex-1 rounded-2xl overflow-hidden aspect-square">
+<div className="flex-1 rounded-2xl overflow-hidden aspect-square">
                             <img
                                 src={selectedImage}
                                 alt={product.name}
                                 className="w-full h-full object-cover"
                             />
                         </div>
-                    </div>
+                    </Reveal>
 
                     {/* RIGHT SIDE - PRODUCT INFO */}
+                    <Reveal variant="subtle" delay={0.1}>
                     <div>
 
                         {product.isNewLaunch && (
@@ -553,12 +555,13 @@ const handleWriteReview = () => {
   </button>
 </div>
 
-                    </div>
+</div>
+                    </Reveal>
                 </div>
 
                 {/* Trust Badges */}
-                <div className="grid grid-cols-3 gap-4 sm:gap-6 mt-12 sm:mt-16 text-center">
-                    <div className="flex flex-col items-center">
+                <RevealGroup staggerDelay={0.1} className="grid grid-cols-3 gap-4 sm:gap-6 mt-12 sm:mt-16 text-center">
+<RevealItem variant="subtle" className="flex flex-col items-center">
                         <Truck size={44} strokeWidth={2.5} className="text-brand-orange mb-3" />
                         <p className="font-body font-semibold text-sm mb-1">
                             Fast Delivery
@@ -566,9 +569,9 @@ const handleWriteReview = () => {
                         <p className="font-body text-xs text-gray-500">
                             Delivered within 3-5 business days
                         </p>
-                    </div>
+                    </RevealItem>
 
-                    <div className="flex flex-col items-center">
+                    <RevealItem variant="subtle" className="flex flex-col items-center">
                         <RotateCcw size={44} strokeWidth={2.5} className="text-brand-orange mb-3" />
                         <p className="font-body font-semibold text-sm mb-1">
                             Easy Returns
@@ -576,9 +579,9 @@ const handleWriteReview = () => {
                         <p className="font-body text-xs text-gray-500">
                             Hassle-free returns within 7 days
                         </p>
-                    </div>
+                    </RevealItem>
 
-                    <div className="flex flex-col items-center">
+                    <RevealItem variant="subtle" className="flex flex-col items-center">
                         <Lock size={44} strokeWidth={2.5} className="text-brand-orange mb-3" />
                         <p className="font-body font-semibold text-sm mb-1">
                             Secure Checkout
@@ -586,20 +589,22 @@ const handleWriteReview = () => {
                         <p className="font-body text-xs text-gray-500">
                             Your payments are protected and encrypted
                         </p>
-                    </div>
-                </div>
+                    </RevealItem>
+                </RevealGroup>
 
 
 {/* Nutritional Value */}
 {product.nutrition && product.nutrition.nutrients?.length > 0 && (
 <div className="mt-12 sm:mt-16 max-w-xl mx-auto">
+        <Reveal variant="noticeable">
         <h2 className="font-heading text-2xl sm:text-3xl mb-6 uppercase">
             Nutritional Value
         </h2>
+        </Reveal>
 
-        <div className="space-y-5">
-            {product.nutrition.nutrients.map((n, index) => (
-                <div key={index}>
+        <RevealGroup staggerDelay={0.08} className="space-y-5">
+{product.nutrition.nutrients.map((n, index) => (
+                <RevealItem variant="subtle" key={index}>
                     <div className="flex items-baseline justify-between gap-2 mb-1.5">
                         <span className="font-body text-sm font-semibold text-black">
                             {n.name}{" "}
@@ -617,9 +622,9 @@ const handleWriteReview = () => {
                             style={{ width: `${Math.min(n.dailyValue || 0, 100)}%` }}
                         />
                     </div>
-                </div>
+</RevealItem>
             ))}
-        </div>
+        </RevealGroup>
 
         {product.nutrition.note && (
             <p className="font-body text-xs text-gray-500 italic mt-4">
@@ -629,60 +634,68 @@ const handleWriteReview = () => {
 
         <hr className="border-gray-200 my-8" />
 
-        {/* Static claims — same on every product */}
-        <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="flex flex-col items-center">
+{/* Static claims — same on every product */}
+        <RevealGroup staggerDelay={0.1} className="grid grid-cols-3 gap-4 text-center">
+            <RevealItem variant="subtle" className="flex flex-col items-center">
                 <span className="w-14 h-14 rounded-full border-2 border-brand-orange flex items-center justify-center mb-2">
                     <Cuboid size={24} className="text-brand-orange" />
                 </span>
                 <p className="font-heading text-base uppercase">Zero</p>
                 <p className="font-body text-xs text-gray-500">Refined Sugar</p>
-            </div>
+            </RevealItem>
 
-            <div className="flex flex-col items-center">
+            <RevealItem variant="subtle" className="flex flex-col items-center">
                 <span className="w-14 h-14 rounded-full border-2 border-brand-orange flex items-center justify-center mb-2">
                     <Droplet size={24} className="text-brand-orange" />
                 </span>
                 <p className="font-heading text-base uppercase">Zero</p>
                 <p className="font-body text-xs text-gray-500">Trans Fat</p>
-            </div>
+            </RevealItem>
 
-            <div className="flex flex-col items-center">
+            <RevealItem variant="subtle" className="flex flex-col items-center">
                 <span className="w-14 h-14 rounded-full border-2 border-brand-orange flex items-center justify-center mb-2">
                     <FlaskConical size={24} className="text-brand-orange" />
                 </span>
                 <p className="font-heading text-base uppercase">No</p>
                 <p className="font-body text-xs text-gray-500">Preservatives or Fillers</p>
-            </div>
-        </div>
+            </RevealItem>
+        </RevealGroup>
     </div>
 )}
 
-                {showViewCart && (
-    <div className="fixed bottom-3 left-0 w-full z-50 bg-brand-orange text-white px-8 py-4 flex justify-between items-center shadow-lg rounded-full">
-        <span>Item added to cart</span>
-<button
-    onClick={() => openCart()}
-    className="bg-white font-heading text-brand-orange px-8 py-2 rounded hover:translate-y-[-2px] transition cursor-pointer rounded-full shadow-md"
->
-    VIEW CART
-</button>
+{showViewCart && (
+    <div className="fixed bottom-0 left-0 w-full z-50 bg-white px-6 sm:px-8 py-4 flex items-center justify-between gap-4 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+        <div className="flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+            <span className="font-body text-sm text-black">
+                Item added to cart
+            </span>
+        </div>
+        <button
+            onClick={() => openCart()}
+           className="bg-brand-orange font-heading text-white px-8 py-2 rounded hover:translate-y-[-2px] transition cursor-pointer rounded-full shadow-md"
+        >
+            VIEW CART
+        </button>
     </div>
 )}
 
             </div>
             {product.howToEnjoy?.length > 0 && (
-                <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+ <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+                    <Reveal variant="noticeable">
                     <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] text-center mb-10 sm:mb-12">
                         HOW TO ENJOY
                     </h2>
+                    </Reveal>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <RevealGroup staggerDelay={0.12} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                         {product.howToEnjoy.map((item, index) => {
                             const Icon = iconMap[item.icon];
 
                             return (
-                                <div
+                                <RevealItem
+                                    variant="subtle"
                                     key={index}
                                     className="border-2 border-brand-orange rounded-2xl p-6 text-left shadow-md hover:-translate-y-1"
                                 >
@@ -701,17 +714,18 @@ const handleWriteReview = () => {
                                     <p className="font-body text-sm text-gray-500 leading-relaxed">
                                         {item.description}
                                     </p>
-                                </div>
+</RevealItem>
                             );
                         })}
-                    </div>
+                    </RevealGroup>
                 </section>
             )}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+                <Reveal variant="noticeable">
                 <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] mb-8">
                     CUSTOMER REVIEWS
                 </h2>
-
+                </Reveal>
                 {/* Header row: rating summary / write review / sort */}
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
                     <div className="flex items-center gap-2">
@@ -853,8 +867,8 @@ const handleWriteReview = () => {
                 {reviews.length === 0 ? (
                     <p className="font-body text-gray-500">No reviews yet.</p>
                 ) : (
-                    <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+<>
+                        <RevealGroup staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                             {(() => {
                                 const sortedReviews =
     reviewSort === ""
@@ -870,10 +884,11 @@ const handleWriteReview = () => {
               return b.rating - a.rating;
           });
 
-                                return sortedReviews
+return sortedReviews
                                     .slice(0, visibleReviewCount)
                                     .map((review) => (
-                                        <div
+                                        <RevealItem
+                                            variant="subtle"
                                             key={review._id}
                                             className="bg-white border border-gray-200 rounded-2xl shadow-sm px-6 py-5"
                                         >
@@ -901,10 +916,10 @@ const handleWriteReview = () => {
                                                     {review.user?.name}
                                                 </span>
                                             </div>
-                                        </div>
+</RevealItem>
                                     ));
                             })()}
-                        </div>
+                        </RevealGroup>
 
                         {visibleReviewCount < reviews.length && (
                             <div className="flex justify-center mt-10">

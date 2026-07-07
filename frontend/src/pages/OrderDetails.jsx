@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BadgePercent } from "lucide-react";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
+import { FREE_BLENDER_THRESHOLD } from "../utils/pricing";
 
 const STATUS_STYLES = {
     Pending: "text-yellow-600 border-yellow-600",
@@ -234,13 +235,27 @@ const grandTotal = order.totalAmount ?? subtotal;
                                         {shippingFee === 0 ? "FREE" : `₹${shippingFee}`}
                                    </span>
                                 </div>
-                                {discount > 0 && (
+{discount > 0 && (
                                     <div className="flex justify-between text-green-600 font-medium">
                                         <span>Offer applied</span>
                                         <span>-₹{discount}</span>
                                    </div>
                                 )}
                             </div>
+
+                            {subtotal >= FREE_BLENDER_THRESHOLD && (
+                                <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 mt-4">
+                                    <div className="flex items-center gap-2">
+                                        <BadgePercent size={18} className="text-brand-orange" />
+                                        <span className="font-body text-sm text-black">
+                                            Free <span className="font-semibold">Electric Juice Blender</span> included
+                                        </span>
+                                    </div>
+                                    <span className="bg-green-100 text-green-700 font-body text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap">
+                                        Free Gift
+                                    </span>
+                                </div>
+                            )}
 
                             <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">
                                 <span className="font-body font-semibold text-base">

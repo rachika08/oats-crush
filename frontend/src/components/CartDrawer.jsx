@@ -345,6 +345,20 @@ const couponBadge = discount > 0 && (
   </div>
 );
 
+const blenderBadge = subtotal >= FREE_BLENDER_THRESHOLD && (
+  <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 mb-4">
+    <div className="flex items-center gap-2">
+      <BadgePercent size={18} className="text-brand-orange" />
+      <span className="font-body text-sm text-black">
+        Free <span className="font-semibold">Electric Juice Blender</span> unlocked
+      </span>
+    </div>
+    <span className="bg-green-100 text-green-700 font-body text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap">
+      Free Gift
+    </span>
+  </div>
+);
+
   // ---------------- STEP NAVIGATION ----------------
 const handleProceedToCheckout = () => {
     const token = localStorage.getItem("token");
@@ -450,7 +464,7 @@ if (!selectedAddress) {
             MY <span className="text-brand-orange">CART</span>
           </h2>
 
-          <button onClick={closeCart}>
+          <button onClick={closeCart} className="cursor-pointer">
             <X size={24} />
           </button>
         </div>
@@ -520,7 +534,53 @@ if (!selectedAddress) {
               {loading ? (
                 <p className="text-center py-10">Loading...</p>
               ) : cartItems.length === 0 ? (
-                <div className="text-center py-16 flex flex-col items-center">
+<div className="text-center py-16 flex flex-col items-center">
+                  <svg
+                    width="120"
+                    height="120"
+                    viewBox="0 0 120 120"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mb-6"
+                  >
+                    {/* sparkle accents */}
+                    <path d="M22 28 L24 33 L29 35 L24 37 L22 42 L20 37 L15 35 L20 33 Z" fill="#E06318" opacity="0.35" />
+                    <path d="M98 70 L99.5 73.5 L103 75 L99.5 76.5 L98 80 L96.5 76.5 L93 75 L96.5 73.5 Z" fill="#E06318" opacity="0.35" />
+                    <circle cx="94" cy="30" r="2.5" fill="#E06318" opacity="0.35" />
+                    <circle cx="18" cy="80" r="2" fill="#E06318" opacity="0.35" />
+
+                    {/* pouch body */}
+                    <path
+                      d="M38 44 C38 44 40 30 60 30 C80 30 82 44 82 44 L88 96 C88 102 83 106 77 106 L43 106 C37 106 32 102 32 96 Z"
+                      stroke="#1a1a1a"
+                      strokeWidth="2.5"
+                      fill="#FDF4EE"
+                    />
+                    {/* pouch fold/seal at top */}
+                    <path
+                      d="M38 44 L82 44"
+                      stroke="#1a1a1a"
+                      strokeWidth="2.5"
+                    />
+                    <path
+                      d="M46 44 C46 44 48 34 60 34 C72 34 74 44 74 44"
+                      stroke="#1a1a1a"
+                      strokeWidth="2.5"
+                      fill="none"
+                    />
+
+                    {/* sad face */}
+                    <circle cx="52" cy="70" r="3" fill="#1a1a1a" />
+                    <circle cx="68" cy="70" r="3" fill="#1a1a1a" />
+                    <path
+                      d="M52 84 Q60 78 68 84"
+                      stroke="#1a1a1a"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      fill="none"
+                    />
+                  </svg>
+
                   <p className="font-heading text-xl mb-2 text-gray-800">YOUR CART IS EMPTY</p>
                   <p className="font-body text-sm text-gray-500 mb-8">
                     Add a flavour and crush your cravings.
@@ -644,6 +704,7 @@ if (!selectedAddress) {
                 })
               )}
 {couponBadge}
+{blenderBadge}
               {/* EXPLORE MORE — real products */}
               {cartItems.length > 0 && exploreProducts.length > 0 && (
                 <div className="py-5 border-t border-gray-200">
@@ -792,6 +853,7 @@ if (!selectedAddress) {
                 )}
               </div>
 {couponBadge}
+{blenderBadge}
               <div className="space-y-2 font-body text-sm">
                 <div className="flex justify-between">
                   <span>Total Items</span>
@@ -807,14 +869,16 @@ if (!selectedAddress) {
                     {shippingFee === 0 ? "FREE" : `₹${shippingFee}`}
                   </span>
                 </div>
-                {discount > 0 && (
-                  <div className="flex justify-between text-green-600 font-medium">
-                    <span>Offer applied</span>
+{discount > 0 && (
+                  <div className="flex justify-between text-sm mt-2 text-green-600 font-medium">
+                    <span>Offer applied (₹1499+)</span>
                     <span>-₹{discount}</span>
                   </div>
                 )}
-                <div className="flex justify-between font-body font-semibold text-base pt-2 border-t border-gray-200">
-                  <span>Grand Total</span>
+
+
+                <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-200 font-semibold">
+                  <span>Total</span>
                   <span>₹{grandTotal.toFixed(0)}</span>
                 </div>
               </div>
@@ -827,8 +891,8 @@ if (!selectedAddress) {
   <div className="relative border-t border-brand-orange px-6 py-5">
 
 {checkoutStep !== "order" && totalSaved > 0 && (
-  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[11px] font-heading px-3 py-1 rounded-full shadow-md whitespace-nowrap">
-    YOU SAVED {savedPercent}%
+  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[13px] font-heading px-3 py-1 rounded-full shadow-md whitespace-nowrap">
+    YOU HAVE SAVED {savedPercent}% SO FAR
   </span>
 )}
             {/* totals — shown on cart & shipping, hidden on order (already shown above) */}
@@ -846,12 +910,13 @@ if (!selectedAddress) {
                   </span>
                 </div>
 
-                {discount > 0 && (
+{discount > 0 && (
                   <div className="flex justify-between text-sm mt-2 text-green-600 font-medium">
                     <span>Offer applied (₹1499+)</span>
                     <span>-₹{discount}</span>
                   </div>
                 )}
+
 
                 <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-200 font-semibold">
                   <span>Total</span>

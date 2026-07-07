@@ -4,6 +4,7 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import PageFade from "../components/PageFade";
+import { Reveal, RevealGroup, RevealItem } from "../components/Reveal";
 
 export default function Contact() {
     const [form, setForm] = useState({
@@ -56,23 +57,28 @@ const handleSubmit = async (e) => {
 
             <div className="max-w-7xl mx-auto px-6 sm:px-10 pt-32 sm:pt-40 pb-16 sm:pb-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 md:gap-x-16 gap-y-6">
-                    {/* Row 1 - Heading spans only the left column */}
+{/* Row 1 - Heading spans only the left column */}
+                    <Reveal variant="noticeable">
                     <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl leading-[1.05]">
                         GET IN
                         <br />
                         TOUCH WITH US
                     </h1>
+                    </Reveal>
                     <div className="hidden md:block" aria-hidden="true" />
 
                     {/* Row 2 - Left: intro text, contact info, map. Right: form. */}
                     <div>
+                        <Reveal variant="subtle" delay={0.1}>
                         <p className="font-body text-gray-600 text-sm sm:text-base mb-8 max-w-md">
                             Do you have any questions about our products?
                             You can contact us on our socials or fill in the
                             following form.
                         </p>
+                        </Reveal>
 
-                        <div className="space-y-4 mb-8">
+                        <RevealGroup staggerDelay={0.08} className="space-y-4 mb-8">
+                            <RevealItem variant="subtle">
                             <a
                                 href="mailto:dm@oatscrush.co.in"
                                 className="flex items-center gap-3 font-body text-sm sm:text-base hover:text-brand-orange transition"
@@ -80,7 +86,9 @@ const handleSubmit = async (e) => {
                                 <Mail size={18} className="text-brand-orange flex-shrink-0" />
                                 dm@oatscrush.co.in
                             </a>
+                            </RevealItem>
 
+                            <RevealItem variant="subtle">
                             <a
                                 href="tel:+91123456789"
                                 className="flex items-center gap-3 font-body text-sm sm:text-base hover:text-brand-orange transition"
@@ -88,18 +96,19 @@ const handleSubmit = async (e) => {
                                 <Phone size={18} className="text-brand-orange flex-shrink-0" />
                                 +91 123456789
                             </a>
+                            </RevealItem>
 
-                            <div className="flex items-start gap-3 font-body text-sm sm:text-base">
+                            <RevealItem variant="subtle" className="flex items-start gap-3 font-body text-sm sm:text-base">
                                 <MapPin size={18} className="text-brand-orange flex-shrink-0 mt-0.5" />
                                 <span>
                                     Oats Crush, Dwarka Sector 14, Near Vegas Mall,
                                     New Delhi, India
                                 </span>
-                            </div>
-                        </div>
+                            </RevealItem>
+                        </RevealGroup>
 
                         {/* Live Google Map embed */}
-                        <div className="rounded-2xl overflow-hidden border border-gray-200 aspect-[4/3] sm:aspect-[16/10]">
+                        <Reveal variant="subtle" delay={0.2} className="rounded-2xl overflow-hidden border border-gray-200 aspect-[4/3] sm:aspect-[16/10]">
                             <iframe
                                 title="Oats Crush location"
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.9676470447203!2d77.02699707549962!3d28.60074737568218!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1dd61eb460af%3A0xe89377d97456bc5e!2sVegas%20Mall!5e0!3m2!1sen!2sin!4v1782563624684!5m2!1sen!2sin"
@@ -109,11 +118,12 @@ const handleSubmit = async (e) => {
                                 allowFullScreen
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
-                            />
-                        </div>
+/>
+                        </Reveal>
                     </div>
 
                     {/* RIGHT - Form */}
+                    <Reveal variant="subtle" delay={0.15}>
                     <div>
                         {status === "sent" ? (
                             <div className="h-full flex flex-col items-center justify-center text-center border border-gray-200 rounded-2xl p-10 sm:p-14">
@@ -188,9 +198,10 @@ const handleSubmit = async (e) => {
 >
     {sending ? "SENDING..." : "SEND"}
 </button>
-                            </form>
+</form>
                         )}
                     </div>
+                    </Reveal>
                 </div>
             </div>
 
