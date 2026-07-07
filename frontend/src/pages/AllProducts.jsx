@@ -68,7 +68,7 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showToast, setShowToast] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "", variant: "success" });
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
   const [availability, setAvailability] = useState("");
@@ -144,9 +144,9 @@ const handleAddToCart = async (e, product) => {
     try {
       const token = localStorage.getItem("token");
 
-      if (!token) {
-        alert("Please login to add items to your cart");
-        navigate("/login");
+if (!token) {
+        setToast({ show: true, message: "Please login to add items to your cart", variant: "info" });
+        setTimeout(() => navigate("/login"), 800);
         return;
       }
 
@@ -155,17 +155,16 @@ const handleAddToCart = async (e, product) => {
         product.packSizes?.[0];
 
       if (!defaultPack) {
-        alert("Product pack missing");
+        setToast({ show: true, message: "Product pack missing", variant: "info" });
         return;
       }
 
       const price = Number(defaultPack.price);
 
       if (isNaN(price)) {
-        alert("Invalid product price");
+        setToast({ show: true, message: "Invalid product price", variant: "info" });
         return;
       }
-
       setCartStatus((prev) => ({ ...prev, [product._id]: "loading" }));
 
       const res = await api.post(
@@ -192,8 +191,8 @@ const handleAddToCart = async (e, product) => {
 
       window.dispatchEvent(new Event("cartUpdated"));
 
-      setCartStatus((prev) => ({ ...prev, [product._id]: "success" }));
-      setShowToast(true);
+setCartStatus((prev) => ({ ...prev, [product._id]: "success" }));
+      setToast({ show: true, message: "Added to cart successfully!", variant: "success" });
 
       setTimeout(() => {
         setCartStatus((prev) => ({ ...prev, [product._id]: "idle" }));
@@ -215,9 +214,9 @@ const handleAddToCart = async (e, product) => {
 
     const token = localStorage.getItem("token");
 
-    if (!token) {
-      alert("Please login to get notified");
-      navigate("/login");
+if (!token) {
+      setToast({ show: true, message: "Please login to get notified", variant: "info" });
+      setTimeout(() => navigate("/login"), 800);
       return;
     }
 
@@ -238,11 +237,10 @@ const handleAddToCart = async (e, product) => {
         return;
       }
 
-      setNotifyStatus((prev) => ({ ...prev, [productId]: "idle" }));
-      alert(error.response?.data?.message || "Something went wrong");
+setNotifyStatus((prev) => ({ ...prev, [productId]: "idle" }));
+      setToast({ show: true, message: error.response?.data?.message || "Something went wrong", variant: "info" });
     }
   };
-
   const filteredProducts = products
     .filter((product) => {
       if (!category) return true;
@@ -306,7 +304,7 @@ const ProductCardItem = ({ product }) => {
       >
 <div className="relative aspect-square m-2 sm:m-3 rounded-lg sm:rounded-xl overflow-hidden">
           {isComingSoon && (
-            <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-brand-orange/10 text-brand-orange-dark text-[10px] sm:text-xs font-body font-medium px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
+            <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-white text-brand-orange-dark text-[10px] sm:text-xs font-body font-medium px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
               Coming Soon
             </span>
           )}
@@ -731,7 +729,12 @@ const ProductCardItem = ({ product }) => {
       </section>
 
       <Footer />
-      <CartToast show={showToast} onClose={() => setShowToast(false)} />
+            <CartToast
+        show={toast.show}
+        onClose={() => setToast((prev) => ({ ...prev, show: false }))}
+        message={toast.message}
+        variant={toast.variant}
+      />
     </>
     </PageFade>
   );

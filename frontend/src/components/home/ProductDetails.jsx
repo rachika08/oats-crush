@@ -40,7 +40,7 @@ export default function ProductDetails() {
     const [selectedImage, setSelectedImage] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [showViewCart, setShowViewCart] = useState(false);
-    const [showToast, setShowToast] = useState(false);
+    const [toast, setToast] = useState({ show: false, message: "", variant: "success" });
     const [showReviewForm, setShowReviewForm] = useState(false);
     const [notifyStatus, setNotifyStatus] = useState("idle");
     const [reviews, setReviews] = useState([]);
@@ -74,9 +74,9 @@ const addToCart = async () => {
     if (addToCartLoading) return;
     try {
         const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Please login to add items to your cart");
-            navigate("/login");
+if (!token) {
+            setToast({ show: true, message: "Please login to add items to your cart", variant: "info" });
+            setTimeout(() => navigate("/login"), 800);
             return;
         }
 
@@ -102,7 +102,7 @@ const addToCart = async () => {
 
         setShowViewCart(true);
         window.dispatchEvent(new Event("cartUpdated"));
-        setShowToast(true);
+        setToast({ show: true, message: "Added to cart successfully!", variant: "success" });
     } catch (error) {
         console.log(error.response?.data || error.message);
     } finally {
@@ -114,9 +114,9 @@ const buyNow = async () => {
     if (buyNowLoading) return;
     try {
         const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Please login to add items to your cart");
-            navigate("/login");
+if (!token) {
+            setToast({ show: true, message: "Please login to add items to your cart", variant: "info" });
+            setTimeout(() => navigate("/login"), 800);
             return;
         }
 
@@ -169,10 +169,10 @@ const buyNow = async () => {
 const handleNotify = async () => {
         if (notifyStatus === "loading" || notifyStatus === "success") return;
 
-        const token = localStorage.getItem("token");
+const token = localStorage.getItem("token");
         if (!token) {
-            alert("Please login to get notified");
-            navigate("/login");
+            setToast({ show: true, message: "Please login to get notified", variant: "info" });
+            setTimeout(() => navigate("/login"), 800);
             return;
         }
 
@@ -193,8 +193,8 @@ const handleNotify = async () => {
                 return;
             }
 
-            setNotifyStatus("idle");
-            alert(error.response?.data?.message || "Something went wrong");
+setNotifyStatus("idle");
+            setToast({ show: true, message: error.response?.data?.message || "Something went wrong", variant: "info" });
         }
     };
 
@@ -253,9 +253,9 @@ const submitReview = async () => {
     try {
         const token = localStorage.getItem("token");
 
-        if (!token) {
-            alert("Please login to add a review");
-            navigate("/login");
+if (!token) {
+            setToast({ show: true, message: "Please login to add a review", variant: "info" });
+            setTimeout(() => navigate("/login"), 800);
             return;
         }
 
@@ -265,26 +265,25 @@ const submitReview = async () => {
             { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        alert("Review added successfully");
+        setToast({ show: true, message: "Review added successfully", variant: "success" });
 
         setRating(5);
         setComments("");
 
         fetchReviews();
     } catch (error) {
-        alert(error.response?.data?.message || "Failed to add review");
+        setToast({ show: true, message: error.response?.data?.message || "Failed to add review", variant: "info" });
     } finally {
         setSubmittingReview(false);
     }
 };
 
-    const handleWriteReview = () => {
+const handleWriteReview = () => {
         if (!token) {
-            alert("Please login to write a review");
-            navigate("/login");
+            setToast({ show: true, message: "Please login to write a review", variant: "info" });
+            setTimeout(() => navigate("/login"), 800);
             return;
         }
-
 
         setShowReviewForm(true);
 
@@ -933,7 +932,12 @@ const submitReview = async () => {
             <FAQSection faqs={product.faqs} image={product.image}/>
 
             <Footer />
-            <CartToast show={showToast} onClose={() => setShowToast(false)} />
+            <CartToast
+  show={toast.show}
+  onClose={() => setToast((prev) => ({ ...prev, show: false }))}
+  message={toast.message}
+  variant={toast.variant}
+/>
 </PageFade>
     );
 }

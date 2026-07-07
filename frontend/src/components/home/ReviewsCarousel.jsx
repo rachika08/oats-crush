@@ -292,6 +292,15 @@ const handleAddToCart = async (review) => {
     return;
   }
 
+  if (review.product.isLaunched === false) {
+    setToast({
+      show: true,
+      message: "This flavour is coming soon — stay tuned!",
+      variant: "info",
+    });
+    return;
+  }
+
   if ((review.product.stock ?? 0) <= 0) {
     setToast({
       show: true,
@@ -300,11 +309,10 @@ const handleAddToCart = async (review) => {
     });
     return;
   }
-
-  const token = localStorage.getItem("token");
+const token = localStorage.getItem("token");
   if (!token) {
-    alert("Please login to add items to your cart");
-    navigate("/login");
+    setToast({ show: true, message: "Please login to add items to your cart", variant: "info" });
+    setTimeout(() => navigate("/login"), 800);
     return;
   }
 
@@ -314,8 +322,8 @@ const handleAddToCart = async (review) => {
     review.product.packSizes?.find((p) => Number(p.units) === 1) ||
     review.product.packSizes?.[0];
 
-  if (!defaultPack) {
-    alert("Product pack missing");
+if (!defaultPack) {
+    setToast({ show: true, message: "Product pack missing", variant: "info" });
     return;
   }
 

@@ -7,6 +7,7 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
 import { useCart } from "../context/CartContext";
+import CartToast from "../components/CartToast";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -24,6 +25,7 @@ export default function CustomizeBox() {
   const uidRef = useRef(0);
   const navigate = useNavigate();
   const { openCart } = useCart();
+  const [toast, setToast] = useState({ show: false, message: "", variant: "success" });
 
   useEffect(() => {
     fetchProducts();
@@ -52,9 +54,9 @@ export default function CustomizeBox() {
     setSelectedItems([]);
   };
 
-  const addItem = (product) => {
+const addItem = (product) => {
   if (selectedItems.length >= packSize) return;
-  if (product.stock <= 0) return;
+  if (product.stock <= 0 || product.isLaunched === false) return;
   uidRef.current += 1;
   setSelectedItems((prev) => [...prev, { uid: uidRef.current, product }]);
 };
@@ -77,8 +79,8 @@ const handleAddBoxToCart = async () => {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please login to add your box to cart");
-      navigate("/login");
+      setToast({ show: true, message: "Please login to add your box to cart", variant: "info" });
+      setTimeout(() => navigate("/login"), 800);
       return;
     }
 
@@ -94,8 +96,8 @@ const handleAddBoxToCart = async () => {
         });
         setSelectedItems([]);
         openCart();
-    } catch (error) {
-        alert(error?.response?.data?.message || "Could not add box to cart. Please try again.");
+} catch (error) {
+        setToast({ show: true, message: error?.response?.data?.message || "Could not add box to cart. Please try again.", variant: "info" });
     } finally {
         setAddingBox(false);
     }
@@ -178,21 +180,28 @@ const handleAddBoxToCart = async () => {
                 1024: { slidesPerView: 3 },
               }}
             >
-              {products.map((product) => {
+{products.map((product) => {
   const count = countFor(product._id);
-  const isSoldOut = product.stock <= 0;
+  const isComingSoon = product.isLaunched === false;
+  const isSoldOut = !isComingSoon && product.stock <= 0;
+  const isUnavailable = isComingSoon || isSoldOut;
 
   return (
     <SwiperSlide key={product._id}>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="relative aspect-square">
           <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+{isComingSoon && (
+            <span className="absolute top-3 left-3 bg-white text-brand-orange-dark text-xs font-body font-medium px-3 py-1 rounded-full">
+              Coming Soon
+            </span>
+          )}
           {isSoldOut && (
             <span className="absolute top-3 left-3 bg-white text-black text-xs font-body font-medium px-3 py-1 rounded-full">
               Sold Out
             </span>
           )}
-          {count > 0 && !isSoldOut && (
+          {count > 0 && !isUnavailable && (
             <span className="absolute top-3 right-3 bg-brand-orange text-white text-xs font-heading w-6 h-6 rounded-full flex items-center justify-center shadow-md">
               {count}
             </span>
@@ -203,16 +212,16 @@ const handleAddBoxToCart = async () => {
           <p className="font-body text-sm text-gray-500 mb-4">
             {product.benefits?.slice(0, 2).join(" • ") || "Lactose-free • Vegan friendly"}
           </p>
-          <button
+<button
             onClick={() => addItem(product)}
-            disabled={isComplete || isSoldOut}
+            disabled={isComplete || isUnavailable}
             className={`w-full rounded-full py-2.5 font-heading text-base font-medium transition border-2 ${
-              isComplete || isSoldOut
+              isComplete || isUnavailable
                 ? "bg-gray-200 text-gray-400 border-transparent cursor-not-allowed"
                 : "bg-brand-orange text-white border-transparent hover:bg-white hover:text-brand-orange hover:border-brand-orange hover:-translate-y-1 shadow-md cursor-pointer"
             }`}
           >
-            {isSoldOut ? "SOLD OUT" : isComplete ? "BOX FULL" : "ADD TO CART"}
+            {isComingSoon ? "COMING SOON" : isSoldOut ? "SOLD OUT" : isComplete ? "BOX FULL" : "ADD TO CART"}
           </button>
                       </div>
                     </div>
@@ -271,6 +280,12 @@ const handleAddBoxToCart = async () => {
       </section>
 
       <Footer />
+      <CartToast
+        show={toast.show}
+        onClose={() => setToast((prev) => ({ ...prev, show: false }))}
+        message={toast.message}
+        variant={toast.variant}
+      />
     </>
   );
 }

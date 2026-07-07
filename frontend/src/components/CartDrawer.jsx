@@ -6,6 +6,7 @@ import api from "../api/axios";
 import { useCart } from "../context/CartContext";
 import { calculatePricing, REWARD_TIERS, FREE_BLENDER_THRESHOLD, SHIPPING_FEE } from "../utils/pricing";
 import AddressModal from "./AddressModal";
+import CartToast from "./CartToast";
 
 const CHECKOUT_STEPS = [
   { key: "cart", label: "Cart" },
@@ -62,6 +63,7 @@ export default function CartDrawer() {
 
   // ---------------- ORDER / PAYMENT ----------------
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [drawerToast, setDrawerToast] = useState({ show: false, message: "", variant: "success" });
 
   // ---------------- FETCH CART ----------------
   const fetchCart = async () => {
@@ -109,11 +111,10 @@ export default function CartDrawer() {
       await fetchAddresses();
       setSelectedAddress(res.data._id);
       setIsAddressModalOpen(false);
-    } catch (error) {
-      alert(error.response?.data?.message || "Failed to save address");
+} catch (error) {
+      setDrawerToast({ show: true, message: error.response?.data?.message || "Failed to save address", variant: "info" });
     }
   };
-
   // ---------------- EFFECTS ----------------
   const [exploreCartStatus, setExploreCartStatus] = useState({});
 
@@ -123,10 +124,9 @@ const handleExploreAddToCart = async (product) => {
     try {
       const token = localStorage.getItem("token");
 
-      if (!token) {
-        alert("Please login to add items to your cart");
-        closeCart();
-        navigate("/login");
+if (!token) {
+        setDrawerToast({ show: true, message: "Please login to add items to your cart", variant: "info" });
+        setTimeout(() => { closeCart(); navigate("/login"); }, 800);
         return;
       }
 
@@ -134,14 +134,14 @@ const handleExploreAddToCart = async (product) => {
         product.packSizes?.find((p) => Number(p.units) === 1) ||
         product.packSizes?.[0];
 
-      if (!defaultPack) {
-        alert("Product pack missing");
+if (!defaultPack) {
+        setDrawerToast({ show: true, message: "Product pack missing", variant: "info" });
         return;
       }
 
       const price = Number(defaultPack.price);
       if (isNaN(price)) {
-        alert("Invalid product price");
+        setDrawerToast({ show: true, message: "Invalid product price", variant: "info" });
         return;
       }
 
@@ -167,9 +167,9 @@ const handleExploreAddToCart = async (product) => {
       setTimeout(() => {
         setExploreCartStatus((prev) => ({ ...prev, [product._id]: "idle" }));
       }, 1500);
-    } catch (error) {
+} catch (error) {
       console.log(error.response?.data || error.message);
-      alert(error.response?.data?.message || "Could not add item to cart");
+      setDrawerToast({ show: true, message: error.response?.data?.message || "Could not add item to cart", variant: "info" });
       setExploreCartStatus((prev) => ({ ...prev, [product._id]: "idle" }));
     }
 };
@@ -183,9 +183,9 @@ const handleExploreAddToCart = async (product) => {
         .filter((item) => !item.isCustomBox)
         .map((item) => item.product?._id);
 
-      const filtered = allProducts
+const filtered = allProducts
         .filter((p) => !cartProductIds.includes(p._id))
-        .filter((p) => p.stock > 0)
+        .filter((p) => p.isLaunched !== false && p.stock > 0)
         .slice(0, 6);
 
       setExploreProducts(filtered);
@@ -346,21 +346,20 @@ const couponBadge = discount > 0 && (
 );
 
   // ---------------- STEP NAVIGATION ----------------
-  const handleProceedToCheckout = () => {
+const handleProceedToCheckout = () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please login to proceed to checkout");
-      closeCart();
-      navigate("/login");
+      setDrawerToast({ show: true, message: "Please login to proceed to checkout", variant: "info" });
+      setTimeout(() => { closeCart(); navigate("/login"); }, 800);
       return;
     }
     if (cartItems.length === 0) return;
     setCheckoutStep("shipping");
   };
 
-  const handleViewOrderDetails = () => {
+const handleViewOrderDetails = () => {
     if (!selectedAddress) {
-      alert("Please select or add a shipping address");
+      setDrawerToast({ show: true, message: "Please select or add a shipping address", variant: "info" });
       return;
     }
     setCheckoutStep("order");
@@ -370,8 +369,8 @@ const couponBadge = discount > 0 && (
   const handlePlaceOrder = async () => {
     if (isPlacingOrder) return;
 
-    if (!selectedAddress) {
-      alert("Please select an address");
+if (!selectedAddress) {
+      setDrawerToast({ show: true, message: "Please select an address", variant: "info" });
       return;
     }
 
@@ -418,7 +417,7 @@ const couponBadge = discount > 0 && (
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to place order");
+      setDrawerToast({ show: true, message: error.response?.data?.message || "Failed to place order", variant: "info" });
     } finally {
       setIsPlacingOrder(false);
     }
@@ -917,6 +916,13 @@ const couponBadge = discount > 0 && (
         onClose={() => setIsAddressModalOpen(false)}
         onSave={handleSaveAddress}
         initialData={null}
+      />
+
+      <CartToast
+        show={drawerToast.show}
+        onClose={() => setDrawerToast((prev) => ({ ...prev, show: false }))}
+        message={drawerToast.message}
+        variant={drawerToast.variant}
       />
     </>
   );
