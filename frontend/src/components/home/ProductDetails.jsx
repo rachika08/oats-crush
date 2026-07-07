@@ -21,7 +21,8 @@ import {
   Bell,
   Cuboid,
   Droplet,
-  FlaskConical
+  FlaskConical,
+  Blender,
 } from "lucide-react";
 
 const iconMap = {
@@ -32,6 +33,7 @@ const iconMap = {
   bowl: Soup,
   icecream: IceCreamCone,
   bell: Bell,
+  blender: Blender,
 };
 export default function ProductDetails() {
     const { id } = useParams();
