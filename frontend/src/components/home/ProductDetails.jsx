@@ -396,24 +396,23 @@ const handleWriteReview = () => {
                             </span>
                         </div>
 
-                        <p
-                            className={`font-body text-sm text-gray-600 mb-6 ${
-                                showFullDescription ? "" : "line-clamp-3"
-                            }`}
-                        >
-                            {product.description}
+                        <div className="mb-6">
+                            <p
+                                className={`font-body text-sm text-gray-600 ${
+                                    showFullDescription ? "" : "line-clamp-2"
+                                }`}
+                            >
+                                {product.description}
+                            </p>
                             {!showFullDescription && (
-                                <>
-                                    {"... "}
-                                    <button
-                                        onClick={() => setShowFullDescription(true)}
-                                        className="text-brand-orange underline cursor-pointer font-medium"
-                                    >
-                                        Read More
-                                    </button>
-                                </>
+                                <button
+                                    onClick={() => setShowFullDescription(true)}
+                                    className="text-brand-orange underline cursor-pointer font-medium text-sm mt-1"
+                                >
+                                    Read More
+                                </button>
                             )}
-                        </p>
+                        </div>
 
                         {/* Pack size selector */}
                         <div className="mb-6">
