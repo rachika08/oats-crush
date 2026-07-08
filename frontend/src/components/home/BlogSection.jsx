@@ -20,7 +20,7 @@ const BlogSection = () => {
   const fetchBlogs = async () => {
     try {
       const res = await api.get("/blog");
-      const latest = res.data.blogs.slice(0, 4); // latest 4
+      const latest = res.data.blogs; 
       setBlogs(latest);
       fetchCommentCounts(latest);
     } catch (err) {

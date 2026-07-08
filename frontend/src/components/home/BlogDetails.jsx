@@ -230,7 +230,7 @@ const paragraphs = blog.content
           </div>
 
           {/* ---------------- RIGHT: RELATED PRODUCTS (STICKY) ---------------- */}
-          <aside className="lg:sticky lg:top-6">
+          <aside className="lg:sticky lg:top-20">
             <h2 className="font-heading text-2xl sm:text-3xl mb-5">
               RELATED <span className="text-brand-orange">PRODUCTS</span>
             </h2>
