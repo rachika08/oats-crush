@@ -8,12 +8,12 @@ const AddBlog = () => {
   const [formData, setFormData] = useState({
     title: "",
     shortDescription: "",
-    content: "",
     author: "",
     category: "",
     tags: "",
   });
 
+  const [sections, setSections] = useState([{ heading: "", content: "" }]);
   const [image, setImage] = useState(null);
 
   const handleChange = (e) => {
@@ -21,6 +21,20 @@ const AddBlog = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const addSection = () => {
+    setSections([...sections, { heading: "", content: "" }]);
+  };
+
+  const updateSection = (index, field, value) => {
+    const updated = [...sections];
+    updated[index][field] = value;
+    setSections(updated);
+  };
+
+  const removeSection = (index) => {
+    setSections(sections.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -35,6 +49,7 @@ const AddBlog = () => {
         data.append(key, formData[key]);
       });
 
+      data.append("sections", JSON.stringify(sections));
       data.append("image", image);
 
       await api.post("/blog", data, {
@@ -78,13 +93,45 @@ const AddBlog = () => {
           className="w-full border p-3"
         />
 
-        <textarea
-          name="content"
-          placeholder="Blog Content"
-          rows="10"
-          onChange={handleChange}
-          className="w-full border p-3"
-        />
+        <h3 className="text-xl font-bold mt-6">Sections</h3>
+
+        {sections.map((section, index) => (
+          <div key={index} className="border rounded p-4 space-y-2 bg-gray-50">
+            <input
+              type="text"
+              placeholder="Section Heading"
+              value={section.heading}
+              onChange={(e) => updateSection(index, "heading", e.target.value)}
+              className="w-full border p-3"
+            />
+
+            <textarea
+              placeholder="Section Content"
+              rows="6"
+              value={section.content}
+              onChange={(e) => updateSection(index, "content", e.target.value)}
+              className="w-full border p-3"
+            />
+
+            {sections.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeSection(index)}
+                className="text-red-500"
+              >
+                Remove Section
+              </button>
+            )}
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={addSection}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          + Add Section
+        </button>
 
         <input
           type="text"

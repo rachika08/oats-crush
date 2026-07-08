@@ -20,11 +20,9 @@ import {
   IceCreamCone,
   Soup,
   Bell,
-  Cuboid,
-  Droplet,
-  FlaskConical,
   Blender,
 } from "lucide-react";
+
 
 const iconMap = {
   moon: Moon,
@@ -595,13 +593,29 @@ const handleWriteReview = () => {
 
 {/* Nutritional Value */}
 {product.nutrition && product.nutrition.nutrients?.length > 0 && (
-<div className="mt-12 sm:mt-16 max-w-xl mx-auto">
-        <Reveal variant="noticeable">
-        <h2 className="font-heading text-2xl sm:text-3xl mb-6 uppercase">
-            Nutritional Value
-        </h2>
-        </Reveal>
+<div className="mt-12 sm:mt-16 max-w-5xl mx-auto">
 
+    <Reveal variant="noticeable">
+    <h2 className="font-heading text-2xl sm:text-3xl mb-8 sm:mb-10 uppercase text-center">
+        Nutritional Value
+    </h2>
+    </Reveal>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+
+        {/* Left - image only */}
+        {product.additionalImages?.length > 0 && (
+            <Reveal variant="subtle" className="rounded-2xl sm:rounded-3xl overflow-hidden">
+                <img
+                    src={product.additionalImages[product.additionalImages.length - 1]}
+                    alt={`${product.name} nutrition facts`}
+                    className="w-full h-full object-contain"
+                />
+            </Reveal>
+        )}
+
+        {/* Right - nutrients + badges */}
+        <div>
         <RevealGroup staggerDelay={0.08} className="space-y-5">
 {product.nutrition.nutrients.map((n, index) => (
                 <RevealItem variant="subtle" key={index}>
@@ -626,7 +640,7 @@ const handleWriteReview = () => {
             ))}
         </RevealGroup>
 
-        {product.nutrition.note && (
+{product.nutrition.note && (
             <p className="font-body text-xs text-gray-500 italic mt-4">
                 *{product.nutrition.note}
             </p>
@@ -635,32 +649,37 @@ const handleWriteReview = () => {
         <hr className="border-gray-200 my-8" />
 
 {/* Static claims — same on every product */}
-        <RevealGroup staggerDelay={0.1} className="grid grid-cols-3 gap-4 text-center">
+        <RevealGroup staggerDelay={0.1} className="grid grid-cols-3 gap-4 text-left">
             <RevealItem variant="subtle" className="flex flex-col items-center">
-                <span className="w-14 h-14 rounded-full border-2 border-brand-orange flex items-center justify-center mb-2">
-                    <Cuboid size={24} className="text-brand-orange" />
-                </span>
+                <span
+                    className="icon-mask w-14 h-14 mb-2 bg-brand-orange"
+                    style={{ WebkitMaskImage: `url(/images/icon-zero-sugar.svg)`, maskImage: `url(/images/icon-zero-sugar.svg)` }}
+                />
                 <p className="font-heading text-base uppercase">Zero</p>
                 <p className="font-body text-xs text-gray-500">Refined Sugar</p>
             </RevealItem>
 
             <RevealItem variant="subtle" className="flex flex-col items-center">
-                <span className="w-14 h-14 rounded-full border-2 border-brand-orange flex items-center justify-center mb-2">
-                    <Droplet size={24} className="text-brand-orange" />
-                </span>
+                <span
+                    className="icon-mask w-14 h-14 mb-2 bg-brand-orange"
+                    style={{ WebkitMaskImage: `url(/images/icon-drop.svg)`, maskImage: `url(/images/icon-drop.svg)` }}
+                />
                 <p className="font-heading text-base uppercase">Zero</p>
                 <p className="font-body text-xs text-gray-500">Trans Fat</p>
             </RevealItem>
 
             <RevealItem variant="subtle" className="flex flex-col items-center">
-                <span className="w-14 h-14 rounded-full border-2 border-brand-orange flex items-center justify-center mb-2">
-                    <FlaskConical size={24} className="text-brand-orange" />
-                </span>
+                <span
+                    className="icon-mask w-14 h-14 mb-2 bg-brand-orange"
+                    style={{ WebkitMaskImage: `url(/images/icon-fillers.webp)`, maskImage: `url(/images/icon-fillers.webp)` }}
+                />
                 <p className="font-heading text-base uppercase">No</p>
                 <p className="font-body text-xs text-gray-500">Preservatives or Fillers</p>
             </RevealItem>
         </RevealGroup>
+        </div>
     </div>
+</div>
 )}
 
 {showViewCart && (

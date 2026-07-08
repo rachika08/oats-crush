@@ -11,12 +11,12 @@ const EditBlog = () => {
   const [formData, setFormData] = useState({
     title: "",
     shortDescription: "",
-    content: "",
     author: "",
     category: "",
     tags: "",
   });
 
+  const [sections, setSections] = useState([{ heading: "", content: "" }]);
   const [image, setImage] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
 
@@ -33,11 +33,18 @@ const EditBlog = () => {
       setFormData({
         title: blog.title || "",
         shortDescription: blog.shortDescription || "",
-        content: blog.content || "",
         author: blog.author || "",
         category: blog.category || "",
         tags: blog.tags?.join(",") || "",
       });
+
+      // Old blogs only have a plain `content` string with no sections yet —
+      // drop it into a single section so it's editable here instead of lost.
+      if (blog.sections?.length > 0) {
+        setSections(blog.sections);
+      } else if (blog.content) {
+        setSections([{ heading: "", content: blog.content }]);
+      }
 
       setPreviewImage(blog.coverImage || "");
     } catch (error) {
@@ -64,6 +71,20 @@ const EditBlog = () => {
     }
   };
 
+  const addSection = () => {
+    setSections([...sections, { heading: "", content: "" }]);
+  };
+
+  const updateSection = (index, field, value) => {
+    const updated = [...sections];
+    updated[index][field] = value;
+    setSections(updated);
+  };
+
+  const removeSection = (index) => {
+    setSections(sections.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -75,6 +96,8 @@ const EditBlog = () => {
       Object.keys(formData).forEach((key) => {
         data.append(key, formData[key]);
       });
+
+      data.append("sections", JSON.stringify(sections));
 
       if (image) {
         data.append("image", image);
@@ -135,14 +158,45 @@ const EditBlog = () => {
           className="w-full border p-3 rounded"
         />
 
-        <textarea
-          name="content"
-          placeholder="Blog Content"
-          value={formData.content}
-          onChange={handleChange}
-          rows={10}
-          className="w-full border p-3 rounded"
-        />
+<h3 className="text-xl font-bold mt-2">Sections</h3>
+
+        {sections.map((section, index) => (
+          <div key={index} className="border rounded p-4 space-y-2 bg-gray-50">
+            <input
+              type="text"
+              placeholder="Section Heading"
+              value={section.heading}
+              onChange={(e) => updateSection(index, "heading", e.target.value)}
+              className="w-full border p-3 rounded"
+            />
+
+            <textarea
+              placeholder="Section Content"
+              rows="6"
+              value={section.content}
+              onChange={(e) => updateSection(index, "content", e.target.value)}
+              className="w-full border p-3 rounded"
+            />
+
+            {sections.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeSection(index)}
+                className="text-red-500"
+              >
+                Remove Section
+              </button>
+            )}
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={addSection}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          + Add Section
+        </button>
 
         <input
           type="text"

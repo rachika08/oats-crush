@@ -132,9 +132,11 @@ export default function BlogDetails() {
     );
   }
 
-  const paragraphs = blog.content
+const paragraphs = blog.content
     ? blog.content.split(/\n\s*\n/).filter((p) => p.trim().length > 0)
     : [];
+
+  const sections = blog.sections?.length > 0 ? blog.sections : null;
 
   const formattedDate = blog.createdAt
     ? new Date(blog.createdAt).toLocaleDateString("en-US", {
@@ -200,10 +202,28 @@ export default function BlogDetails() {
               </div>
             )}
 
-<Reveal variant="subtle" delay={0.15} className="font-body text-sm sm:text-base text-gray-700 leading-relaxed space-y-6">
-              {paragraphs.length > 0 ? (
+<Reveal variant="subtle" delay={0.15} className="font-body text-sm sm:text-base text-gray-700 leading-relaxed space-y-8">
+              {sections ? (
+                sections.map((section, i) => (
+                  <div key={i}>
+                    {section.heading && (
+                      <h2 className="font-heading text-xl sm:text-2xl mb-3 uppercase">
+                        {section.heading}
+                      </h2>
+                    )}
+                    <div className="space-y-4">
+                      {section.content
+                        .split(/\n\s*\n/)
+                        .filter((p) => p.trim().length > 0)
+                        .map((para, j) => (
+                          <p key={j}>{para.trim()}</p>
+                        ))}
+                    </div>
+                  </div>
+                ))
+              ) : paragraphs.length > 0 ? (
                 paragraphs.map((para, i) => <p key={i}>{para.trim()}</p>)
-) : (
+              ) : (
                 <p>{blog.content}</p>
               )}
             </Reveal>

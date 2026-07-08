@@ -14,10 +14,23 @@ const blogSchema = new mongoose.Schema(
       required: true,
     },
 
-    content: {
+content: {
       type: String,
-      required: true,
+      default: "",
     },
+
+    sections: [
+      {
+        heading: {
+          type: String,
+          default: "",
+        },
+        content: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
 
     coverImage: {
       type: String,

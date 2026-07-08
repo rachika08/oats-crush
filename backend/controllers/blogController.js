@@ -19,6 +19,7 @@ export const createBlog = async (req, res) => {
       author,
       category,
       tags,
+      sections,
     } = req.body;
 
     let coverImage = "";
@@ -31,6 +32,8 @@ export const createBlog = async (req, res) => {
       coverImage = uploadedImage.secure_url;
     }
 
+    const sectionsArray = sections ? JSON.parse(sections) : [];
+
     const blog = await Blog.create({
       title,
       shortDescription,
@@ -39,8 +42,8 @@ export const createBlog = async (req, res) => {
       category,
       tags: tags ? tags.split(",") : [],
       coverImage,
+      sections: sectionsArray,
     });
-
     res.status(201).json({
       success: true,
       message: "Blog created successfully",
@@ -126,7 +129,7 @@ export const updateBlog = async (req, res) => {
       });
     }
 
-    const updatedData = {
+const updatedData = {
       title: req.body.title || blog.title,
       shortDescription:
         req.body.shortDescription || blog.shortDescription,
@@ -136,6 +139,9 @@ export const updateBlog = async (req, res) => {
       tags: req.body.tags
         ? req.body.tags.split(",")
         : blog.tags,
+      sections: req.body.sections
+        ? JSON.parse(req.body.sections)
+        : blog.sections,
     };
 
     // if (req.file) {
