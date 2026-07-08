@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Check, Loader2, ArrowRight } from "lucide-react";
 import api from "../../api/axios";
+import { Reveal, RevealGroup, RevealItem } from "../Reveal";
 
 const heroBadges = [
   { icon: "/images/icon-zero-sugar.svg", label: "Sweetened with monk fruit" },
@@ -107,9 +108,6 @@ const FlavoursSection = () => {
     );
   }
 
-  // Static slots — this section is a fixed hero + coming-soon strip,
-  // not derived from isLaunched. Only the product _id (for routing/notify)
-  // comes from the API.
   const heroProduct = products.find((p) =>
     p.name?.toLowerCase().includes("rasmalai")
   );
@@ -153,8 +151,8 @@ const FlavoursSection = () => {
               </div>
             </div>
 
-            {/* Right - content */}
-            <div className="text-left relative">
+{/* Right - content */}
+            <Reveal variant="subtle" delay={0.1} className="text-left relative">
               <span className="inline-block border border-flavour-rasmalai-accent text-flavour-rasmalai-accent rounded-full px-4 py-1 text-xs sm:text-sm font-body mb-4">
                 Now Live
               </span>
@@ -166,7 +164,7 @@ const FlavoursSection = () => {
                 <img
                   src="/images/mark.svg"
                   alt=""
-                  className="hidden md:block absolute right-10 top-1/3 text-flavour-rasmalai-accent w-14 h-14 pointer-events-none"
+                  className="hidden md:block absolute right-10 top-30 -translate-y-2 text-flavour-rasmalai-accent w-14 h-14 pointer-events-none"
                 />
               </div>
 
@@ -178,19 +176,19 @@ const FlavoursSection = () => {
                 {heroProduct.description}
               </p>
 
-              <div className="grid grid-cols-3 gap-6 mb-8 max-w-sm">
+<RevealGroup staggerDelay={0.1} className="grid grid-cols-3 gap-6 mb-8 max-w-sm">
                 {heroBadges.map(({ icon, label }) => (
-                  <div key={label} className="flex flex-col items-center text-center">
+                  <RevealItem key={label} variant="subtle" className="flex flex-col items-center text-center">
                     <span
                       className="icon-mask w-9 h-9 sm:w-10 sm:h-10 mb-3 bg-flavour-rasmalai-accent"
                       style={{ WebkitMaskImage: `url(${icon})`, maskImage: `url(${icon})` }}
                     />
                     <p className="font-body text-xs sm:text-sm font-semibold text-gray-800 leading-snug">
                       {label}
-                    </p>
-                  </div>
+</p>
+                  </RevealItem>
                 ))}
-              </div>
+              </RevealGroup>
 
               <button
                 onClick={() => navigate(`/product/${heroProduct._id}`)}
@@ -198,74 +196,117 @@ const FlavoursSection = () => {
               >
                 ORDER NOW
                 <ArrowRight size={16} strokeWidth={3} />
-              </button>
-            </div>
+</button>
+            </Reveal>
           </div>
         )}
+{/* Coming-soon strip — soft launch card */}
+{comingSoonProduct && (
+<Reveal
+    variant="noticeable"
+    key={comingSoonProduct._id}
+    className="block"
+  >
+    <div
+      className="relative border-2 border-dashed border-brand-orange rounded-2xl px-6 pt-8 pb-6 mt-4 cursor-pointer hover:-translate-y-1 transition bg-[#FFFBF5]"
+      onClick={() => navigate(`/product/${comingSoonProduct._id}`)}
+    >
+    <span className="absolute -top-2.5 left-6 bg-black text-white text-[11px] font-body font-medium px-3.5 py-1 rounded-md -rotate-3">
+      Coming Soon
+    </span>
 
-        {/* Coming-soon strip — Coffee, notify-me stays as-is */}
-        {comingSoonProduct && (
-          <div
-            key={comingSoonProduct._id}
-            className="flex flex-col sm:flex-row sm:items-center sm:justify-between cursor-pointer gap-3 sm:gap-4 border border-brand-orange transition hover:-translate-y-1 shadow-md rounded-2xl px-4 sm:px-6 py-3 sm:py-4 mt-4"
-            onClick={() => navigate(`/product/${comingSoonProduct._id}`)}
-          >
-            <div className="flex items-center gap-4 min-w-0">
-              <div className="flip-card w-24 h-24 sm:w-28 sm:h-28 rounded-xl flex-shrink-0 bg-gray-100">
-                <div className="flip-card-inner">
-                  <div className="flip-card-front rounded-xl overflow-hidden">
-                    <img
-                      src={comingSoonProduct.image}
-                      loading="lazy"
-                      alt={comingSoonProduct.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flip-card-back rounded-xl overflow-hidden">
-                    <img
-                      src={getFlavourImage(comingSoonProduct.name)}
-                      loading="lazy"
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="min-w-0">
-                <span className="inline-block bg-brand-orange/10 text-brand-orange-dark rounded-full px-3 py-0.5 text-[10px] sm:text-xs font-body mb-1">
-                  Brewing in the back
-                </span>
-                <h3 className="font-heading text-xl sm:text-2xl uppercase truncate">
-                  {comingSoonProduct.name}
-                </h3>
-                <p className="font-body text-xs sm:text-sm text-gray-500 truncate">
-                  {comingSoonProduct.tagline || comingSoonProduct.description}
-                </p>
-              </div>
-            </div>
+    <div className="flex gap-4 items-start">
+     <div className="flip-card w-16 h-16 rounded-xl flex-shrink-0 bg-gray-100 animate-gentle-float">
+        <div className="flip-card-inner">
+          <div className="flip-card-front rounded-xl overflow-hidden">
+            <img
+              src={comingSoonProduct.image}
+              loading="lazy"
+              alt={comingSoonProduct.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flip-card-back rounded-xl overflow-hidden">
+            <img
+              src={getFlavourImage(comingSoonProduct.name)}
+              loading="lazy"
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </div>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleNotify(comingSoonProduct);
-              }}
-              disabled={
-                notifyStatus[comingSoonProduct._id] === "loading" ||
-                notifyStatus[comingSoonProduct._id] === "success"
-              }
-              className="w-full sm:w-auto flex-shrink-0 bg-brand-orange text-white rounded-full px-5 py-2 flex items-center justify-center gap-2 font-heading text-xs sm:text-sm font-medium transition hover:-translate-y-1 shadow-md cursor-pointer disabled:cursor-default disabled:hover:translate-y-0"
+      <div className="min-w-0">
+        <h3 className="font-heading text-2xl leading-tight lowercase text-black">
+          {comingSoonProduct.name.split(" ")[0].toLowerCase()}.
+          <br />
+          <span className="relative inline-block">
+            brewing.
+<svg
+              className="absolute left-0 -bottom-0.5 w-full h-2.5"
+              viewBox="0 0 120 10"
+              preserveAspectRatio="none"
             >
-              {renderNotifyButtonContent(comingSoonProduct)}
-            </button>
+              <path
+                d="M2,7 Q 20,3 40,5 T 80,4 T 118,6"
+                stroke="var(--color-brand-orange)"
+                strokeOpacity="0.55"
+                strokeWidth="6"
+                fill="none"
+                strokeLinecap="round"
+                style={{ mixBlendMode: "multiply" }}
+                className="marker-highlight-path"
+              />
+            </svg>
+          </span>
+        </h3>
+        <p className="font-body text-xs text-gray-400 mt-1 line-clamp-1">
+          {comingSoonProduct.tagline || comingSoonProduct.description}
+        </p>
+      </div>
+    </div>
 
-            {notifyStatus[comingSoonProduct._id] === "error" &&
-              errorMsg[comingSoonProduct._id] && (
-                <p className="text-xs text-red-600 mt-2 font-body">
-                  {errorMsg[comingSoonProduct._id]}
-                </p>
-              )}
-          </div>
-        )}
+    <div className="marquee-wrapper my-4 -mx-6 border-y border-[#eee2d2] py-1.5 overflow-hidden">
+<div className="marquee-track" style={{ "--marquee-duration": "44s" }}>
+        {Array.from({ length: 8 }).flatMap((_, i) => [
+          <span key={`a-${i}`} className="px-2.5 font-body text-[11px] font-medium tracking-wide text-brand-orange-dark whitespace-nowrap">COMING SOON</span>,
+          <span key={`b-${i}`} className="px-2.5 font-body text-[11px] text-brand-orange-dark whitespace-nowrap">•</span>,
+          <span key={`c-${i}`} className="px-2.5 font-body text-[11px] font-medium tracking-wide text-brand-orange-dark whitespace-nowrap">BE THE FIRST TO KNOW</span>,
+          <span key={`d-${i}`} className="px-2.5 font-body text-[11px] text-brand-orange-dark whitespace-nowrap">•</span>,
+                    <span key={`c-${i}`} className="px-2.5 font-body text-[11px] font-medium tracking-wide text-brand-orange-dark whitespace-nowrap">NEW BREW</span>,
+          <span key={`d-${i}`} className="px-2.5 font-body text-[11px] text-brand-orange-dark whitespace-nowrap">•</span>,
+        ])}
+      </div>
+    </div>
+
+    <p className="font-body text-sm font-medium text-black mb-2.5">
+      Be the first to be notified when it drops
+    </p>
+
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        handleNotify(comingSoonProduct);
+      }}
+      disabled={
+        notifyStatus[comingSoonProduct._id] === "loading" ||
+        notifyStatus[comingSoonProduct._id] === "success"
+      }
+      className="bg-brand-orange text-white rounded-full px-6 py-2.5 inline-flex items-center justify-center gap-2 font-heading text-sm font-medium transition hover:-translate-y-1 shadow-md cursor-pointer disabled:cursor-default disabled:hover:translate-y-0"
+    >
+      {renderNotifyButtonContent(comingSoonProduct)}
+    </button>
+
+    {notifyStatus[comingSoonProduct._id] === "error" &&
+      errorMsg[comingSoonProduct._id] && (
+        <p className="text-xs text-red-600 mt-2 font-body">
+          {errorMsg[comingSoonProduct._id]}
+        </p>
+)}
+    </div>
+  </Reveal>
+)}
       </div>
     </section>
   );

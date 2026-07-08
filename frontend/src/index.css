@@ -138,3 +138,22 @@ input[type="password"]::-ms-reveal {
   height: auto;
   align-self: stretch;
 }
+
+.marker-highlight-path {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: draw-highlight 0.9s ease 0.3s forwards;
+}
+@keyframes draw-highlight {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.animate-gentle-float {
+  animation: gentle-float 3s ease-in-out infinite;
+}
