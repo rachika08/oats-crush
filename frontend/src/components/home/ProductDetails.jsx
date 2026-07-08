@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef  } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Star, Truck, RotateCcw, Lock, ChevronDown } from "lucide-react";
@@ -11,6 +11,7 @@ import CartToast from "../CartToast";
 import { useCart } from "../../context/CartContext";
 import PageFade from "../PageFade";
 import { Reveal, RevealGroup, RevealItem } from "../Reveal";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   Moon,
@@ -301,8 +302,30 @@ const handleWriteReview = () => {
 
 {/* Mobile: hero image on top, swipeable thumbnail row below */}
 <Reveal variant="subtle" className="md:hidden min-w-0">
-  <div className="rounded-2xl overflow-hidden aspect-square mb-3">
-    <img src={selectedImage} alt={product.name} className="w-full h-full object-cover" />
+<div className="relative rounded-2xl overflow-hidden aspect-square mb-3">
+    <AnimatePresence mode="wait">
+      <motion.img
+        key={selectedImage}
+        src={selectedImage}
+        alt={product.name}
+        initial={{ opacity: 0, scale: 1.02 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        className="w-full h-full object-cover"
+      />
+    </AnimatePresence>
+    {isUnavailable && (
+      <motion.span
+        animate={{ opacity: [1, 0.6, 1] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        className={`absolute top-3 left-3 text-xs font-body font-medium px-3 py-1 rounded-full ${
+          isUnlaunched ? "bg-white text-brand-orange-dark" : "bg-white text-black"
+        }`}
+      >
+        {isUnlaunched ? "Coming Soon" : "Sold Out"}
+      </motion.span>
+    )}
   </div>
 
   <div className="relative min-w-0">
@@ -348,12 +371,30 @@ const handleWriteReview = () => {
                             ))}
                         </div>
 
-<div className="flex-1 rounded-2xl overflow-hidden aspect-square">
-                            <img
+<div className="relative flex-1 rounded-2xl overflow-hidden aspect-square">
+                            <AnimatePresence mode="wait">
+                              <motion.img
+                                key={selectedImage}
                                 src={selectedImage}
                                 alt={product.name}
+                                initial={{ opacity: 0, scale: 1.02 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.25 }}
                                 className="w-full h-full object-cover"
-                            />
+                              />
+                            </AnimatePresence>
+                            {isUnavailable && (
+                              <motion.span
+                                animate={{ opacity: [1, 0.6, 1] }}
+                                transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                                className={`absolute top-3 left-3 text-xs font-body font-medium px-3 py-1 rounded-full ${
+                                  isUnlaunched ? "bg-white text-brand-orange-dark" : "bg-white text-black"
+                                }`}
+                              >
+                                {isUnlaunched ? "Coming Soon" : "Sold Out"}
+                              </motion.span>
+                            )}
                         </div>
                     </Reveal>
 
@@ -437,16 +478,19 @@ const handleWriteReview = () => {
 
                                         return (
                                             <div key={pack._id} className="relative">
-                                                <button
+<motion.button
                                                     onClick={() => setSelectedPack(pack)}
-                                                    className={`font-body text-sm font-medium px-5 py-2 rounded-full border-2 transition cursor-pointer ${
+                                                    animate={{ scale: isActive ? 1.05 : 1 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                                                    className={`font-body text-sm font-medium px-5 py-2 rounded-full border-2 cursor-pointer ${
                                                         isActive
                                                             ? "bg-brand-orange border-brand-orange text-white"
                                                             : "bg-white border-gray-200 text-black hover:border-brand-orange"
                                                     }`}
                                                 >
                                                     {pack.label}
-                                                </button>
+                                                </motion.button>
 
                                                 {hasSavings && (
                                                     <span
@@ -467,10 +511,19 @@ const handleWriteReview = () => {
                         </div>
 
                         {/* Price */}
-                        <div className="flex items-baseline gap-2 mb-1">
-                            <span className="font-heading text-3xl">
-                                ₹{selectedPack?.price}.00
-                            </span>
+<div className="flex items-baseline gap-2 mb-1">
+    <AnimatePresence mode="wait">
+        <motion.span
+            key={selectedPack?.price}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2 }}
+            className="font-heading text-3xl"
+        >
+            ₹{selectedPack?.price}.00
+        </motion.span>
+    </AnimatePresence>
                             {selectedPack && selectedPack.units > 1 && (
                                 <span className="font-body text-sm text-gray-400">
                                     ₹{(selectedPack.price / selectedPack.units).toFixed(0)}/pouch
@@ -596,7 +649,7 @@ const handleWriteReview = () => {
 <div className="mt-12 sm:mt-16 max-w-5xl mx-auto">
 
     <Reveal variant="noticeable">
-    <h2 className="font-heading text-2xl sm:text-3xl mb-8 sm:mb-10 uppercase text-center">
+    <h2 className="font-heading text-3xl sm:text-4xl mb-8 sm:mb-10 uppercase text-center">
         Nutritional Value
     </h2>
     </Reveal>
@@ -630,12 +683,15 @@ const handleWriteReview = () => {
                             {n.dailyValue}%
                         </span>
                     </div>
-                    <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                        <div
-                            className={`h-full rounded-full ${index === 0 ? "bg-brand-orange" : "bg-gray-300"}`}
-                            style={{ width: `${Math.min(n.dailyValue || 0, 100)}%` }}
-                        />
-                    </div>
+<div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+    <motion.div
+        className={`h-full rounded-full ${index === 0 ? "bg-brand-orange" : "bg-gray-400"}`}
+        initial={{ width: 0 }}
+        whileInView={{ width: `${Math.min(n.dailyValue || 0, 100)}%` }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: index * 0.08, ease: "easeOut" }}
+    />
+</div>
 </RevealItem>
             ))}
         </RevealGroup>

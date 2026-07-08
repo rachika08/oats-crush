@@ -23,7 +23,7 @@ const reviews = [
   {
     id: 4,
     quote:
-      "Rasmalai flavour tastes exactly like the real thing. Didn't expect that from a protein drink.",
+      "Rasmalai flavour tastes exactly like the real thing. Didn't expect that from an oats shake.",
     name: "Simran",
   },
   {
@@ -47,7 +47,6 @@ const ReviewCard = ({ review }) => (
     </div>
 
     <div className="flex items-center gap-2 mt-2">
-      <span className="w-5 h-5 rounded bg-gray-200 flex-shrink-0" />
       <span className="font-body text-sm text-gray-700">{review.name}</span>
     </div>
   </div>

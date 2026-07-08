@@ -161,10 +161,7 @@ const paragraphs = blog.content
         </Reveal>
 
         {/* ---------------- CONTENT + STICKY SIDEBAR ---------------- */}
-        {/* This grid's height = title + tags + content only. The aside's
-            sticky range is bounded by this container, so it naturally stops
-            being sticky once we reach the comments block below (which sits
-            outside the grid, full width). */}
+
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10 lg:gap-14 mt-10 sm:mt-12 items-start">
           {/* ---------------- LEFT: BLOG CONTENT ---------------- */}
 <div>
@@ -202,14 +199,14 @@ const paragraphs = blog.content
               </div>
             )}
 
-<Reveal variant="subtle" delay={0.15} className="font-body text-sm sm:text-base text-gray-700 leading-relaxed space-y-8">
+<Reveal variant="subtle" delay={0.15} className="font-body text-sm sm:text-base text-black leading-relaxed space-y-8">
               {sections ? (
                 sections.map((section, i) => (
                   <div key={i}>
                     {section.heading && (
-                      <h2 className="font-heading text-xl sm:text-2xl mb-3 uppercase">
+                      <p className="font-body text-brand-orange font-semibold text-xl sm:text-xl mb-3">
                         {section.heading}
-                      </h2>
+                      </p>
                     )}
                     <div className="space-y-4">
                       {section.content
