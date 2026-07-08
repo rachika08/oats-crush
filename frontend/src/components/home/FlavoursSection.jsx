@@ -208,7 +208,7 @@ const FlavoursSection = () => {
     className="block"
   >
     <div
-      className="relative border-2 border-dashed border-brand-orange rounded-2xl px-6 pt-8 pb-6 mt-4 cursor-pointer hover:-translate-y-1 transition bg-[#FFFBF5]"
+      className="relative border-2 border-dashed border-brand-orange rounded-2xl px-6 pt-8 pb-6 mt-30 cursor-pointer hover:-translate-y-1 transition bg-[#FFFBF5]"
       onClick={() => navigate(`/product/${comingSoonProduct._id}`)}
     >
     <span className="absolute -top-2.5 left-6 bg-black text-white text-[11px] font-body font-medium px-3.5 py-1 rounded-md -rotate-3">
