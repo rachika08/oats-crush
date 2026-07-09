@@ -7,6 +7,7 @@ import Footer from "../components/home/Footer";
 import InfoBar from "../components/home/InfoBar";
 import CartToast from "../components/CartToast";
 import PageFade from "../components/PageFade";
+import { getStrikethroughPrice } from "../utils/pricing";
 
 const PRODUCTS_PER_PAGE = 6;
 
@@ -331,9 +332,28 @@ const ProductCardItem = ({ product }) => {
               product.category?.name}
           </p>
 
-          <p className="font-heading text-lg sm:text-2xl mb-2 sm:mb-3">
-            ₹{product.packSizes?.find(p => p.units === 1)?.price || "N/A"}
-          </p>
+          {(() => {
+            const price = product.packSizes?.find(p => p.units === 1)?.price;
+            const strike = getStrikethroughPrice(product, price);
+
+            return (
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 flex-wrap">
+                <p className="font-heading text-lg sm:text-2xl">
+                  ₹{price ?? "N/A"}
+                </p>
+                {strike && (
+                  <>
+                    <span className="font-heading text-lg sm:text-2xl text-gray-400 line-through">
+                      ₹{strike.original}
+                    </span>
+                    <span className="bg-green-100 text-green-700 text-[10px] sm:text-xs font-body font-semibold px-2 py-0.5 rounded-full">
+                      {strike.discountPercent}% OFF
+                    </span>
+                  </>
+                )}
+              </div>
+            );
+          })()}
 
 <button
   onClick={(e) =>
@@ -416,13 +436,6 @@ const ProductCardItem = ({ product }) => {
           </span>
 
           <FilterDropdown
-            label="Category"
-            value={category}
-            onChange={setCategory}
-            options={categories.map((c) => c.name)}
-          />
-
-          <FilterDropdown
             label="Availability"
             value={availability}
             onChange={setAvailability}
@@ -499,42 +512,7 @@ const ProductCardItem = ({ product }) => {
             </div>
 
             <div className="flex-1 overflow-y-auto">
-              {/* Category */}
-              <div className="border-b border-gray-100">
-                <button
-                  onClick={() =>
-                    setExpandedFilter(expandedFilter === "category" ? null : "category")
-                  }
-                  className="w-full flex items-center justify-between px-5 py-4"
-                >
-                  <span className="font-body text-sm">
-                    Category {tempCategory && <span className="text-brand-orange">· {tempCategory}</span>}
-                  </span>
-                  <ChevronRight
-                    size={16}
-                    className={`text-gray-400 transition-transform ${
-                      expandedFilter === "category" ? "rotate-90" : ""
-                    }`}
-                  />
-                </button>
-                {expandedFilter === "category" && (
-                  <div className="px-5 pb-4 flex flex-wrap gap-2">
-                    {categories.map((c) => c.name).map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() => setTempCategory(tempCategory === opt ? "" : opt)}
-                        className={`px-4 py-2 rounded-full text-sm border ${
-                          tempCategory === opt
-                            ? "bg-brand-orange text-white border-brand-orange"
-                            : "border-gray-200 text-black"
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+
 
               {/* Availability */}
               <div className="border-b border-gray-100">

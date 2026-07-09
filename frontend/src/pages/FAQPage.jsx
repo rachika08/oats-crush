@@ -7,70 +7,95 @@ import PageFade from "../components/PageFade";
 const faqCategories = [
   {
     id: "general",
-    label: "General Questions",
+    label: "Product & Ingredients",
     faqs: [
       {
-        question: "How to Crush it?",
+        question: "What exactly is Oats Crush?",
         answer:
-          "Mix with 240ml milk or alternative, shake or blend, and you're ready in seconds. No bowls, no spoons, no mess.",
+          "Oats Crush is a premium, high-protein oat beverage designed for busy lifestyles. It delivers a clean, nutritious, and filling meal alternative or post-workout boost in a convenient, grab-and-go format.",
       },
       {
-        question: "How much protein does one serving contain?",
+        question: "Does it contain any artificial sweeteners or refined sugar?",
         answer:
-          "Each serving packs 30g of protein — more than two whole eggs, in a single pouch.",
+          "We use only natural sweetness derived from oats and monk fruit. You get zero refined sugar and zero artificial sweeteners.",
       },
       {
-        question: "Does it contain artificial sweeteners?",
+        question: " How much protein will I get from a single serving?",
         answer:
-          "No. We use natural sweetness from oats and monk fruit — zero refined sugar, zero artificial sweeteners.",
+          " Each serving packs an impressive 30g of plant-based protein—which is more than two whole eggs—packed into a single pouch.",
       },
     ],
   },
   {
     id: "orders-shipping",
-    label: "Orders & Shipping",
+    label: "Preparation & Usage",
     faqs: [
       {
-        question: "How long does delivery take?",
+        question: " How do I prepare my Oats Crush?",
         answer:
-          "Most orders are delivered within 3-5 business days, depending on your location.",
+          " It’s incredibly easy! Simply mix one pouch with 240ml of milk or your favorite dairy-free alternative, shake or blend, and it’s ready to drink in seconds. No bowls, no spoons, and no mess.",
       },
       {
-        question: "Can I track my order?",
+        question: " Can I mix Oats Crush with water instead of milk?",
         answer:
-          "Yes — once your order ships, you'll get a tracking link via email/SMS, and you can also check status from your Profile page.",
+          "Yes, you can mix it with water! However, for the creamiest texture and optimal flavor profile, we highly recommend using milk or a plant-based alternative like almond, oat, or soy milk.",
+      },
+      {
+        question: "Can I blend it with ice or fruits?",
+        answer:
+          "Definitely. While it tastes fantastic just shaken up, it makes a great base for smoothies. Feel free to toss it in a blender with ice, a banana, berries, or nut butter to customize your drink.",
+      },
+      {
+        question: "Is it safe to consume more than one serving a day?",
+        answer:
+          "Yes, Oats Crush can be consumed multiple times a day as part of a balanced diet. It is an excellent way to cleanly hit your daily protein and caloric targets.",
       },
     ],
   },
   {
     id: "payments-refunds",
-    label: "Payments & Refunds",
+    label: "Storage & Packaging",
     faqs: [
       {
-        question: "What payment methods do you accept?",
+        question: "What is the shelf life of Oats Crush?",
         answer:
-          "We accept UPI, credit/debit cards, net banking, and popular wallets via Razorpay.",
+          "Unopened pouches stay completely fresh for up to 9 months. Always check the exact expiration date printed on the back of your pouch.",
       },
       {
-        question: "What's your refund policy?",
+        question: "How should I store my unopened pouches?",
         answer:
-          "We don't offer returns or refunds once an order is delivered, unless it arrives damaged, defective, or incorrect — reach out within 48 hours of delivery.",
+          "Keep them stored in a cool, dry place out of direct sunlight. There is absolutely no refrigeration needed until the product is opened or mixed.",
+      },
+      {
+        question: "Once mixed, how long does the drink stay good?",
+        answer:
+          " Once you mix Oats Crush with a liquid, we recommend consuming it immediately for the best taste and texture. If you need to save it, keep it refrigerated and consume it within 24 hours.",
+      },
+      {
+        question: "Can I travel with Oats Crush pouches?",
+        answer:
+          "Yes! The durable, lightweight, airtight pouches are perfectly sealed and travel-friendly. They easily fit into gym bags, backpacks, or luggage without any risk of spilling.",
       },
     ],
   },
   {
     id: "product-nutrition",
-    label: "Product & Nutrition",
+    label: " Orders & Shipping",
     faqs: [
       {
-        question: "Is Oats Crush vegan and lactose-free?",
+        question: "Can I buy a variety pack to sample multiple flavors?",
         answer:
-          "Yes — every flavour is 100% plant-based, dairy-free, and lactose-free, without compromising on taste or protein.",
+          "Yes! We offer customizable bundles and variety packs so you can discover your absolute favorite flavors before committing to a larger single-flavor pack.",
       },
       {
-        question: "What's the shelf life and how should I store it?",
+        question: "How long does shipping typically take?",
         answer:
-          "Unopened, it stays fresh for up to 9 months in a cool, dry place. No refrigeration needed until opened.",
+          "Orders are processed within 24–48 hours. Standard domestic shipping usually takes between 5 to 7 business days, depending on your location.",
+      },
+      {
+        question: "What is your return policy?",
+        answer:
+          "We do not offer returns or refunds once the order has been delivered. However, if your product arrives damaged, defective, or incorrect, please contact us within 48 hours of delivery at dm@oatscrush.co.in",
       },
     ],
   },
@@ -81,12 +106,7 @@ const faqCategories = [
       {
         question: "How do I contact support?",
         answer:
-          "Head to our Contact page, or reach out directly at contact@oatscrush.co.in — we typically respond within 24 hours.",
-      },
-      {
-        question: "How do I reset my password?",
-        answer:
-          "Go to the Login page and click 'Forgot Password' to receive a reset link on your registered email.",
+          "Head to our Contact page, or reach out directly at dm@oatscrush.co.in — we typically respond within 24 hours.",
       },
     ],
   },
