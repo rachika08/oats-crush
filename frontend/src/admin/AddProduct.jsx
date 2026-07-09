@@ -22,6 +22,7 @@ export default function AddProduct() {
 
     const [mainImage, setMainImage] = useState(null);
     const [additionalImages, setAdditionalImages] = useState([]);
+    const [ingredientGallery, setIngredientGallery] = useState([]);
     const [packSizes, setPackSizes] = useState([
         {
             label: "Pack of 1",
@@ -105,6 +106,19 @@ export default function AddProduct() {
             formData.append("additionalImages", image);
         });
 
+        const validIngredients = ingredientGallery.filter(
+            (item) => item.file && item.name.trim()
+        );
+
+        validIngredients.forEach((item) => {
+            formData.append("ingredientImages", item.file);
+        });
+
+        formData.append(
+            "ingredientNames",
+            JSON.stringify(validIngredients.map((item) => item.name))
+        );
+
         for (let [key, value] of formData.entries()) {
             console.log(key, value);
         }
@@ -135,6 +149,31 @@ export default function AddProduct() {
             packSizes.filter((_, i) => i !== index)
         );
     };
+
+    const addIngredient = () => {
+    setIngredientGallery([
+        ...ingredientGallery,
+        { file: null, name: "", preview: null }
+    ]);
+};
+
+const updateIngredientName = (index, value) => {
+    const updated = [...ingredientGallery];
+    updated[index].name = value;
+    setIngredientGallery(updated);
+};
+
+const updateIngredientImage = (index, file) => {
+    const updated = [...ingredientGallery];
+    updated[index].file = file;
+    updated[index].preview = file ? URL.createObjectURL(file) : null;
+    setIngredientGallery(updated);
+};
+
+const removeIngredient = (index) => {
+    setIngredientGallery(ingredientGallery.filter((_, i) => i !== index));
+};
+
     const handleNutritionChange = (field, value) => {
         setForm(prev => ({
             ...prev,
@@ -311,6 +350,47 @@ export default function AddProduct() {
                         onChange={handleChange}
                         className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
+                    <h3 className="text-lg font-semibold mt-6">Ingredient Gallery</h3>
+
+                    {ingredientGallery.map((item, index) => (
+                        <div key={index} className="flex items-center gap-3 border rounded-lg p-3">
+                            {item.preview && (
+                                <img
+                                    src={item.preview}
+                                    alt=""
+                                    className="w-14 h-14 rounded-full object-cover flex-shrink-0"
+                                />
+                            )}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => updateIngredientImage(index, e.target.files[0])}
+                                className="text-sm flex-shrink-0"
+                            />
+                            <input
+                                placeholder="Ingredient name (e.g. Cardamom)"
+                                value={item.name}
+                                onChange={(e) => updateIngredientName(index, e.target.value)}
+                                className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => removeIngredient(index)}
+                                className="text-red-500 text-sm flex-shrink-0"
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+
+                    <button
+                        type="button"
+                        onClick={addIngredient}
+                        className="bg-gray-800 text-white px-4 py-2 rounded"
+                    >
+                        Add Ingredient
+                    </button>
+
                     <h3 className="text-lg font-semibold mt-6">Nutrition Information</h3>
 
                     <input

@@ -81,7 +81,7 @@ const handleSubmit = async (e) => {
             <div className="relative order-1 md:order-2 h-[300px] md:h-screen w-full md:w-1/2">
                 <div className="absolute inset-0 overflow-hidden md:rounded-tl-[200px] md:rounded-bl-[200px]">
                     <img
-                        src="/images/banner4.webp"
+                        src="/images/img (1).webp"
                         alt="Login banner"
                         className="w-full h-full object-cover"
                     />

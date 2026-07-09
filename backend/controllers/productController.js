@@ -42,7 +42,7 @@ export const createProduct = async (req, res) => {
 
         const imageUrl = mainImageResult.secure_url;
 
-        // Upload additional images
+// Upload additional images
         const additionalImages = [];
 
         if (req.files.additionalImages) {
@@ -53,6 +53,24 @@ export const createProduct = async (req, res) => {
             }
         }
         console.log(additionalImages);
+
+        // Upload ingredient gallery images, paired with their names by index
+        const ingredientGallery = [];
+
+        if (req.files.ingredientImages) {
+            const ingredientNames = req.body.ingredientNames
+                ? JSON.parse(req.body.ingredientNames)
+                : [];
+
+            for (let i = 0; i < req.files.ingredientImages.length; i++) {
+                const result = await uploadToCloudinary(req.files.ingredientImages[i].buffer);
+
+                ingredientGallery.push({
+                    image: result.secure_url,
+                    name: ingredientNames[i] || "",
+                });
+            }
+        }
 
         // Parse arrays coming from FormData
         const benefitsArray = benefits
@@ -91,6 +109,7 @@ export const createProduct = async (req, res) => {
             featured: featuredValue,
             benefits: benefitsArray,
             ingredients: ingredientsArray,
+            ingredientGallery,
             faqs,
             howToEnjoy,
             nutrition: nutritionObject,
@@ -205,243 +224,6 @@ export const getProductsByCategory=async (req,res) => {
     }
 }
 
-// export const updateProduct = async (req, res) => {
-//     try {
-//         const oldProduct = await Product.findById(req.params.id);
-
-//         if (!oldProduct) {
-//             return res.status(404).json({
-//                 message: "Product not found"
-//             });
-//         }
-
-//         const wasUnavailable =
-//             oldProduct.stock === 0 || oldProduct.stock === undefined;
-
-//         const product = await Product.findByIdAndUpdate(
-//             req.params.id,
-//             req.body,
-//             { new: true }
-//         );
-
-//         // 🔥 Check if product just became available
-//         const isNowAvailable =
-//             product.stock > 0;
-
-//         if (wasUnavailable && isNowAvailable) {
-            
-//             const subs = await ProductNotification.find({
-//                 product: product._id,
-//                 notified: false
-//             });
-
-//             for (let sub of subs) {
-//                 await sendEmail(
-//                     sub.email,
-//                     `${product.name} is now available 🎉`,
-//                     `
-//                         <h2>Good news!</h2>
-//                         <p><b>${product.name}</b> is now back in stock.</p>
-//                         <p>Go grab it before it runs out again!</p>
-//                     `
-//                 );
-
-//                 sub.notified = true;
-//                 await sub.save();
-//             }
-//         }
-
-//         return res.status(200).json(product);
-
-//     } catch (error) {
-//         return res.status(500).json({ message: error.message });
-//     }
-// };
-
-// export const updateProduct = async (req, res) => {
-//     try {
-//         const oldProduct = await Product.findById(req.params.id);
-
-//         if (!oldProduct) {
-//             return res.status(404).json({ message: "Product not found" });
-//         }
-
-//         console.log("DEBUG req.body:", req.body);
-//         console.log("DEBUG oldProduct.stock:", oldProduct.stock, typeof oldProduct.stock);
-
-//         const wasUnavailable =
-//             oldProduct.stock === 0 || oldProduct.stock === undefined;
-
-//         const product = await Product.findByIdAndUpdate(
-//             req.params.id,
-//             req.body,
-//             { new: true }
-//         );
-
-//         const isNowAvailable = product.stock > 0;
-
-//         console.log("DEBUG new product.stock:", product.stock, typeof product.stock);
-//         console.log("DEBUG wasUnavailable:", wasUnavailable, "isNowAvailable:", isNowAvailable);
-
-//         if (wasUnavailable && isNowAvailable) {
-//             console.log("DEBUG entered notification block");
-//             const subs = await ProductNotification.find({
-//                 product: product._id,
-//                 notified: false
-//             });
-//             console.log("DEBUG subs found:", subs.length, subs);
-
-//             for (let sub of subs) {
-//                 await sendEmail(
-//                     sub.email,
-//                     `${product.name} is now available 🎉`,
-//                     `<h2>Good news!</h2><p><b>${product.name}</b> is now back in stock.</p>`
-//                 );
-//                 sub.notified = true;
-//                 await sub.save();
-//             }
-//         } else {
-//             console.log("DEBUG skipped notification block");
-//         }
-
-//         return res.status(200).json(product);
-
-//     } catch (error) {
-//         console.error("DEBUG updateProduct error:", error);
-//         return res.status(500).json({ message: error.message });
-//     }
-// };
-
-// export const updateProduct = async (req, res) => {
-//     try {
-//         const oldProduct = await Product.findById(req.params.id);
-
-//         if (!oldProduct) {
-//             return res.status(404).json({ message: "Product not found" });
-//         }
-//         console.log("DEBUG oldProduct.isLaunched:", oldProduct.isLaunched);
-//         console.log("DEBUG req.body.isLaunched:", req.body.isLaunched);
-//         const wasOutOfStock = oldProduct.stock === 0 || oldProduct.stock === undefined;
-//         const wasNotLaunched = oldProduct.isLaunched === false;
-//         console.log("DEBUG wasNotLaunched:", wasNotLaunched);
-//         const product = await Product.findByIdAndUpdate(
-//             req.params.id,
-//             req.body,
-//             { new: true }
-//         );
-
-//         const isNowInStock = product.stock > 0;
-//         const isNowLaunched = product.isLaunched === true;
-
-//         const justLaunched = wasNotLaunched && isNowLaunched;
-//         const justRestocked = !wasNotLaunched && wasOutOfStock && isNowInStock;
-
-//         if (justLaunched || justRestocked) {
-//             const subs = await ProductNotification.find({
-//                 product: product._id,
-//                 notified: false
-//             });
-
-//             for (let sub of subs) {
-//                 const subject = justLaunched
-//                     ? `${product.name} is now LIVE 🚀`
-//                     : `${product.name} is back in stock 🎉`;
-
-//                 const html = justLaunched
-//                     ? `<h2>It's here!</h2><p><b>${product.name}</b> has just launched.</p><p>Be one of the first to grab it!</p>`
-//                     : `<h2>Good news!</h2><p><b>${product.name}</b> is now back in stock.</p><p>Go grab it before it runs out again!</p>`;
-
-//                 await sendEmail(sub.email, subject, html);
-
-//                 sub.notified = true;
-//                 await sub.save();
-//             }
-//         }
-
-//         return res.status(200).json(product);
-
-//     } catch (error) {
-//         return res.status(500).json({ message: error.message });
-//     }
-// };
-
-// export const updateProduct = async (req, res) => {
-//     try {
-//         const oldProduct = await Product.findById(req.params.id);
-
-//         if (!oldProduct) {
-//             return res.status(404).json({ message: "Product not found" });
-//         }
-        
-//         const parseIfString = (value) => {
-//         if (typeof value === "string") {
-//             try {
-//             return JSON.parse(value);
-//             } catch (e) {
-//             return value;
-//             }
-//         }
-//         return value;
-//         };
-
-//         req.body.nutrition = parseIfString(req.body.nutrition);
-//         req.body.faqs = parseIfString(req.body.faqs);
-//         req.body.packSizes = parseIfString(req.body.packSizes);
-//         req.body.howToEnjoy = parseIfString(req.body.howToEnjoy);
-
-//         const wasOutOfStock = !oldProduct.stock || oldProduct.stock <= 0;
-//         const wasNotLaunched = oldProduct.isLaunched === false;
-
-//         const product = await Product.findByIdAndUpdate(
-//             req.params.id,
-//             req.body,
-//             { new: true, runValidators: true }
-//         );
-
-//         const isNowInStock = product.stock > 0;
-//         const isNowLaunched = product.isLaunched === true;
-
-//         const justLaunched = wasNotLaunched && isNowLaunched;
-//         const justRestocked = !wasNotLaunched && wasOutOfStock && isNowInStock;
-
-//         console.log("DEBUG:", { wasOutOfStock, wasNotLaunched, isNowInStock, isNowLaunched, justLaunched, justRestocked });
-
-//         if (justLaunched || justRestocked) {
-//             const subs = await ProductNotification.find({
-//                 product: product._id,
-//                 notified: false
-//             });
-
-//             console.log(`DEBUG: found ${subs.length} subscribers to notify for product ${product._id}`);
-
-//             for (const sub of subs) {
-//                 const subject = justLaunched
-//                     ? `${product.name} is now LIVE 🚀`
-//                     : `${product.name} is back in stock 🎉`;
-
-//                 const html = justLaunched
-//                     ? `<h2>It's here!</h2><p><b>${product.name}</b> has just launched.</p><p>Be one of the first to grab it!</p>`
-//                     : `<h2>Good news!</h2><p><b>${product.name}</b> is now back in stock.</p><p>Go grab it before it runs out again!</p>`;
-
-//                 try {
-//                     await sendEmail(sub.email, subject, html);
-//                     // delete instead of marking notified, so the user can re-subscribe later
-//                     await ProductNotification.deleteOne({ _id: sub._id });
-//                 } catch (emailErr) {
-//                     console.error(`Failed to email ${sub.email} for product ${product._id}:`, emailErr.message);
-//                     // don't delete — leave it so it can be retried on the next restock/launch,
-//                     // and don't let one failure block the rest of the batch
-//                 }
-//             }
-            
-//         }
-
-//         return res.status(200).json(product);
-
-//     } catch (error) {
-//         return res.status(500).json({ message: error.message });
-//     }
-// };
 
 export const getUpcomingProducts = async (req, res) => {
     try {
@@ -510,7 +292,31 @@ export const updateProduct = async (req, res) => {
     }
     }
 
-    req.body.additionalImages = [...keptImages, ...newImages];
+req.body.additionalImages = [...keptImages, ...newImages];
+
+    // -----------------------------
+    // HANDLE INGREDIENT GALLERY
+    // -----------------------------
+    const keptIngredients = req.body.existingIngredients !== undefined
+    ? parseIfString(req.body.existingIngredients)
+    : (oldProduct.ingredientGallery || []);
+
+    let newIngredients = [];
+    if (req.files?.ingredientImages?.length > 0) {
+    const newIngredientNames = req.body.newIngredientNames
+        ? parseIfString(req.body.newIngredientNames)
+        : [];
+
+    for (let i = 0; i < req.files.ingredientImages.length; i++) {
+        const result = await uploadToCloudinary(req.files.ingredientImages[i].buffer);
+        newIngredients.push({
+            image: result.secure_url,
+            name: newIngredientNames[i] || "",
+        });
+    }
+    }
+
+    req.body.ingredientGallery = [...keptIngredients, ...newIngredients];
 
     // -----------------------------
     // UPDATE PRODUCT

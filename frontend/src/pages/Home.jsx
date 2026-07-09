@@ -52,7 +52,6 @@ const faqs = [
       <InfoBar />
       <FeaturedProducts />
       <FlavoursSection />
-
       <BenefitsSection />
       <ReviewsCarousel />
       <PromoBanner />

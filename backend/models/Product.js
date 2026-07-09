@@ -50,6 +50,12 @@ const productSchema = mongoose.Schema({
     ingredients: [{
         type: String
     }],
+    ingredientGallery: [
+        {
+            image: { type: String, required: true },
+            name: { type: String, required: true },
+        }
+    ],
     faqs: [
         {
             question: { type: String, default: "" },

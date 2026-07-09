@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 // Placeholder paths — swap these with your real banner images.
 const heroBanners = [
-  "/images/banner1.webp",
+  "/images/banner.webp",
   "/images/banner2.webp",
   "/images/banner3.webp",
   "/images/banner4.webp",
