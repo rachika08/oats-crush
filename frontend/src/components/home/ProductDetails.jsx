@@ -12,6 +12,8 @@ import { useCart } from "../../context/CartContext";
 import PageFade from "../PageFade";
 import { Reveal, RevealGroup, RevealItem } from "../Reveal";
 import { motion, AnimatePresence } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
 
 import {
   Moon,
@@ -643,6 +645,38 @@ const handleWriteReview = () => {
                     </RevealItem>
                 </RevealGroup>
 
+
+{product.ingredientGallery?.length > 0 && (
+  <Reveal variant="subtle" className="mt-10">
+    <h3 className="font-heading text-xl mb-4">What's Inside</h3>
+    <Swiper
+      modules={[Navigation, Pagination]}
+      navigation
+      pagination={{ clickable: true }}
+      slidesPerView={2.5}
+      spaceBetween={16}
+      breakpoints={{
+        640: { slidesPerView: 3.5 },
+        1024: { slidesPerView: 5 },
+      }}
+      className="cravings-swiper !pb-8"
+    >
+      {product.ingredientGallery.map((item, i) => (
+        <SwiperSlide key={i} className="!w-auto flex flex-col items-center text-center">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-gray-100 mb-2">
+            <img
+              src={item.image}
+              alt={item.name}
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <p className="font-body text-xs sm:text-sm font-medium">{item.name}</p>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  </Reveal>
+)}
 
 {/* Nutritional Value */}
 {product.nutrition && product.nutrition.nutrients?.length > 0 && (

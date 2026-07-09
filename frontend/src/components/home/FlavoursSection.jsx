@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Check, Loader2, ArrowRight } from "lucide-react";
 import api from "../../api/axios";
+import CrushMoments from "./CrushMoments";
 import { Reveal, RevealGroup, RevealItem } from "../Reveal";
 
 const heroBadges = [
@@ -200,6 +201,9 @@ const FlavoursSection = () => {
             </Reveal>
           </div>
         )}
+
+<CrushMoments />
+
 {/* Coming-soon strip — soft launch card */}
 {comingSoonProduct && (
 <Reveal
@@ -208,7 +212,7 @@ const FlavoursSection = () => {
     className="block"
   >
     <div
-      className="relative border-2 border-dashed border-brand-orange rounded-2xl px-6 pt-8 pb-6 mt-30 cursor-pointer hover:-translate-y-1 transition bg-[#FFFBF5]"
+      className="relative border-2 border-dashed border-brand-orange rounded-2xl px-6 pt-8 pb-6 mt-15 cursor-pointer hover:-translate-y-1 transition bg-[#FFFBF5]"
       onClick={() => navigate(`/product/${comingSoonProduct._id}`)}
     >
     <span className="absolute -top-2.5 left-6 bg-black text-white text-[11px] font-body font-medium px-3.5 py-1 rounded-md -rotate-3">
@@ -274,8 +278,8 @@ const FlavoursSection = () => {
           <span key={`b-${i}`} className="px-2.5 font-body text-[11px] text-brand-orange-dark whitespace-nowrap">•</span>,
           <span key={`c-${i}`} className="px-2.5 font-body text-[11px] font-medium tracking-wide text-brand-orange-dark whitespace-nowrap">BE THE FIRST TO KNOW</span>,
           <span key={`d-${i}`} className="px-2.5 font-body text-[11px] text-brand-orange-dark whitespace-nowrap">•</span>,
-                    <span key={`c-${i}`} className="px-2.5 font-body text-[11px] font-medium tracking-wide text-brand-orange-dark whitespace-nowrap">NEW BREW</span>,
-          <span key={`d-${i}`} className="px-2.5 font-body text-[11px] text-brand-orange-dark whitespace-nowrap">•</span>,
+          <span key={`e-${i}`} className="px-2.5 font-body text-[11px] font-medium tracking-wide text-brand-orange-dark whitespace-nowrap">NEW BREW</span>,
+          <span key={`f-${i}`} className="px-2.5 font-body text-[11px] text-brand-orange-dark whitespace-nowrap">•</span>,
         ])}
       </div>
     </div>

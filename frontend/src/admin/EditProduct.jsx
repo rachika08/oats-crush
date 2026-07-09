@@ -668,6 +668,8 @@ export default function EditProduct() {
   // NEW: image states
   const [mainImage, setMainImage] = useState(null);
   const [additionalImages, setAdditionalImages] = useState([]);
+  const [existingIngredients, setExistingIngredients] = useState([]);
+const [newIngredients, setNewIngredients] = useState([]);
 
   // -----------------------------
   // LOAD CATEGORIES
@@ -702,6 +704,8 @@ export default function EditProduct() {
           nutrients: []
         }
       });
+
+      setExistingIngredients(data.ingredientGallery || []);
       setExistingAdditionalImages(data.additionalImages || []); // ✅ track separately
       setPackSizes(
         data.packSizes || [
@@ -802,6 +806,31 @@ export default function EditProduct() {
     setExistingAdditionalImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const removeExistingIngredient = (index) => {
+    setExistingIngredients((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const addNewIngredient = () => {
+    setNewIngredients([...newIngredients, { file: null, name: "", preview: null }]);
+  };
+
+  const updateNewIngredientName = (index, value) => {
+    const updated = [...newIngredients];
+    updated[index].name = value;
+    setNewIngredients(updated);
+  };
+
+  const updateNewIngredientImage = (index, file) => {
+    const updated = [...newIngredients];
+    updated[index].file = file;
+    updated[index].preview = file ? URL.createObjectURL(file) : null;
+    setNewIngredients(updated);
+  };
+
+  const removeNewIngredient = (index) => {
+    setNewIngredients(newIngredients.filter((_, i) => i !== index));
+  };
+
   // -----------------------------
   // SUBMIT (IMPORTANT CHANGE → FORM DATA)
   // -----------------------------
@@ -844,6 +873,23 @@ export default function EditProduct() {
       formData.append("additionalImages", file);
     });
 
+    formData.append(
+      "existingIngredients",
+      JSON.stringify(existingIngredients)
+    );
+
+    const validNewIngredients = newIngredients.filter(
+      (item) => item.file && item.name.trim()
+    );
+
+    validNewIngredients.forEach((item) => {
+      formData.append("ingredientImages", item.file);
+    });
+
+    formData.append(
+      "newIngredientNames",
+      JSON.stringify(validNewIngredients.map((item) => item.name))
+    );
     try {
       await api.put(`/product/${id}`, formData);
 
@@ -1205,12 +1251,66 @@ export default function EditProduct() {
               </div>
             )}
 
-            <input
+           <input
               type="file"
               multiple
               onChange={(e) => setAdditionalImages(Array.from(e.target.files))}
               className="w-full border p-2"
             />
+          </div>
+
+          {/* ---------------- INGREDIENT GALLERY ---------------- */}
+          <div className="mt-6">
+            <h3 className="text-xl font-bold mb-3">Ingredient Gallery</h3>
+
+            {existingIngredients.map((item, index) => (
+              <div key={`existing-${index}`} className="flex items-center gap-3 border rounded-lg p-3 mb-2">
+                <img src={item.image} alt={item.name} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
+                <p className="flex-1 text-sm">{item.name}</p>
+                <button
+                  type="button"
+                  onClick={() => removeExistingIngredient(index)}
+                  className="text-red-500 text-sm flex-shrink-0"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+
+            {newIngredients.map((item, index) => (
+              <div key={`new-${index}`} className="flex items-center gap-3 border rounded-lg p-3 mb-2">
+                {item.preview && (
+                  <img src={item.preview} alt="" className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => updateNewIngredientImage(index, e.target.files[0])}
+                  className="text-sm flex-shrink-0"
+                />
+                <input
+                  placeholder="Ingredient name"
+                  value={item.name}
+                  onChange={(e) => updateNewIngredientName(index, e.target.value)}
+                  className="flex-1 border rounded-lg px-3 py-2 text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeNewIngredient(index)}
+                  className="text-red-500 text-sm flex-shrink-0"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={addNewIngredient}
+              className="bg-gray-800 text-white px-4 py-2 rounded"
+            >
+              Add Ingredient
+            </button>
           </div>
 
           {/* ---------------- FAQs ---------------- */}
