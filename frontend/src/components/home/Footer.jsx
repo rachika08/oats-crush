@@ -39,6 +39,22 @@ const Footer = () => {
                   About Us
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/customize-box"
+                  className="hover:text-brand-orange-dark transition"
+                >
+                  Customize Your Own Box
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/faq"
+                  className="hover:text-brand-orange-dark transition"
+                >
+                  FAQs
+                </Link>
+              </li>
             </ul>
           </RevealItem>
 
@@ -114,7 +130,7 @@ const Footer = () => {
 
           <div className="flex gap-3">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/oatscrush/"
               target="_blank"
               rel="noreferrer"
               aria-label="Instagram"
@@ -123,7 +139,7 @@ const Footer = () => {
               <FaInstagram size={25} />
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/company/oats-crush"
               target="_blank"
               rel="noreferrer"
               aria-label="LinkedIn"

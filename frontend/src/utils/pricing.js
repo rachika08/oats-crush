@@ -18,3 +18,21 @@ export function calculatePricing(subtotal, itemCount = 1) {
 
   return { subtotal, shippingFee, discount, grandTotal };
 }
+
+// Static "was" pricing for visual attraction only — no real discount logic,
+// no admin control. Only these two products show it; everyone else is unaffected.
+const STRIKETHROUGH_PRODUCTS = ["rasmalai", "coffee"];
+const STRIKETHROUGH_FACTOR = 0.915; // ~8.5% off — matches the "₹130 → ₹119" example
+
+export function getStrikethroughPrice(product, price) {
+  if (!product?.name || !price) return null;
+
+  const nameLower = product.name.toLowerCase();
+  const matches = STRIKETHROUGH_PRODUCTS.some((key) => nameLower.includes(key));
+  if (!matches) return null;
+
+  const original = Math.round(price / STRIKETHROUGH_FACTOR / 5) * 5;
+  const discountPercent = Math.round(((original - price) / original) * 100);
+
+  return { original, discountPercent };
+}

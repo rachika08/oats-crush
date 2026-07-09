@@ -10,6 +10,7 @@ import { Reveal } from "../Reveal";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { getStrikethroughPrice } from "../../utils/pricing";
 
 
 const FeaturedProducts = ({
@@ -279,9 +280,28 @@ setNotifyStatus((prev) => ({ ...prev, [productId]: "idle" }));
                             product.category?.name}
                         </p>
 
-                        <p className="font-heading text-2xl mb-3">
-                          ₹{product.packSizes?.find(p => p.units === 1)?.price || "N/A"}
-                        </p>
+                        {(() => {
+                          const price = product.packSizes?.find(p => p.units === 1)?.price;
+                          const strike = getStrikethroughPrice(product, price);
+
+                          return (
+                            <div className="flex items-center gap-2 mb-3 flex-wrap">
+                              <p className="font-heading text-2xl">
+                                ₹{price ?? "N/A"}
+                              </p>
+                              {strike && (
+                                <>
+                                  <span className="font-heading text-2xl text-gray-400 line-through">
+                                    ₹{strike.original}
+                                  </span>
+                                  <span className="bg-green-100 text-green-700 text-xs font-body font-semibold px-2 py-0.5 rounded-full">
+                                    {strike.discountPercent}% OFF
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          );
+                        })()}
 
 <button
   onClick={(e) =>

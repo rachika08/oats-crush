@@ -39,7 +39,7 @@ import Blogs from './components/home/Blogs';
 import WhatsAppButton from './components/WhatsAppButton';
 import FAQPage from './pages/FAQPage';
 import NotFound from './pages/NotFound';
-
+import InitialLoader from './components/InitialLoader';
 
 function RootLayout() {
   return (
@@ -123,7 +123,8 @@ const router = createBrowserRouter([
 ]);
 export default function App() {
   return (
-<CartProvider>
+    <CartProvider>
+      <InitialLoader />
       <RouterProvider router={router} />
     </CartProvider>
   );

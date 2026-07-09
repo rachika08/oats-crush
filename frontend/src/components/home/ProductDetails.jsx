@@ -12,6 +12,7 @@ import { useCart } from "../../context/CartContext";
 import PageFade from "../PageFade";
 import { Reveal, RevealGroup, RevealItem } from "../Reveal";
 import { motion, AnimatePresence } from "framer-motion";
+import { getStrikethroughPrice } from "../../utils/pricing";
 
 
 import {
@@ -512,7 +513,7 @@ const handleWriteReview = () => {
                         </div>
 
                         {/* Price */}
-<div className="flex items-baseline gap-2 mb-1">
+<div className="flex items-baseline gap-2 mb-1 flex-wrap">
     <AnimatePresence mode="wait">
         <motion.span
             key={selectedPack?.price}
@@ -530,6 +531,22 @@ const handleWriteReview = () => {
                                     ₹{(selectedPack.price / selectedPack.units).toFixed(0)}/pouch
                                 </span>
                             )}
+                            {(() => {
+                                if (!selectedPack || selectedPack.units !== 1) return null;
+                                const strike = getStrikethroughPrice(product, selectedPack.price);
+                                if (!strike) return null;
+
+                                return (
+                                    <>
+                                        <span className="font-heading text-2xl text-gray-400 line-through">
+                                            ₹{strike.original}.00
+                                        </span>
+                                        <span className="bg-green-100 text-green-700 text-xs font-body font-semibold px-2.5 py-1 rounded-full">
+                                            {strike.discountPercent}% OFF
+                                        </span>
+                                    </>
+                                );
+                            })()}
                         </div>
 
                         <p className="font-body text-xs text-gray-400 mb-6">
