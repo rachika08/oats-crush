@@ -12,8 +12,7 @@ import { useCart } from "../../context/CartContext";
 import PageFade from "../PageFade";
 import { Reveal, RevealGroup, RevealItem } from "../Reveal";
 import { motion, AnimatePresence } from "framer-motion";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+
 
 import {
   Moon,
@@ -613,13 +612,13 @@ const handleWriteReview = () => {
                 </div>
 
                 {/* Trust Badges */}
-                <RevealGroup staggerDelay={0.1} className="grid grid-cols-3 gap-4 sm:gap-6 mt-12 sm:mt-16 text-center">
+                <RevealGroup staggerDelay={0.1} className="grid grid-cols-3 gap-4 sm:gap-6 mt-20 sm:mt-26 text-center">
 <RevealItem variant="subtle" className="flex flex-col items-center">
                         <Truck size={44} strokeWidth={2.5} className="text-brand-orange mb-3" />
                         <p className="font-body font-semibold text-sm mb-1">
                             Fast Delivery
                         </p>
-                        <p className="font-body text-xs text-gray-500">
+                        <p className="font-body text-xs text-gray-500 hidden sm:block">
                             Delivered within 3-5 business days
                         </p>
                     </RevealItem>
@@ -629,7 +628,7 @@ const handleWriteReview = () => {
                         <p className="font-body font-semibold text-sm mb-1">
                             Easy Returns
                         </p>
-                        <p className="font-body text-xs text-gray-500">
+                        <p className="font-body text-xs text-gray-500 hidden sm:block">
                             Hassle-free returns within 7 days
                         </p>
                     </RevealItem>
@@ -639,42 +638,39 @@ const handleWriteReview = () => {
                         <p className="font-body font-semibold text-sm mb-1">
                             Secure Checkout
                         </p>
-                        <p className="font-body text-xs text-gray-500">
+                        <p className="font-body text-xs text-gray-500 hidden sm:block">
                             Your payments are protected and encrypted
                         </p>
                     </RevealItem>
                 </RevealGroup>
 
-
 {product.ingredientGallery?.length > 0 && (
-  <Reveal variant="subtle" className="mt-10">
-    <h3 className="font-heading text-xl mb-4">What's Inside</h3>
-    <Swiper
-      modules={[Navigation, Pagination]}
-      navigation
-      pagination={{ clickable: true }}
-      slidesPerView={2.5}
-      spaceBetween={16}
-      breakpoints={{
-        640: { slidesPerView: 3.5 },
-        1024: { slidesPerView: 5 },
-      }}
-      className="cravings-swiper !pb-8"
-    >
-      {product.ingredientGallery.map((item, i) => (
-        <SwiperSlide key={i} className="!w-auto flex flex-col items-center text-center">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-gray-100 mb-2">
-            <img
-              src={item.image}
-              alt={item.name}
-              loading="lazy"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <p className="font-body text-xs sm:text-sm font-medium">{item.name}</p>
-        </SwiperSlide>
-      ))}
-    </Swiper>
+<Reveal variant="noticeable" className="mt-20 sm:mt-26">
+    <h2 className="font-heading text-3xl sm:text-4xl md:text-[44px] uppercase text-center mb-8 sm:mb-10">
+      What's Inside
+    </h2>
+
+    <div className="marquee-wrapper overflow-hidden -mx-4 sm:-mx-6 px-4 sm:px-6">
+      <div className="marquee-track gap-8 sm:gap-10 py-4" style={{ "--marquee-duration": "58s" }}>
+        {Array.from({ length: 6 })
+          .flatMap((_, i) =>
+            product.ingredientGallery.map((item, j) => ({ ...item, key: `${i}-${j}` }))
+          )
+          .map((item) => (
+            <div key={item.key} className="flex-shrink-0 flex flex-col items-center text-center w-28 sm:w-32 md:w-40">
+             <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-gray-100 shadow-lg mb-3">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <p className="font-body text-sm font-medium">{item.name}</p>
+            </div>
+          ))}
+      </div>
+    </div>
   </Reveal>
 )}
 
