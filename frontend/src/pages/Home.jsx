@@ -11,6 +11,7 @@ import FAQSection from "../components/home/FAQSection";
 import HowToCrushSection from "../components/home/HowToCrushSection";
 import BlogSection from "../components/home/BlogSection";
 import Footer from "../components/home/Footer";
+import ComparisonSection from "../components/home/ComparisonSection";
 
 const Home = () => {
 const faqs = [
@@ -52,6 +53,7 @@ const faqs = [
       <InfoBar />
       <FeaturedProducts />
       <FlavoursSection />
+      <ComparisonSection />
       <BenefitsSection />
       <ReviewsCarousel />
       <PromoBanner />
