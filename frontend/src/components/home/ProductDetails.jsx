@@ -550,7 +550,7 @@ const handleWriteReview = () => {
                         </div>
 
                         <p className="font-body text-xs text-gray-400 mb-6">
-                            Incl. of all taxes &amp; shipping
+                            Incl. of all taxes
                         </p>
 
                         {/* Quantity stepper */}

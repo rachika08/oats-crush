@@ -3,6 +3,8 @@ import cloudinary from "../config/cloudinary.js";
 import {uploadToCloudinary} from "../utils/uploadToCloudinary.js"
 import ProductNotification from "../models/ProductNotification.js";
 import { sendEmail } from "../utils/sendEmail.js";
+import Review from "../models/Review.js";
+
 export const createProduct = async (req, res) => {
     try {
         const {
@@ -141,8 +143,33 @@ export const createProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
     try {
-        const products = await Product.find().populate("category");
-        res.status(200).json(products);
+        const products = await Product.find().populate("category").lean();
+
+        const ratingStats = await Review.aggregate([
+            {
+                $group: {
+                    _id: "$product",
+                    averageRating: { $avg: "$rating" },
+                    reviewCount: { $sum: 1 },
+                },
+            },
+        ]);
+
+        const ratingMap = {};
+        ratingStats.forEach((stat) => {
+            ratingMap[stat._id.toString()] = {
+                averageRating: Math.round(stat.averageRating * 10) / 10,
+                reviewCount: stat.reviewCount,
+            };
+        });
+
+        const productsWithRatings = products.map((product) => ({
+            ...product,
+            averageRating: ratingMap[product._id.toString()]?.averageRating || 0,
+            reviewCount: ratingMap[product._id.toString()]?.reviewCount || 0,
+        }));
+
+        res.status(200).json(productsWithRatings);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
