@@ -425,7 +425,7 @@ if (!defaultPack) {
                           alt={review.productName}
                           className="absolute inset-0 w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-black/40" />
+                        <div className="absolute inset-0" />
                         <button
                           aria-label="Play reel"
                           onClick={() => setOpenReview(review)}

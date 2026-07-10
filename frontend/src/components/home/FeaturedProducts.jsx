@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-import { Bell } from "lucide-react";
+import { Bell, Star } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import CartToast from "../CartToast";
 import { Reveal } from "../Reveal";
@@ -29,6 +29,15 @@ const [toast, setToast] = useState({ show: false, message: "", variant: "success
     fetchProducts();
   }, []);
 
+// Fixed display order for the homepage featured strip
+  const FEATURED_ORDER = ["rasmalai", "coffee", "midnight latte"];
+
+  const getFeaturedRank = (name = "") => {
+    const lower = name.toLowerCase();
+    const idx = FEATURED_ORDER.findIndex((key) => lower.includes(key));
+    return idx === -1 ? FEATURED_ORDER.length : idx;
+  };
+
   const fetchProducts = async () => {
     try {
       const res=await api.get("/product");
@@ -38,34 +47,16 @@ const [toast, setToast] = useState({ show: false, message: "", variant: "success
       (product) => product._id !== excludeProductId
     );
 
-    setProducts(filteredProducts);
+    const sortedProducts = [...filteredProducts].sort(
+      (a, b) => getFeaturedRank(a.name) - getFeaturedRank(b.name)
+    );
+
+    setProducts(sortedProducts);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // const handleAddToCart = async (e, product) => {
-  //   e.stopPropagation();
-
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     if (!token) {
-  //       alert("Please login to add items to your cart");
-  //       navigate("/login");
-  //       return;
-  //     }
-
-  //     await api.post(
-  //       "/cart/add",
-  //       { productId: product._id, quantity: 1 },
-  //       { headers: { Authorization: `Bearer ${token}` } }
-  //     );
-
-  //     alert("Added to cart!");
-  //   } catch (error) {
-  //     console.log(error.response?.data || error.message);
-  //   }
-  // };
 const [cartStatus, setCartStatus] = useState({});
 
 const handleAddToCart = async (e, product) => {
@@ -271,6 +262,19 @@ setNotifyStatus((prev) => ({ ...prev, [productId]: "idle" }));
                       </div>
 
                       <div className="px-4 pb-4">
+                        {product.reviewCount > 0 && (
+                          <div className="inline-flex items-center gap-1.5 bg-white shadow-sm border border-gray-100 rounded-full px-3 py-1 mb-2">
+                            <Star size={14} className="fill-brand-orange text-brand-orange" />
+                            <span className="font-body text-sm font-semibold text-black">
+                              {product.averageRating}
+                            </span>
+                            <span className="font-body text-sm text-gray-300">|</span>
+                            <span className="font-body text-sm text-gray-500">
+                              {product.reviewCount} Reviews
+                            </span>
+                          </div>
+                        )}
+
                         <h3 className="font-heading text-2xl sm:text-2xl mb-1 uppercase">
                           {product.name}
                         </h3>
