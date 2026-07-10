@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, ChevronDown, SlidersHorizontal, X, ChevronRight } from "lucide-react";
+import { Bell, Star, ChevronDown, SlidersHorizontal, X, ChevronRight } from "lucide-react";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/home/Footer";
@@ -8,17 +8,31 @@ import InfoBar from "../components/home/InfoBar";
 import CartToast from "../components/CartToast";
 import PageFade from "../components/PageFade";
 import { getStrikethroughPrice } from "../utils/pricing";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 const PRODUCTS_PER_PAGE = 6;
 
 
 const FilterDropdown = ({ label, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const isSelected = Boolean(value);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 border rounded-full px-4 py-2 font-body text-sm shadow-sm transition-colors duration-200 cursor-pointer ${isSelected
@@ -35,37 +49,56 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
         />
       </button>
 
-      {isOpen && (
-        <div className="absolute top-10 left-0 bg-white border rounded-xl shadow-md min-w-[160px] py-2 z-20 text-sm">
-          {isSelected && (
-            <button
-              onClick={() => {
-                onChange("");
-                setIsOpen(false);
-              }}
-              className="w-full text-left px-4 py-2 text-red-400 hover:bg-gray-100 transition-colors duration-150 cursor-pointer border-b border-gray-100"
-            >
-              ✕ Clear
-            </button>
-          )}
-          {options.map((option) => (
-            <button
-              key={option}
-              onClick={() => {
-                onChange(option);
-                setIsOpen(false);
-              }}
-              className="w-full text-left px-4 py-2 hover:bg-gray-100 hover:text-brand-orange transition-colors duration-150 cursor-pointer"
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.96 }}
+            transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
+            style={{ transformOrigin: "top left" }}
+            className="absolute top-11 left-0 bg-white rounded-2xl shadow-lg min-w-[170px] p-2 z-20 font-body text-sm"
+          >
+            <div className="absolute -top-1 left-6 w-3 h-3 bg-white rotate-45" />
+
+            {isSelected && (
+              <>
+                <button
+                  onClick={() => {
+                    onChange("");
+                    setIsOpen(false);
+                  }}
+                  className="relative w-full flex items-center gap-2 text-left px-3 py-2 rounded-lg hover:bg-red-50 transition text-red-500 cursor-pointer"
+                >
+                  <X size={14} />
+                  Clear
+                </button>
+                <div className="h-px bg-gray-100 mx-1.5 my-1" />
+              </>
+            )}
+
+            {options.map((option) => (
+              <button
+                key={option}
+                onClick={() => {
+                  onChange(option);
+                  setIsOpen(false);
+                }}
+                className={`relative w-full text-left px-3 py-2 rounded-lg transition cursor-pointer ${
+                  value === option
+                    ? "bg-brand-orange/10 text-brand-orange-dark font-medium"
+                    : "hover:bg-brand-orange/10"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
-
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -322,7 +355,20 @@ const ProductCardItem = ({ product }) => {
           />
         </div>
 
-        <div className="px-3 pb-3 sm:px-4 sm:pb-4">
+<div className="px-3 pb-3 sm:px-4 sm:pb-4">
+          {product.reviewCount > 0 && (
+            <div className="inline-flex items-center gap-1.5 bg-white shadow-sm border border-gray-100 rounded-full px-2.5 py-0.5 sm:px-3 sm:py-1 mb-2">
+              <Star size={12} className="fill-brand-orange text-brand-orange sm:w-3.5 sm:h-3.5" />
+              <span className="font-body text-xs sm:text-sm font-semibold text-black">
+                {product.averageRating}
+              </span>
+              <span className="font-body text-xs sm:text-sm text-gray-300">|</span>
+              <span className="font-body text-xs sm:text-sm text-gray-500">
+                {product.reviewCount} Reviews
+              </span>
+            </div>
+          )}
+
           <h3 className="font-heading text-lg sm:text-2xl mb-1 uppercase line-clamp-1">
             {product.name}
           </h3>
