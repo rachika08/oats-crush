@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
+import { X, Star } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import api from "../api/axios";
@@ -9,6 +9,7 @@ import Footer from "../components/home/Footer";
 import { useCart } from "../context/CartContext";
 import CartToast from "../components/CartToast";
 import { Reveal, RevealGroup, RevealItem } from "../components/Reveal";
+
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -216,6 +217,19 @@ const handleAddBoxToCart = async () => {
           )}
         </div>
         <div className="p-5">
+          {product.reviewCount > 0 && (
+            <div className="inline-flex items-center gap-1.5 bg-white shadow-sm border border-gray-100 rounded-full px-3 py-1 mb-2">
+              <Star size={14} className="fill-brand-orange text-brand-orange" />
+              <span className="font-body text-sm font-semibold text-black">
+                {product.averageRating}
+              </span>
+              <span className="font-body text-sm text-gray-300">|</span>
+              <span className="font-body text-sm text-gray-500">
+                {product.reviewCount} Reviews
+              </span>
+            </div>
+          )}
+
           <h3 className="font-heading text-lg uppercase mb-1">{product.name}</h3>
           <p className="font-body text-sm text-gray-500 mb-4">
             {product.benefits?.slice(0, 2).join(" • ") || "Lactose-free • Vegan friendly"}
@@ -241,50 +255,51 @@ const handleAddBoxToCart = async () => {
           </div>
         )}
 
-        {/* Selection tracker bar */}
-        <div className="bg-white border border-gray-200 rounded-full shadow-sm px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 overflow-x-auto flex-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {selectedItems.map((item) => (
-              <div key={item.uid} className="relative flex-shrink-0 group">
-                <img
-                  src={item.product.image}
-                  alt={item.product.name}
-                  className="w-14 h-14 rounded-full object-cover border-2 border-brand-orange"
-                />
-                <button
-                  onClick={() => removeItem(item.uid)}
-                  aria-label={`Remove ${item.product.name}`}
-                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-black text-white flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition cursor-pointer"
-                >
-                  <X size={12} />
-                </button>
-              </div>
-            ))}
+        {/* Selection tracker bar — sticky to bottom until it reaches its natural position */}
+        <div className="sticky bottom-4 sm:bottom-6 z-30 bg-white border border-gray-200 rounded-full shadow-lg px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+          
+            <div className="flex items-center gap-3 overflow-x-auto flex-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {selectedItems.map((item) => (
+                <div key={item.uid} className="relative flex-shrink-0 group">
+                  <img
+                    src={item.product.image}
+                    alt={item.product.name}
+                    className="w-14 h-14 rounded-full object-cover border-2 border-brand-orange"
+                  />
+                  <button
+                    onClick={() => removeItem(item.uid)}
+                    aria-label={`Remove ${item.product.name}`}
+                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-black text-white flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition cursor-pointer"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
 
-            {Array.from({ length: emptySlots }).map((_, i) => (
-              <div
-                key={`empty-${i}`}
-                className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-2xl text-gray-400 flex-shrink-0"
-              >
-                +
-              </div>
-            ))}
-          </div>
-<button
-    onClick={handleAddBoxToCart}
-    disabled={!isComplete || addingBox}
-    className={`flex-shrink-0 font-heading text-sm sm:text-base px-6 py-2.5 rounded-full border-2 whitespace-nowrap transition ${
-      isComplete
-        ? "bg-brand-orange text-white border-brand-orange hover:-translate-y-1 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-        : "bg-white text-gray-400 border-gray-200 cursor-not-allowed"
-    }`}
-  >
-    {addingBox
-      ? "ADDING..."
-      : isComplete
-      ? `ADD BOX TO CART · ₹${PACK_CONFIG[packSize].price}`
-      : `ADD ${remaining} MORE ITEM${remaining === 1 ? "" : "S"}`}
-  </button>
+              {Array.from({ length: emptySlots }).map((_, i) => (
+                <div
+                  key={`empty-${i}`}
+                  className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-2xl text-gray-400 flex-shrink-0"
+                >
+                  +
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={handleAddBoxToCart}
+              disabled={!isComplete || addingBox}
+              className={`flex-shrink-0 font-heading text-sm sm:text-base px-6 py-2.5 rounded-full border-2 whitespace-nowrap transition ${
+                isComplete
+                  ? "bg-brand-orange text-white border-brand-orange hover:-translate-y-1 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                  : "bg-white text-gray-400 border-gray-200 cursor-not-allowed"
+              }`}
+            >
+              {addingBox
+                ? "ADDING..."
+                : isComplete
+                ? `ADD BOX TO CART · ₹${PACK_CONFIG[packSize].price}`
+                : `ADD ${remaining} MORE ITEM${remaining === 1 ? "" : "S"}`}
+            </button>
         </div>
       </section>
 

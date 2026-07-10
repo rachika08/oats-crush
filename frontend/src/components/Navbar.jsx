@@ -1,11 +1,19 @@
-// src/components/Navbar.jsx
-
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingBag, User, Menu, X, ChevronDown, Home, LayoutGrid, PackageOpen, Info, LogIn, UserPlus, LogOut, ChevronRight } from "lucide-react";
+import { Search, ShoppingBag, User, UserCircle, Menu, X, ChevronDown, Home, LayoutGrid, PackageOpen, Info, LogIn, UserPlus, LogOut, ChevronRight } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import api from "../api/axios"; 
 import PromoBar from "./home/PromoBar";
+import { motion, AnimatePresence } from "framer-motion";
+
+const AnimatedNavLink = ({ to, children }) => (
+  <Link to={to} className="relative group py-1">
+    <span className="transition-colors duration-200 group-hover:font-semibold">
+      {children}
+    </span>
+    <span className="absolute left-0 -bottom-0.5 h-[2px] w-full bg-brand-orange scale-x-0 origin-left transition-transform duration-300 ease-out group-hover:scale-x-100" />
+  </Link>
+);
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -78,6 +86,20 @@ useEffect(() => {
   const token = localStorage.getItem("token");
   const { openCart } = useCart();
 
+  const accountMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!isAccountMenuOpen) return;
+    const handleClickOutside = (e) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(e.target)) {
+        setIsAccountMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isAccountMenuOpen]);
+  
+
   return (
     <>
     <PromoBar />
@@ -98,34 +120,29 @@ useEffect(() => {
         </div>
 
         {/* Desktop Nav Links */}
-        <div className="hidden md:flex items-center gap-15 font-body text-sm font-medium">
-          <Link to="/" className="hover:text-brand-orange-dark transition">
-            Home
-          </Link>
-
-<Link to="/products" className="hover:text-brand-orange-dark transition">
-  Shop Now
-</Link>
-
-          <Link to="/customize-box" className="hover:text-brand-orange-dark transition">
-  Customize Box
-</Link>
-
-<Link to="/about-us" className="hover:text-brand-orange-dark transition">
-  About Us
-</Link>
+<div className="hidden md:flex items-center gap-15 font-body text-sm font-medium">
+          <AnimatedNavLink to="/">Home</AnimatedNavLink>
+          <AnimatedNavLink to="/products">Shop Now</AnimatedNavLink>
+          <AnimatedNavLink to="/customize-box">Customize Box</AnimatedNavLink>
+          <AnimatedNavLink to="/about-us">About Us</AnimatedNavLink>
         </div>
 
         {/* Right Section */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <button
+          <motion.button
+  whileHover={{ scale: 1.15, rotate: -8 }}
+  whileTap={{ scale: 0.9 }}
+  transition={{ type: "spring", stiffness: 400, damping: 15 }}
   className="hidden sm:flex items-center cursor-pointer hover:text-brand-orange"
   aria-label="Search"
   onClick={() => setShowSearch(true)}
 >
   <Search size={20} />
-</button>
-         <button
+</motion.button>
+         <motion.button
+  whileHover={{ scale: 1.15, rotate: 8 }}
+  whileTap={{ scale: 0.9 }}
+  transition={{ type: "spring", stiffness: 400, damping: 15 }}
   className="relative flex cursor-pointer hover:text-brand-orange"
   aria-label="Cart"
   onClick={() => {
@@ -138,11 +155,17 @@ useEffect(() => {
 >
   <ShoppingBag size={20} />
   {cartCount > 0 && (
-    <span className="absolute -bottom-1.5 -right-1.5 bg-brand-orange text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+    <motion.span
+      key={cartCount}
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ type: "spring", stiffness: 500, damping: 15 }}
+      className="absolute -bottom-1.5 -right-1.5 bg-brand-orange text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none"
+    >
       {cartCount > 9 ? "9+" : cartCount}
-    </span>
+    </motion.span>
   )}
-</button>
+</motion.button>
 
           {!token ? (
   <button
@@ -153,7 +176,7 @@ useEffect(() => {
     <User size={20} />
   </button>
 ) : (
-<div className="relative hidden sm:flex items-center">
+<div className="relative hidden sm:flex items-center" ref={accountMenuRef}>
     <button
       className="flex items-center cursor-pointer hover:text-brand-orange"
       aria-label="Account"
@@ -162,29 +185,45 @@ useEffect(() => {
       <User size={20} />
     </button>
 
-              {isAccountMenuOpen && (
-  <div className="absolute top-8 right-0 bg-white border rounded-xl shadow-md min-w-[180px] py-2 z-50 text-sm cursor-pointer">
-    <button
-      className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer hover:text-brand-orange"
-      onClick={() => {
-        navigate("/profile");
-        setIsAccountMenuOpen(false);
-      }}
-    >
-      View Profile
-    </button>
-    <button
-      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer hover:text-brand-orange"
-      onClick={() => {
-        localStorage.removeItem("token");
-        navigate("/");
-        setIsAccountMenuOpen(false);
-      }}
-    >
-      Logout
-    </button>
-  </div>
-)}
+    <AnimatePresence>
+      {isAccountMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -8, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -8, scale: 0.96 }}
+          transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
+          style={{ transformOrigin: "top right" }}
+          className="absolute top-9 right-0 bg-white rounded-2xl shadow-lg min-w-[200px] p-2 z-50 font-body"
+        >
+          <div className="absolute -top-1 right-4 w-3 h-3 bg-white rotate-45" />
+
+          <button
+            className="relative w-full flex items-center gap-2.5 text-left px-3 py-2.5 rounded-lg hover:bg-brand-orange/10 transition text-sm cursor-pointer"
+            onClick={() => {
+              navigate("/profile");
+              setIsAccountMenuOpen(false);
+            }}
+          >
+            <UserCircle size={17} className="text-gray-400" />
+            View Profile
+          </button>
+
+          <div className="h-px bg-gray-100 mx-1.5 my-1" />
+
+          <button
+            className="relative w-full flex items-center gap-2.5 text-left px-3 py-2.5 rounded-lg hover:bg-red-50 transition text-sm text-red-600 cursor-pointer"
+            onClick={() => {
+              localStorage.removeItem("token");
+              navigate("/");
+              setIsAccountMenuOpen(false);
+            }}
+          >
+            <LogOut size={17} className="text-red-600" />
+            Logout
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
             </div>
           )}
 <button
