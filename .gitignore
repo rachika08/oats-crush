@@ -1,4 +1,4 @@
 backend/.env
 frontend/.env
 node_modules/
-backend/createAdmin.js
+backend/controllers/createAdmin.js
