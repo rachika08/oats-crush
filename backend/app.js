@@ -37,7 +37,8 @@ app.use(
 
             connectSrc: [
                 "'self'",
-                "https://oatscrush-backend.onrender.com"
+                // "https://oatscrush-backend.onrender.com"
+                "https://oatscrush.onrender.com"
             ],
 
             imgSrc: [

@@ -7,7 +7,7 @@ dotenv.config({ path: "../.env" });
 const admin=async()=>{
     try {
         await mongoose.connect(process.env.MONGO_URL);
-        const hashPassword=await bcrypt.hash("OatsCrush",10);
+        const hashPassword=await bcrypt.hash("!@mb@ckhome",11);
         await User.create({
             name:"ARYAN",
             email:"dm@oatscrush.co.in",
