@@ -1,13 +1,23 @@
 import { useEffect, useState } from "react";
-import api from "../api/axios";
 import { useNavigate } from "react-router";
+import { Plus, Pencil, Trash2 } from "lucide-react";
+import AdminLayout from "./AdminLayout";
+import api from "../api/axios";
 
 export default function Products() {
     const [products, setProducts] = useState([]);
-    const navigate=useNavigate();
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
     const fetchProducts = async () => {
-        const res = await api.get("/product/admin/all");
-        setProducts(res.data);
+        try {
+            const res = await api.get("/product/admin/all");
+            setProducts(res.data);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -15,60 +25,126 @@ export default function Products() {
     }, []);
 
     const deleteProduct = async (id) => {
-        await api.delete(`/product/${id}`);
-        fetchProducts(); // refresh list
+        if (!window.confirm("Delete this product?")) return;
+
+        try {
+            await api.delete(`/product/${id}`);
+            fetchProducts();
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    return (
-        <div>
-            <h1 className="text-2xl font-bold">Admin Products</h1>
+    const basePack = (p) =>
+        p.packSizes?.find((pack) => pack.units === 1) || p.packSizes?.[0];
 
-            <button onClick={()=>{
-                navigate('/admin/add-product')
-            }} className="bg-green-500 text-white px-4 py-2 my-3">
-                + Add Product
+    return (
+        <AdminLayout>
+            <h1 className="font-heading text-3xl sm:text-4xl text-brand-orange mb-6">
+                Products
+            </h1>
+
+            {/* Column header bar — desktop only */}
+            <div className="hidden md:grid grid-cols-[2.2fr_1fr_0.8fr_1fr_140px] items-center bg-brand-orange rounded-xl px-6 py-3 mb-5">
+                <span className="font-heading text-white text-sm">Name</span>
+                <span className="font-heading text-white text-sm text-center border-l border-white/30">
+                    Price
+                </span>
+                <span className="font-heading text-white text-sm text-center border-l border-white/30">
+                    Stock
+                </span>
+                <span className="font-heading text-white text-sm text-center border-l border-white/30">
+                    Categories
+                </span>
+                <span className="border-l border-white/30" />
+            </div>
+
+            <button
+                onClick={() => navigate("/admin/add-product")}
+                className="flex items-center gap-2 bg-brand-orange text-white font-body text-sm font-medium px-5 py-2.5 rounded-full mb-6 cursor-pointer hover:bg-brand-orange-dark transition-colors"
+            >
+                Add Product <Plus size={16} />
             </button>
 
-            <table className="w-full border">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Category</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
+            {loading && (
+                <p className="font-body text-sm text-gray-500">Loading products…</p>
+            )}
 
-                <tbody>
-                    {products.map((p) => (
-                        <tr key={p._id} className="border-t">
-                            <td>{p.name}</td>
-                            {p.packSizes?.find(pack => pack.units === 1)?.price ?? "-"}
-                            <td>{p.stock}</td>
-                            <td>{p.category?.name}</td>
+            {!loading && products.length === 0 && (
+                <p className="font-body text-sm text-gray-500">No products yet.</p>
+            )}
 
-                            <td>
+            <div className="space-y-4">
+                {products.map((p) => {
+                    const pack = basePack(p);
+
+                    return (
+                        <div
+                            key={p._id}
+                            className="bg-white border border-gray-200 rounded-2xl px-4 sm:px-6 py-4 md:grid md:grid-cols-[2.2fr_1fr_0.8fr_1fr_140px] md:items-center gap-2"
+                        >
+                            {/* Name + image */}
+                            <div className="flex items-center gap-4 min-w-0">
+                                <img
+                                    src={p.image}
+                                    alt={p.name}
+                                    className="w-14 h-14 rounded-xl object-cover shrink-0"
+                                />
+                                <div className="min-w-0">
+                                    <p className="font-heading text-brand-orange text-base uppercase truncate">
+                                        {p.name}
+                                    </p>
+                                    {pack?.label && (
+                                        <p className="font-body text-sm text-gray-400">
+                                            {pack.label}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Price */}
+                            <div className="font-body text-sm font-semibold mt-3 md:mt-0 md:text-center">
+                                <span className="md:hidden text-gray-400 font-normal mr-1">
+                                    Price:
+                                </span>
+                                {pack?.price != null ? `₹${pack.price.toFixed(2)}` : "-"}
+                            </div>
+
+                            {/* Stock */}
+                            <div className="font-body text-sm font-semibold mt-1 md:mt-0 md:text-center">
+                                <span className="md:hidden text-gray-400 font-normal mr-1">
+                                    Stock:
+                                </span>
+                                {p.stock}
+                            </div>
+
+                            {/* Category */}
+                            <div className="font-body text-sm font-semibold mt-1 md:mt-0 md:text-center">
+                                <span className="md:hidden text-gray-400 font-normal mr-1">
+                                    Category:
+                                </span>
+                                {p.category?.name || "—"}
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-4 mt-3 md:mt-0 md:justify-end">
                                 <button
-                                    className="bg-blue-500 text-white px-2"
                                     onClick={() => navigate(`/admin/edit/${p._id}`)}
+                                    className="flex items-center gap-1 font-body text-sm font-medium text-black cursor-pointer hover:text-brand-orange transition-colors"
                                 >
-                                    Edit
+                                    <Pencil size={14} /> Edit
                                 </button>
-
                                 <button
-                                    className="bg-red-500 text-white px-2 ml-2"
                                     onClick={() => deleteProduct(p._id)}
+                                    className="flex items-center gap-1 font-body text-sm font-medium text-red-500 cursor-pointer hover:text-red-600 transition-colors"
                                 >
-                                    Delete
+                                    <Trash2 size={14} /> Delete
                                 </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </AdminLayout>
     );
-};
-
-
+}

@@ -287,6 +287,7 @@ export const updateProduct = async (req, res) => {
     req.body.faqs = parseIfString(req.body.faqs);
     req.body.packSizes = parseIfString(req.body.packSizes);
     req.body.howToEnjoy = parseIfString(req.body.howToEnjoy);
+    req.body.benefits = parseIfString(req.body.benefits);
 
     // -----------------------------
     // STOCK / LAUNCH FLAGS

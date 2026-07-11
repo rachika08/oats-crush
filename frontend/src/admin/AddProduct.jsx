@@ -1,7 +1,20 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Plus, Trash2 } from "lucide-react";
+import AdminLayout from "./AdminLayout";
 import api from "../api/axios";
+
+const inputClass =
+    "w-full border border-gray-200 rounded-xl px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange";
+
+const sectionHeading =
+    "font-heading text-lg text-brand-orange uppercase tracking-wide mb-4";
+
+const addButtonClass =
+    "flex items-center gap-1.5 border-2 border-brand-orange text-brand-orange font-body text-sm font-medium px-4 py-2 rounded-full cursor-pointer hover:bg-brand-orange hover:text-white transition-colors";
+
+const removeButtonClass =
+    "flex items-center gap-1 text-red-500 font-body text-sm cursor-pointer hover:text-red-600 transition-colors";
 
 export default function AddProduct() {
     const [form, setForm] = useState({
@@ -49,7 +62,6 @@ export default function AddProduct() {
             price: Number(pack.price)
         }));
         formData.append("name", form.name);
-        // formData.append("price", form.price);
         formData.append(
             "packSizes",
             JSON.stringify(formattedPackSizes)
@@ -80,10 +92,7 @@ export default function AddProduct() {
             "ingredients",
             JSON.stringify(ingredientsArray)
         );
-        // formData.append(
-        //     "nutrition",
-        //     JSON.stringify(form.nutrition)
-        // );
+
         const formattedNutrition = {
             ...form.nutrition,
             servingsPerPack: Number(form.nutrition.servingsPerPack),
@@ -127,6 +136,7 @@ export default function AddProduct() {
         alert("Product created successfully");
         navigate("/admin/products");
     };
+
     const addPack = () => {
         setPackSizes([
             ...packSizes,
@@ -151,28 +161,28 @@ export default function AddProduct() {
     };
 
     const addIngredient = () => {
-    setIngredientGallery([
-        ...ingredientGallery,
-        { file: null, name: "", preview: null }
-    ]);
-};
+        setIngredientGallery([
+            ...ingredientGallery,
+            { file: null, name: "", preview: null }
+        ]);
+    };
 
-const updateIngredientName = (index, value) => {
-    const updated = [...ingredientGallery];
-    updated[index].name = value;
-    setIngredientGallery(updated);
-};
+    const updateIngredientName = (index, value) => {
+        const updated = [...ingredientGallery];
+        updated[index].name = value;
+        setIngredientGallery(updated);
+    };
 
-const updateIngredientImage = (index, file) => {
-    const updated = [...ingredientGallery];
-    updated[index].file = file;
-    updated[index].preview = file ? URL.createObjectURL(file) : null;
-    setIngredientGallery(updated);
-};
+    const updateIngredientImage = (index, file) => {
+        const updated = [...ingredientGallery];
+        updated[index].file = file;
+        updated[index].preview = file ? URL.createObjectURL(file) : null;
+        setIngredientGallery(updated);
+    };
 
-const removeIngredient = (index) => {
-    setIngredientGallery(ingredientGallery.filter((_, i) => i !== index));
-};
+    const removeIngredient = (index) => {
+        setIngredientGallery(ingredientGallery.filter((_, i) => i !== index));
+    };
 
     const handleNutritionChange = (field, value) => {
         setForm(prev => ({
@@ -229,288 +239,311 @@ const removeIngredient = (index) => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 py-10 px-4">
-            <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8">
-                <h2 className="text-2xl font-bold mb-6 text-center">
-                    Add Product
-                </h2>
+        <AdminLayout>
+            <h1 className="font-heading text-3xl sm:text-4xl text-brand-orange mb-6">
+                Add Product
+            </h1>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8">
+                <form onSubmit={handleSubmit} className="space-y-8">
 
-                    <input
-                        name="name"
-                        placeholder="Name"
-                        value={form.name}
-                        onChange={handleChange}
-                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-
-                    {/* <input
-                        name="price"
-                        placeholder="Price"
-                        value={form.price}
-                        onChange={handleChange}
-                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    /> */}
-
-                    <h3>Pack Sizes</h3>
-
-                    {packSizes.map((pack, index) => (
-                        <div key={index}
-                            className="border p-4 rounded-lg mb-3 space-y-2">
-
-                            <input
-                                placeholder="Label"
-                                value={pack.label}
-                                onChange={(e) =>
-                                    updatePack(index, "label", e.target.value)
-                                }
-                            />
-
-                            <input
-                                type="number"
-                                placeholder="Units"
-                                value={pack.units}
-                                onChange={(e) =>
-                                    updatePack(index, "units", e.target.value)
-                                }
-                            />
-
-                            <input
-                                type="number"
-                                placeholder="Price"
-                                value={pack.price}
-                                onChange={(e) =>
-                                    updatePack(index, "price", e.target.value)
-                                }
-                            />
-
-                            {/* <button
-                                type="button"
-                                onClick={() => removePack(index)}
-                            >
-                                Remove
-                            </button> */}
-                            {packSizes.length > 1 && (
-                                <button
-                                    type="button"
-                                    onClick={() => removePack(index)}
-                                    className="text-red-500"
-                                >
-                                    Remove
-                                </button>
-                            )}
-
-                        </div>
-                    ))}
-
-                    <button
-                        type="button"
-                        onClick={addPack}
-                    >
-                        Add Pack
-                    </button>
-
-                    <input
-                        name="stock"
-                        placeholder="Stock"
-                        value={form.stock}
-                        onChange={handleChange}
-                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-
-                    <input
-                        name="description"
-                        placeholder="Description"
-                        value={form.description}
-                        onChange={handleChange}
-                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-
-                    <input
-                        name="category"
-                        placeholder="Category ID (optional)"
-                        value={form.category}
-                        onChange={handleChange}
-                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-
-                    <input
-                        name="benefits"
-                        placeholder="Benefits (comma separated)"
-                        value={form.benefits}
-                        onChange={handleChange}
-                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-
-                    <input
-                        name="ingredients"
-                        placeholder="Ingredients (comma separated)"
-                        value={form.ingredients}
-                        onChange={handleChange}
-                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <h3 className="text-lg font-semibold mt-6">Ingredient Gallery</h3>
-
-                    {ingredientGallery.map((item, index) => (
-                        <div key={index} className="flex items-center gap-3 border rounded-lg p-3">
-                            {item.preview && (
-                                <img
-                                    src={item.preview}
-                                    alt=""
-                                    className="w-14 h-14 rounded-full object-cover flex-shrink-0"
-                                />
-                            )}
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => updateIngredientImage(index, e.target.files[0])}
-                                className="text-sm flex-shrink-0"
-                            />
-                            <input
-                                placeholder="Ingredient name (e.g. Cardamom)"
-                                value={item.name}
-                                onChange={(e) => updateIngredientName(index, e.target.value)}
-                                className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => removeIngredient(index)}
-                                className="text-red-500 text-sm flex-shrink-0"
-                            >
-                                Remove
-                            </button>
-                        </div>
-                    ))}
-
-                    <button
-                        type="button"
-                        onClick={addIngredient}
-                        className="bg-gray-800 text-white px-4 py-2 rounded"
-                    >
-                        Add Ingredient
-                    </button>
-
-                    <h3 className="text-lg font-semibold mt-6">Nutrition Information</h3>
-
-                    <input
-                        type="text"
-                        placeholder="Serving Size (e.g. 75g)"
-                        value={form.nutrition.servingSize}
-                        onChange={(e) =>
-                            handleNutritionChange("servingSize", e.target.value)
-                        }
-                        className="w-full border rounded-lg px-4 py-2"
-                    />
-
-                    <input
-                        type="number"
-                        placeholder="Servings Per Pack"
-                        value={form.nutrition.servingsPerPack}
-                        onChange={(e) =>
-                            handleNutritionChange("servingsPerPack", e.target.value)
-                        }
-                        className="w-full border rounded-lg px-4 py-2"
-                    />
-
-                    <input
-                        type="text"
-                        placeholder="Note (optional)"
-                        value={form.nutrition.note}
-                        onChange={(e) =>
-                            handleNutritionChange("note", e.target.value)
-                        }
-                        className="w-full border rounded-lg px-4 py-2"
-                    />
-
-                    {form.nutrition.nutrients.map((nutrient, index) => (
-                        <div
-                            key={index}
-                            className="border rounded-lg p-4 mt-4 space-y-2"
-                        >
-                            <input
-                                placeholder="Nutrient Name"
-                                value={nutrient.name}
-                                onChange={(e) =>
-                                    updateNutrient(index, "name", e.target.value)
-                                }
-                                className="w-full border rounded-lg px-3 py-2"
-                            />
-
-                            <input
-                                type="number"
-                                placeholder="Per Serving"
-                                value={nutrient.perServing}
-                                onChange={(e) =>
-                                    updateNutrient(index, "perServing", e.target.value)
-                                }
-                                className="w-full border rounded-lg px-3 py-2"
-                            />
-
-                            <input
-                                type="number"
-                                placeholder="Per 100g"
-                                value={nutrient.per100g}
-                                onChange={(e) =>
-                                    updateNutrient(index, "per100g", e.target.value)
-                                }
-                                className="w-full border rounded-lg px-3 py-2"
-                            />
-
-                            <input
-                                placeholder="Unit (g, mg, kcal)"
-                                value={nutrient.unit}
-                                onChange={(e) =>
-                                    updateNutrient(index, "unit", e.target.value)
-                                }
-                                className="w-full border rounded-lg px-3 py-2"
-                            />
-
-                            <input
-                                type="number"
-                                placeholder="Daily Value %"
-                                value={nutrient.dailyValue}
-                                onChange={(e) =>
-                                    updateNutrient(index, "dailyValue", e.target.value)
-                                }
-                                className="w-full border rounded-lg px-3 py-2"
-                            />
-
-                            <button
-                                type="button"
-                                onClick={() => removeNutrient(index)}
-                                className="text-red-500"
-                            >
-                                Remove Nutrient
-                            </button>
-                        </div>
-                    ))}
-
-                    <button
-                        type="button"
-                        onClick={addNutrient}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-                    >
-                        Add Nutrient
-                    </button>
-
+                    {/* ---------------- NAME ---------------- */}
                     <div>
-                        <label className="block text-sm font-medium mb-2">
-                            Main Image
+                        <label className="block mb-2 font-body text-sm font-medium">
+                            Product Name
                         </label>
+                        <input
+                            name="name"
+                            placeholder="Name"
+                            value={form.name}
+                            onChange={handleChange}
+                            className={inputClass}
+                        />
+                    </div>
+
+                    {/* ---------------- PACK SIZES ---------------- */}
+                    <div>
+                        <h3 className={sectionHeading}>Pack Sizes</h3>
+
+                        <div className="space-y-3 mb-4">
+                            {packSizes.map((pack, index) => (
+                                <div
+                                    key={index}
+                                    className="border border-gray-200 rounded-xl p-4 bg-gray-50"
+                                >
+                                    <div className="grid sm:grid-cols-3 gap-3">
+                                        <input
+                                            placeholder="Label"
+                                            value={pack.label}
+                                            onChange={(e) =>
+                                                updatePack(index, "label", e.target.value)
+                                            }
+                                            className={inputClass}
+                                        />
+
+                                        <input
+                                            type="number"
+                                            placeholder="Units"
+                                            value={pack.units}
+                                            onChange={(e) =>
+                                                updatePack(index, "units", e.target.value)
+                                            }
+                                            className={inputClass}
+                                        />
+
+                                        <input
+                                            type="number"
+                                            placeholder="Price"
+                                            value={pack.price}
+                                            onChange={(e) =>
+                                                updatePack(index, "price", e.target.value)
+                                            }
+                                            className={inputClass}
+                                        />
+                                    </div>
+
+                                    {packSizes.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => removePack(index)}
+                                            className={`${removeButtonClass} mt-3`}
+                                        >
+                                            <Trash2 size={14} /> Remove
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <button type="button" onClick={addPack} className={addButtonClass}>
+                            Add Pack <Plus size={15} />
+                        </button>
+                    </div>
+
+                    {/* ---------------- STOCK ---------------- */}
+                    <div>
+                        <label className="block mb-2 font-body text-sm font-medium">
+                            Stock
+                        </label>
+                        <input
+                            name="stock"
+                            placeholder="Stock"
+                            value={form.stock}
+                            onChange={handleChange}
+                            className={inputClass}
+                        />
+                    </div>
+
+                    {/* ---------------- DESCRIPTION ---------------- */}
+                    <div>
+                        <label className="block mb-2 font-body text-sm font-medium">
+                            Description
+                        </label>
+                        <input
+                            name="description"
+                            placeholder="Description"
+                            value={form.description}
+                            onChange={handleChange}
+                            className={inputClass}
+                        />
+                    </div>
+
+                    {/* ---------------- CATEGORY ---------------- */}
+                    <div>
+                        <label className="block mb-2 font-body text-sm font-medium">
+                            Category ID (optional)
+                        </label>
+                        <input
+                            name="category"
+                            placeholder="Category ID (optional)"
+                            value={form.category}
+                            onChange={handleChange}
+                            className={inputClass}
+                        />
+                    </div>
+
+                    {/* ---------------- BENEFITS ---------------- */}
+                    <div>
+                        <label className="block mb-2 font-body text-sm font-medium">
+                            Benefits
+                        </label>
+                        <input
+                            name="benefits"
+                            placeholder="Benefits (comma separated)"
+                            value={form.benefits}
+                            onChange={handleChange}
+                            className={inputClass}
+                        />
+                    </div>
+
+
+
+                    {/* ---------------- INGREDIENT GALLERY ---------------- */}
+                    <div>
+                        <h3 className={sectionHeading}>Ingredient Gallery</h3>
+
+                        <div className="space-y-3 mb-4">
+                            {ingredientGallery.map((item, index) => (
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-3 border border-gray-200 rounded-xl p-3"
+                                >
+                                    {item.preview && (
+                                        <img
+                                            src={item.preview}
+                                            alt=""
+                                            className="w-14 h-14 rounded-full object-cover shrink-0"
+                                        />
+                                    )}
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => updateIngredientImage(index, e.target.files[0])}
+                                        className="font-body text-sm shrink-0"
+                                    />
+                                    <input
+                                        placeholder="Ingredient name (e.g. Cardamom)"
+                                        value={item.name}
+                                        onChange={(e) => updateIngredientName(index, e.target.value)}
+                                        className={`${inputClass} flex-1`}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => removeIngredient(index)}
+                                        className={`${removeButtonClass} shrink-0`}
+                                    >
+                                        <Trash2 size={14} /> Remove
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button type="button" onClick={addIngredient} className={addButtonClass}>
+                            Add Ingredient <Plus size={15} />
+                        </button>
+                    </div>
+
+                    {/* ---------------- NUTRITION ---------------- */}
+                    <div>
+                        <h3 className={sectionHeading}>Nutrition Information</h3>
+
+                        <div className="space-y-3 mb-5">
+                            <input
+                                type="text"
+                                placeholder="Serving Size (e.g. 75g)"
+                                value={form.nutrition.servingSize}
+                                onChange={(e) =>
+                                    handleNutritionChange("servingSize", e.target.value)
+                                }
+                                className={inputClass}
+                            />
+
+                            <input
+                                type="number"
+                                placeholder="Servings Per Pack"
+                                value={form.nutrition.servingsPerPack}
+                                onChange={(e) =>
+                                    handleNutritionChange("servingsPerPack", e.target.value)
+                                }
+                                className={inputClass}
+                            />
+
+                            <input
+                                type="text"
+                                placeholder="Note (optional)"
+                                value={form.nutrition.note}
+                                onChange={(e) =>
+                                    handleNutritionChange("note", e.target.value)
+                                }
+                                className={inputClass}
+                            />
+                        </div>
+
+                        <div className="space-y-3 mb-4">
+                            {form.nutrition.nutrients.map((nutrient, index) => (
+                                <div
+                                    key={index}
+                                    className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-2"
+                                >
+                                    <input
+                                        placeholder="Nutrient Name"
+                                        value={nutrient.name}
+                                        onChange={(e) =>
+                                            updateNutrient(index, "name", e.target.value)
+                                        }
+                                        className={inputClass}
+                                    />
+
+                                    <input
+                                        type="number"
+                                        placeholder="Per Serving"
+                                        value={nutrient.perServing}
+                                        onChange={(e) =>
+                                            updateNutrient(index, "perServing", e.target.value)
+                                        }
+                                        className={inputClass}
+                                    />
+
+                                    <input
+                                        type="number"
+                                        placeholder="Per 100g"
+                                        value={nutrient.per100g}
+                                        onChange={(e) =>
+                                            updateNutrient(index, "per100g", e.target.value)
+                                        }
+                                        className={inputClass}
+                                    />
+
+                                    <input
+                                        placeholder="Unit (g, mg, kcal)"
+                                        value={nutrient.unit}
+                                        onChange={(e) =>
+                                            updateNutrient(index, "unit", e.target.value)
+                                        }
+                                        className={inputClass}
+                                    />
+
+                                    <input
+                                        type="number"
+                                        placeholder="Daily Value %"
+                                        value={nutrient.dailyValue}
+                                        onChange={(e) =>
+                                            updateNutrient(index, "dailyValue", e.target.value)
+                                        }
+                                        className={inputClass}
+                                    />
+
+                                    <button
+                                        type="button"
+                                        onClick={() => removeNutrient(index)}
+                                        className={removeButtonClass}
+                                    >
+                                        <Trash2 size={14} /> Remove
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button type="button" onClick={addNutrient} className={addButtonClass}>
+                            Add Nutrition <Plus size={15} />
+                        </button>
+                    </div>
+
+                    {/* ---------------- MAIN IMAGE ---------------- */}
+                    <div>
+                        <h3 className={sectionHeading}>Main Image</h3>
                         <input
                             type="file"
                             onChange={(e) =>
                                 setMainImage(e.target.files[0])
                             }
-                            className="w-full border rounded-lg px-3 py-2"
+                            className={inputClass}
                         />
                     </div>
 
+                    {/* ---------------- ADDITIONAL IMAGES ---------------- */}
                     <div>
-                        <label className="block text-sm font-medium mb-2">
-                            Additional Images
-                        </label>
+                        <h3 className={sectionHeading}>Additional Images</h3>
                         <input
                             type="file"
                             multiple
@@ -519,36 +552,22 @@ const removeIngredient = (index) => {
                                     Array.from(e.target.files)
                                 )
                             }
-                            className="w-full border rounded-lg px-3 py-2"
+                            className={inputClass}
                         />
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <input
-                            type="checkbox"
-                            checked={form.featured}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    featured: e.target.checked
-                                })
-                            }
-                            className="h-4 w-4"
-                        />
-                        <label className="text-sm font-medium">
-                            Featured Product
-                        </label>
-                    </div>
 
+
+                    {/* ---------------- SUBMIT ---------------- */}
                     <button
                         type="submit"
-                        className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
+                        className="w-full bg-brand-orange text-white font-heading text-lg py-3 rounded-full cursor-pointer hover:bg-brand-orange-dark transition-colors"
                     >
-                        Create Product
+                        CREATE PRODUCT
                     </button>
 
                 </form>
             </div>
-        </div>
+        </AdminLayout>
     );
 }
