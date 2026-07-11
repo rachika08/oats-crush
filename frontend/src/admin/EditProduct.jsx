@@ -1,641 +1,20 @@
-// import { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
-// import api from "../api/axios";
-
-// export default function EditProduct() {
-//   const { id } = useParams();
-//   const navigate = useNavigate();
-//   const [form, setForm] = useState({
-//     name: "",
-//     stock: "",
-//     description: "",
-//     image: "",
-//     category: "",
-//     faqs: [],
-//     isLaunched: true,
-//     nutrition: {
-//       servingSize: "",
-//       servingsPerPack: "",
-//       note: "",
-//       nutrients: []
-//     }
-//   });
-//   const [packSizes, setPackSizes] = useState([]);
-//   const [howToEnjoy, setHowToEnjoy] = useState([]);
-//   const [categories, setCategories] = useState([]);
-
-//   useEffect(() => {
-//     api.get("/category").then((res) => setCategories(res.data)).catch(console.log);
-//   }, []);
-//   // GET product
-//   useEffect(() => {
-//     api.get(`/product/${id}`).then((res) => {
-//       const data = res.data;
-
-//       // setForm({
-//       //   name: data.name || "",
-//       //   price: data.price || "",
-//       //   stock: data.stock || "",
-//       //   description: data.description || "",
-//       //   image: data.image || "",
-//       //   category: data.category?._id || data.category || ""
-//       // });
-//       setForm({
-//         name: data.name || "",
-//         stock: data.stock || "",
-//         description: data.description || "",
-//         image: data.image || "",
-//         category: data.category?._id || data.category || "",
-//         faqs: data.faqs || [],
-//         isLaunched: data.isLaunched !== undefined ? data.isLaunched : true, // 👈 add this
-//         nutrition: data.nutrition || {
-//           servingSize: "",
-//           servingsPerPack: "",
-//           note: "",
-//           nutrients: []
-//         }
-//       });
-
-//       setPackSizes(
-//         data.packSizes || [
-//           {
-//             label: "Pack of 1",
-//             units: 1,
-//             price: ""
-//           }
-//         ]
-//       );
-//       setHowToEnjoy(data.howToEnjoy || []);
-//     });
-//   }, [id]);
-
-//   // handle change
-//   const handleChange = (e) => {
-//     setForm({
-//       ...form,
-//       [e.target.name]: e.target.value
-//     });
-//   };
-
-//   const addPack = () => {
-//     setPackSizes([
-//       ...packSizes,
-//       {
-//         label: "",
-//         units: "",
-//         price: ""
-//       }
-//     ]);
-//   };
-
-//   const updatePack = (index, field, value) => {
-//     const updated = [...packSizes];
-//     updated[index][field] = value;
-//     setPackSizes(updated);
-//   };
-
-//   const removePack = (index) => {
-//     setPackSizes(
-//       packSizes.filter((_, i) => i !== index)
-//     );
-//   };
-
-//   const removeFaq = (index) => {
-//     const updated = form.faqs.filter((_, i) => i !== index);
-//     setForm({ ...form, faqs: updated });
-//   };
-//   const addMethod = () => {
-//     setHowToEnjoy([
-//       ...howToEnjoy,
-//       {
-//         title: "",
-//         description: "",
-//         icon: "glass",
-//       },
-//     ]);
-//   };
-//   // update
-//   // const handleSubmit = async (e) => {
-//   //   e.preventDefault();
-//   //   // await api.put(`/product/${id}`, form);
-//   //   await api.put(`/product/${id}`, {
-//   //       ...form,
-//   //       packSizes,
-//   //       howToEnjoy
-//   //   });
-//   //   alert("Product updated successfully");
-//   //   navigate('/admin/products');
-
-//   // };
-//   const handleNutritionChange = (field, value) => {
-//     setForm(prev => ({
-//       ...prev,
-//       nutrition: {
-//         ...prev.nutrition,
-//         [field]: value
-//       }
-//     }));
-//   };
-
-//   const addNutrient = () => {
-//     setForm(prev => ({
-//       ...prev,
-//       nutrition: {
-//         ...prev.nutrition,
-//         nutrients: [
-//           ...prev.nutrition.nutrients,
-//           {
-//             name: "",
-//             perServing: "",
-//             per100g: "",
-//             unit: "",
-//             dailyValue: ""
-//           }
-//         ]
-//       }
-//     }));
-//   };
-
-//   const updateNutrient = (index, field, value) => {
-//     setForm(prev => {
-//       const nutrients = [...prev.nutrition.nutrients];
-//       nutrients[index][field] = value;
-
-//       return {
-//         ...prev,
-//         nutrition: {
-//           ...prev.nutrition,
-//           nutrients
-//         }
-//       };
-//     });
-//   };
-
-//   const removeNutrient = (index) => {
-//     setForm(prev => ({
-//       ...prev,
-//       nutrition: {
-//         ...prev.nutrition,
-//         nutrients: prev.nutrition.nutrients.filter((_, i) => i !== index)
-//       }
-//     }));
-//   };
-//   // const handleSubmit = async (e) => {
-//   //   e.preventDefault();
-
-//   //   const payload = { ...form, packSizes, howToEnjoy };
-
-//   //   if (!payload.category) {
-//   //     delete payload.category; // don't send empty string — let Mongoose leave it untouched
-//   //   }
-//   //   // ensure numbers are clean
-//   //   payload.nutrition = {
-//   //     ...payload.nutrition,
-//   //     servingsPerPack: Number(payload.nutrition.servingsPerPack),
-//   //     nutrients: payload.nutrition.nutrients.map(n => ({
-//   //       ...n,
-//   //       perServing: Number(n.perServing),
-//   //       per100g: Number(n.per100g),
-//   //       dailyValue: Number(n.dailyValue),
-//   //     }))
-//   //   };
-//   //   try {
-//   //     await api.put(`/product/${id}`, payload);
-//   //     alert("Product updated successfully");
-//   //     navigate('/admin/products');
-//   //   } catch (error) {
-//   //     alert(error.response?.data?.message || "Failed to update product");
-//   //   }
-//   // };
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     const payload = {
-//       ...form,
-//       packSizes,
-//       howToEnjoy
-//     };
-
-//     if (!payload.category) {
-//       delete payload.category;
-//     }
-
-//     try {
-//       await api.put(`/product/${id}`, {
-//         ...payload,
-//         nutrition: JSON.stringify(payload.nutrition),
-//         faqs: JSON.stringify(payload.faqs),
-//         packSizes: JSON.stringify(payload.packSizes),
-//         howToEnjoy: JSON.stringify(payload.howToEnjoy)
-//       });
-
-//       alert("Product updated successfully");
-//       navigate("/admin/products");
-//     } catch (error) {
-//       console.log(error);
-//       alert(error.response?.data?.message || "Failed to update product");
-//     }
-//   };
-
-//   return (
-//     <div className="max-w-3xl mx-auto p-6">
-//       <div className="bg-white shadow-lg rounded-xl p-8">
-//         <h2 className="text-3xl font-bold mb-6 text-center">
-//           Edit Product
-//         </h2>
-
-//         <form onSubmit={handleSubmit} className="space-y-6">
-//           {/* Product Name */}
-//           <div>
-//             <label className="block mb-2 font-medium">
-//               Product Name
-//             </label>
-//             <input
-//               name="name"
-//               value={form.name}
-//               onChange={handleChange}
-//               placeholder="Name"
-//               className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-//             />
-//           </div>
-
-//           {/* Pack Sizes */}
-//           <div>
-//             <h3 className="text-xl font-semibold mb-4">
-//               Pack Sizes
-//             </h3>
-
-//             <div className="space-y-4">
-//               {packSizes.map((pack, index) => (
-//                 <div
-//                   key={index}
-//                   className="border rounded-lg p-4 bg-gray-50 shadow-sm"
-//                 >
-//                   <div className="grid md:grid-cols-3 gap-4">
-//                     <input
-//                       placeholder="Label"
-//                       value={pack.label}
-//                       onChange={(e) =>
-//                         updatePack(index, "label", e.target.value)
-//                       }
-//                       className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-//                     />
-
-//                     <input
-//                       type="number"
-//                       placeholder="Units"
-//                       value={pack.units}
-//                       onChange={(e) =>
-//                         updatePack(index, "units", e.target.value)
-//                       }
-//                       className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-//                     />
-
-//                     <input
-//                       type="number"
-//                       placeholder="Price"
-//                       value={pack.price}
-//                       onChange={(e) =>
-//                         updatePack(index, "price", e.target.value)
-//                       }
-//                       className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-//                     />
-//                   </div>
-
-//                   {packSizes.length > 1 && (
-//                     <button
-//                       type="button"
-//                       onClick={() => removePack(index)}
-//                       className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
-//                     >
-//                       Remove
-//                     </button>
-//                   )}
-//                 </div>
-//               ))}
-//             </div>
-
-//             <button
-//               type="button"
-//               onClick={addPack}
-//               className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg transition"
-//             >
-//               Add Pack
-//             </button>
-//           </div>
-
-//           {/* Stock */}
-//           <div>
-//             <label className="block mb-2 font-medium">
-//               Stock
-//             </label>
-//             <input
-//               name="stock"
-//               value={form.stock}
-//               onChange={handleChange}
-//               placeholder="Stock"
-//               className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-//             />
-//           </div>
-//           {/* Launch status */}
-//           <div className="flex items-center gap-3 border rounded-lg px-4 py-3 bg-gray-50">
-//             <input
-//               type="checkbox"
-//               id="isLaunched"
-//               checked={form.isLaunched}
-//               onChange={(e) =>
-//                 setForm({ ...form, isLaunched: e.target.checked })
-//               }
-//               className="w-5 h-5"
-//             />
-//             <label htmlFor="isLaunched" className="font-medium cursor-pointer">
-//               Product is launched (visible to customers as available)
-//               <span className="block text-sm text-gray-500 font-normal">
-//                 Uncheck to mark as "Coming Soon" — customers can subscribe for a launch notification.
-//               </span>
-//             </label>
-//           </div>
-//           {/* Description */}
-//           <div>
-//             <label className="block mb-2 font-medium">
-//               Description
-//             </label>
-//             <input
-//               name="description"
-//               value={form.description}
-//               onChange={handleChange}
-//               placeholder="Description"
-//               className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-//             />
-//           </div>
-
-//           {/* Image */}
-//           <div>
-//             <label className="block mb-2 font-medium">
-//               Image URL
-//             </label>
-//             <input
-//               name="image"
-//               value={form.image}
-//               onChange={handleChange}
-//               placeholder="Image URL"
-//               className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-//             />
-//           </div>
-
-//           {/* Category */}
-//           <div>
-//             <label className="block mb-2 font-medium">
-//               Category <span className="text-gray-400 font-normal">(optional)</span>
-//             </label>
-//             <select
-//               name="category"
-//               value={form.category}
-//               onChange={handleChange}
-//               className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-//             >
-//               <option value="">No category</option>
-//               {categories.map((c) => (
-//                 <option key={c._id} value={c._id}>{c.name}</option>
-//               ))}
-//             </select>
-//           </div>
-//           <h3 className="text-xl font-bold mt-6 mb-3">Nutrition</h3>
-
-//           <input
-//             placeholder="Serving Size"
-//             value={form.nutrition.servingSize}
-//             onChange={(e) =>
-//               handleNutritionChange("servingSize", e.target.value)
-//             }
-//             className="w-full border p-2 mb-2"
-//           />
-
-//           <input
-//             placeholder="Servings Per Pack"
-//             value={form.nutrition.servingsPerPack}
-//             onChange={(e) =>
-//               handleNutritionChange("servingsPerPack", e.target.value)
-//             }
-//             className="w-full border p-2 mb-2"
-//           />
-
-//           <input
-//             placeholder="Note"
-//             value={form.nutrition.note}
-//             onChange={(e) =>
-//               handleNutritionChange("note", e.target.value)
-//             }
-//             className="w-full border p-2 mb-3"
-//           />
-
-//           <h4 className="font-semibold mb-2">Nutrients</h4>
-
-//           {form.nutrition.nutrients.map((n, index) => (
-//             <div key={index} className="border p-3 mb-3">
-
-//               <input
-//                 placeholder="Name"
-//                 value={n.name}
-//                 onChange={(e) =>
-//                   updateNutrient(index, "name", e.target.value)
-//                 }
-//                 className="w-full border p-2 mb-2"
-//               />
-
-//               <input
-//                 type="number"
-//                 placeholder="Per Serving"
-//                 value={n.perServing}
-//                 onChange={(e) =>
-//                   updateNutrient(index, "perServing", e.target.value)
-//                 }
-//                 className="w-full border p-2 mb-2"
-//               />
-
-//               <input
-//                 type="number"
-//                 placeholder="Per 100g"
-//                 value={n.per100g}
-//                 onChange={(e) =>
-//                   updateNutrient(index, "per100g", e.target.value)
-//                 }
-//                 className="w-full border p-2 mb-2"
-//               />
-
-//               <input
-//                 placeholder="Unit"
-//                 value={n.unit}
-//                 onChange={(e) =>
-//                   updateNutrient(index, "unit", e.target.value)
-//                 }
-//                 className="w-full border p-2 mb-2"
-//               />
-
-//               <input
-//                 type="number"
-//                 placeholder="Daily Value %"
-//                 value={n.dailyValue}
-//                 onChange={(e) =>
-//                   updateNutrient(index, "dailyValue", e.target.value)
-//                 }
-//                 className="w-full border p-2 mb-2"
-//               />
-
-//               <button
-//                 type="button"
-//                 onClick={() => removeNutrient(index)}
-//                 className="text-red-500"
-//               >
-//                 Remove
-//               </button>
-//             </div>
-//           ))}
-
-//           <button
-//             type="button"
-//             onClick={addNutrient}
-//             className="bg-blue-500 text-white px-3 py-2 rounded"
-//           >
-//             + Add Nutrient
-//           </button>
-//           <div className="mt-6">
-//             <h3 className="font-bold mb-2">FAQs</h3>
-
-//             {form.faqs.map((faq, index) => (
-//               <div key={index} className="mb-4 border p-3 rounded-lg">
-
-//                 {/* Question */}
-//                 <input
-//                   type="text"
-//                   placeholder="Question"
-//                   value={faq.question}
-//                   onChange={(e) => {
-//                     const updated = [...form.faqs];
-//                     updated[index].question = e.target.value;
-//                     setForm({ ...form, faqs: updated });
-//                   }}
-//                   className="border p-2 w-full mb-2"
-//                 />
-
-//                 {/* Answer */}
-//                 <input
-//                   type="text"
-//                   placeholder="Answer"
-//                   value={faq.answer}
-//                   onChange={(e) => {
-//                     const updated = [...form.faqs];
-//                     updated[index].answer = e.target.value;
-//                     setForm({ ...form, faqs: updated });
-//                   }}
-//                   className="border p-2 w-full"
-//                 />
-
-//                 {/* Remove button */}
-//                 {form.faqs.length > 1 && (
-//                   <button
-//                     type="button"
-//                     onClick={() => removeFaq(index)}
-//                     className="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-//                   >
-//                     Remove FAQ
-//                   </button>
-//                 )}
-//               </div>
-//             ))}
-
-//             {/* Add FAQ button */}
-//             <button
-//               type="button"
-//               onClick={() =>
-//                 setForm({
-//                   ...form,
-//                   faqs: [
-//                     ...form.faqs,
-//                     { question: "", answer: "" }
-//                   ],
-//                 })
-//               }
-//               className="bg-black text-white px-3 py-2 mt-2 rounded"
-//             >
-//               + Add FAQ
-//             </button>
-//           </div>
-//           <h3 className="text-xl font-bold mt-6 mb-4">
-//             How To Enjoy
-//           </h3>
-
-//           {howToEnjoy.map((method, index) => (
-//             <div key={index} className="border p-4 rounded mb-4">
-
-//               <input
-//                 type="text"
-//                 placeholder="Method Title"
-//                 value={method.title}
-//                 onChange={(e) => {
-//                   const updated = [...howToEnjoy];
-//                   updated[index].title = e.target.value;
-//                   setHowToEnjoy(updated);
-//                 }}
-//                 className="w-full border p-2 mb-3"
-//               />
-
-//               <textarea
-//                 placeholder="Instructions"
-//                 value={method.description}
-//                 onChange={(e) => {
-//                   const updated = [...howToEnjoy];
-//                   updated[index].description = e.target.value;
-//                   setHowToEnjoy(updated);
-//                 }}
-//                 className="w-full border p-2 mb-3"
-//               />
-
-//               <select
-//                 value={method.icon}
-//                 onChange={(e) => {
-//                   const updated = [...howToEnjoy];
-//                   updated[index].icon = e.target.value;
-//                   setHowToEnjoy(updated);
-//                 }}
-//                 className="w-full border p-2"
-//               >
-//                 <option value="moon">Moon</option>
-//                 <option value="glass">Glass</option>
-//                 <option value="snowflake">Snowflake</option>
-//                 <option value="coffee">Coffee</option>
-//                 <option value="blender">Blender</option>
-//                 <option value="bowl">Bowl</option>
-//                 <option value="icecream">Ice Cream</option>
-//               </select>
-
-//             </div>
-//           ))}
-
-//           <button
-//             type="button"
-//             onClick={addMethod}
-//             className="bg-black text-white px-4 py-2 rounded"
-//           >
-//             Add Method
-//           </button>
-//           {/* Submit */}
-//           <button
-//             type="submit"
-//             className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition"
-//           >
-//             Update Product
-//           </button>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Plus, X, Trash2 } from "lucide-react";
+import AdminLayout from "./AdminLayout";
 import api from "../api/axios";
+
+const inputClass =
+    "w-full border border-gray-200 rounded-xl px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange";
+
+const sectionHeading =
+    "font-heading text-lg text-brand-orange uppercase tracking-wide mb-4";
+
+const addButtonClass =
+    "flex items-center gap-1.5 border-2 border-brand-orange text-brand-orange font-body text-sm font-medium px-4 py-2 rounded-full cursor-pointer hover:bg-brand-orange hover:text-white transition-colors";
+
+const removeButtonClass =
+    "flex items-center gap-1 text-red-500 font-body text-sm cursor-pointer hover:text-red-600 transition-colors";
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -654,6 +33,7 @@ export default function EditProduct() {
     additionalImages: [],
     faqs: [],
     isLaunched: true,
+    benefits: "",
     nutrition: {
       servingSize: "",
       servingsPerPack: "",
@@ -669,7 +49,7 @@ export default function EditProduct() {
   const [mainImage, setMainImage] = useState(null);
   const [additionalImages, setAdditionalImages] = useState([]);
   const [existingIngredients, setExistingIngredients] = useState([]);
-const [newIngredients, setNewIngredients] = useState([]);
+  const [newIngredients, setNewIngredients] = useState([]);
 
   // -----------------------------
   // LOAD CATEGORIES
@@ -697,6 +77,7 @@ const [newIngredients, setNewIngredients] = useState([]);
         additionalImages: data.additionalImages || [],
         faqs: data.faqs || [],
         isLaunched: data.isLaunched ?? true,
+        benefits: data.benefits?.join(", ") || "",
         nutrition: data.nutrition || {
           servingSize: "",
           servingsPerPack: "",
@@ -802,6 +183,7 @@ const [newIngredients, setNewIngredients] = useState([]);
       }
     }));
   };
+
   const removeExistingImage = (index) => {
     setExistingAdditionalImages((prev) => prev.filter((_, i) => i !== index));
   };
@@ -844,6 +226,13 @@ const [newIngredients, setNewIngredients] = useState([]);
     formData.append("description", form.description);
     formData.append("isLaunched", form.isLaunched);
 
+    const benefitsArray = form.benefits
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item);
+
+    formData.append("benefits", JSON.stringify(benefitsArray));
+
     if (form.category) {
       formData.append("category", form.category);
     }
@@ -861,9 +250,6 @@ const [newIngredients, setNewIngredients] = useState([]);
       formData.append("removeMainImage", "true");
     }
 
-    // additionalImages.forEach((file) => {
-    //   formData.append("additionalImages", file);
-    // });
     formData.append(
       "existingAdditionalImages",
       JSON.stringify(existingAdditionalImages)
@@ -903,106 +289,104 @@ const [newIngredients, setNewIngredients] = useState([]);
       );
     }
   };
-  return (
-    <div className="max-w-3xl mx-auto p-6">
-      <div className="bg-white shadow-lg rounded-xl p-8">
-        <h2 className="text-3xl font-bold mb-6 text-center">
-          Edit Product
-        </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+  return (
+    <AdminLayout>
+      <h1 className="font-heading text-3xl sm:text-4xl text-brand-orange mb-6">
+        Edit Product
+      </h1>
+
+      <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
 
           {/* ---------------- NAME ---------------- */}
           <div>
-            <label className="block mb-2 font-medium">
+            <label className="block mb-2 font-body text-sm font-medium">
               Product Name
             </label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2"
+              placeholder="Name"
+              className={inputClass}
             />
           </div>
 
           {/* ---------------- PACK SIZES ---------------- */}
           <div>
-            <h3 className="text-xl font-semibold mb-4">
-              Pack Sizes
-            </h3>
+            <h3 className={sectionHeading}>Pack Sizes</h3>
 
-            {packSizes.map((pack, index) => (
-              <div
-                key={index}
-                className="border p-4 rounded-lg mb-3 bg-gray-50"
-              >
-                <div className="grid md:grid-cols-3 gap-3">
-                  <input
-                    placeholder="Label"
-                    value={pack.label}
-                    onChange={(e) =>
-                      updatePack(index, "label", e.target.value)
-                    }
-                    className="border p-2 rounded"
-                  />
+            <div className="space-y-3 mb-4">
+              {packSizes.map((pack, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-xl p-4 bg-gray-50"
+                >
+                  <div className="grid sm:grid-cols-3 gap-3">
+                    <input
+                      placeholder="Label"
+                      value={pack.label}
+                      onChange={(e) =>
+                        updatePack(index, "label", e.target.value)
+                      }
+                      className={inputClass}
+                    />
 
-                  <input
-                    type="number"
-                    placeholder="Units"
-                    value={pack.units}
-                    onChange={(e) =>
-                      updatePack(index, "units", e.target.value)
-                    }
-                    className="border p-2 rounded"
-                  />
+                    <input
+                      type="number"
+                      placeholder="Units"
+                      value={pack.units}
+                      onChange={(e) =>
+                        updatePack(index, "units", e.target.value)
+                      }
+                      className={inputClass}
+                    />
 
-                  <input
-                    type="number"
-                    placeholder="Price"
-                    value={pack.price}
-                    onChange={(e) =>
-                      updatePack(index, "price", e.target.value)
-                    }
-                    className="border p-2 rounded"
-                  />
+                    <input
+                      type="number"
+                      placeholder="Price"
+                      value={pack.price}
+                      onChange={(e) =>
+                        updatePack(index, "price", e.target.value)
+                      }
+                      className={inputClass}
+                    />
+                  </div>
+
+                  {packSizes.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removePack(index)}
+                      className={`${removeButtonClass} mt-3`}
+                    >
+                      <Trash2 size={14} /> Remove
+                    </button>
+                  )}
                 </div>
+              ))}
+            </div>
 
-                {packSizes.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removePack(index)}
-                    className="text-red-500 mt-2"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-
-            <button
-              type="button"
-              onClick={addPack}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              + Add Pack
+            <button type="button" onClick={addPack} className={addButtonClass}>
+              Add Pack <Plus size={15} />
             </button>
           </div>
 
           {/* ---------------- STOCK ---------------- */}
           <div>
-            <label className="block mb-2 font-medium">
+            <label className="block mb-2 font-body text-sm font-medium">
               Stock
             </label>
             <input
               name="stock"
               value={form.stock}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2"
+              className={inputClass}
             />
           </div>
 
           {/* ---------------- LAUNCH STATUS ---------------- */}
-          <div className="flex items-center gap-3 p-3 border rounded bg-gray-50">
+          <div className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl bg-gray-50">
             <input
               type="checkbox"
               checked={form.isLaunched}
@@ -1012,28 +396,43 @@ const [newIngredients, setNewIngredients] = useState([]);
                   isLaunched: e.target.checked
                 })
               }
+              className="w-4 h-4 accent-brand-orange"
             />
-            <label className="font-medium">
+            <label className="font-body text-sm font-medium">
               Product is launched
             </label>
           </div>
 
           {/* ---------------- DESCRIPTION ---------------- */}
           <div>
-            <label className="block mb-2 font-medium">
+            <label className="block mb-2 font-body text-sm font-medium">
               Description
             </label>
             <input
               name="description"
               value={form.description}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2"
+              className={inputClass}
+            />
+          </div>
+
+          {/* ---------------- BENEFITS ---------------- */}
+          <div>
+            <label className="block mb-2 font-body text-sm font-medium">
+              Benefits
+            </label>
+            <input
+              name="benefits"
+              placeholder="Benefits (comma separated)"
+              value={form.benefits}
+              onChange={handleChange}
+              className={inputClass}
             />
           </div>
 
           {/* ---------------- CATEGORY ---------------- */}
           <div>
-            <label className="block mb-2 font-medium">
+            <label className="block mb-2 font-body text-sm font-medium">
               Category
             </label>
 
@@ -1041,7 +440,7 @@ const [newIngredients, setNewIngredients] = useState([]);
               name="category"
               value={form.category}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2"
+              className={inputClass}
             >
               <option value="">No category</option>
               {categories.map((c) => (
@@ -1053,148 +452,122 @@ const [newIngredients, setNewIngredients] = useState([]);
           </div>
 
           {/* ---------------- NUTRITION ---------------- */}
-          <h3 className="text-xl font-bold mt-6">
-            Nutrition
-          </h3>
+          <div>
+            <h3 className={sectionHeading}>Nutrition</h3>
 
-          <input
-            placeholder="Serving Size"
-            value={form.nutrition.servingSize}
-            onChange={(e) =>
-              handleNutritionChange(
-                "servingSize",
-                e.target.value
-              )
-            }
-            className="w-full border p-2 mb-2"
-          />
-
-          <input
-            placeholder="Servings Per Pack"
-            value={form.nutrition.servingsPerPack}
-            onChange={(e) =>
-              handleNutritionChange(
-                "servingsPerPack",
-                e.target.value
-              )
-            }
-            className="w-full border p-2 mb-2"
-          />
-
-          <input
-            placeholder="Note"
-            value={form.nutrition.note}
-            onChange={(e) =>
-              handleNutritionChange("note", e.target.value)
-            }
-            className="w-full border p-2 mb-4"
-          />
-
-          <h4 className="font-semibold mb-2">
-            Nutrients
-          </h4>
-
-          {form.nutrition.nutrients.map((n, index) => (
-            <div
-              key={index}
-              className="border p-3 mb-3 rounded"
-            >
+            <div className="space-y-3 mb-5">
               <input
-                placeholder="Name"
-                value={n.name}
+                placeholder="Serving Size"
+                value={form.nutrition.servingSize}
                 onChange={(e) =>
-                  updateNutrient(
-                    index,
-                    "name",
-                    e.target.value
-                  )
+                  handleNutritionChange("servingSize", e.target.value)
                 }
-                className="w-full border p-2 mb-2"
+                className={inputClass}
               />
 
               <input
-                type="number"
-                placeholder="Per Serving"
-                value={n.perServing}
+                placeholder="Servings Per Pack"
+                value={form.nutrition.servingsPerPack}
                 onChange={(e) =>
-                  updateNutrient(
-                    index,
-                    "perServing",
-                    e.target.value
-                  )
+                  handleNutritionChange("servingsPerPack", e.target.value)
                 }
-                className="w-full border p-2 mb-2"
+                className={inputClass}
               />
 
               <input
-                type="number"
-                placeholder="Per 100g"
-                value={n.per100g}
+                placeholder="Note"
+                value={form.nutrition.note}
                 onChange={(e) =>
-                  updateNutrient(
-                    index,
-                    "per100g",
-                    e.target.value
-                  )
+                  handleNutritionChange("note", e.target.value)
                 }
-                className="w-full border p-2 mb-2"
+                className={inputClass}
               />
-
-              <input
-                placeholder="Unit"
-                value={n.unit}
-                onChange={(e) =>
-                  updateNutrient(
-                    index,
-                    "unit",
-                    e.target.value
-                  )
-                }
-                className="w-full border p-2 mb-2"
-              />
-
-              <input
-                type="number"
-                placeholder="Daily Value %"
-                value={n.dailyValue}
-                onChange={(e) =>
-                  updateNutrient(
-                    index,
-                    "dailyValue",
-                    e.target.value
-                  )
-                }
-                className="w-full border p-2 mb-2"
-              />
-
-              <button
-                type="button"
-                onClick={() => removeNutrient(index)}
-                className="text-red-500"
-              >
-                Remove
-              </button>
             </div>
-          ))}
 
-          <button
-            type="button"
-            onClick={addNutrient}
-            className="bg-blue-500 text-white px-3 py-2 rounded"
-          >
-            + Add Nutrient
-          </button>
+            <h4 className="font-body text-sm font-semibold mb-3 text-gray-600">
+              Nutrients
+            </h4>
+
+            <div className="space-y-3 mb-4">
+              {form.nutrition.nutrients.map((n, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-2"
+                >
+                  <input
+                    placeholder="Name"
+                    value={n.name}
+                    onChange={(e) =>
+                      updateNutrient(index, "name", e.target.value)
+                    }
+                    className={inputClass}
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Per Serving"
+                    value={n.perServing}
+                    onChange={(e) =>
+                      updateNutrient(index, "perServing", e.target.value)
+                    }
+                    className={inputClass}
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Per 100g"
+                    value={n.per100g}
+                    onChange={(e) =>
+                      updateNutrient(index, "per100g", e.target.value)
+                    }
+                    className={inputClass}
+                  />
+
+                  <input
+                    placeholder="Unit"
+                    value={n.unit}
+                    onChange={(e) =>
+                      updateNutrient(index, "unit", e.target.value)
+                    }
+                    className={inputClass}
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Daily Value %"
+                    value={n.dailyValue}
+                    onChange={(e) =>
+                      updateNutrient(index, "dailyValue", e.target.value)
+                    }
+                    className={inputClass}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removeNutrient(index)}
+                    className={removeButtonClass}
+                  >
+                    <Trash2 size={14} /> Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <button type="button" onClick={addNutrient} className={addButtonClass}>
+              Add Nutrition <Plus size={15} />
+            </button>
+          </div>
+
           {/* ---------------- MAIN IMAGE ---------------- */}
-          {/* ---------------- MAIN IMAGE ---------------- */}
-          <div className="mt-6">
-            <h3 className="text-xl font-bold mb-3">Main Image</h3>
+          <div>
+            <h3 className={sectionHeading}>Main Image</h3>
 
             {form.image && !removeMainImage && (
-              <div className="relative w-32 mb-3">
+              <div className="relative w-32 mb-4">
                 <img
                   src={form.image}
                   alt="product"
-                  className="w-32 h-32 object-cover rounded"
+                  className="w-32 h-32 object-cover rounded-xl"
                 />
                 <button
                   type="button"
@@ -1202,15 +575,15 @@ const [newIngredients, setNewIngredients] = useState([]);
                     setRemoveMainImage(true);
                     setForm((prev) => ({ ...prev, image: "" }));
                   }}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-sm"
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
                 >
-                  ×
+                  <X size={14} />
                 </button>
               </div>
             )}
 
             {removeMainImage && !mainImage && (
-              <p className="text-sm text-gray-500 mb-2">
+              <p className="font-body text-sm text-gray-500 mb-3">
                 Main image will be removed. Upload a new one below to replace it.
               </p>
             )}
@@ -1219,247 +592,238 @@ const [newIngredients, setNewIngredients] = useState([]);
               type="file"
               onChange={(e) => {
                 setMainImage(e.target.files[0]);
-                if (e.target.files[0]) setRemoveMainImage(false); // picking a new file cancels "remove"
+                if (e.target.files[0]) setRemoveMainImage(false);
               }}
-              className="w-full border p-2"
+              className={inputClass}
             />
           </div>
 
           {/* ---------------- ADDITIONAL IMAGES ---------------- */}
-          {/* ---------------- ADDITIONAL IMAGES ---------------- */}
-          <div className="mt-6">
-            <h3 className="text-xl font-bold mb-3">Additional Images</h3>
+          <div>
+            <h3 className={sectionHeading}>Additional Images</h3>
 
             {existingAdditionalImages.length > 0 && (
-              <div className="flex gap-3 flex-wrap mb-3">
+              <div className="flex gap-3 flex-wrap mb-4">
                 {existingAdditionalImages.map((img, i) => (
                   <div key={img} className="relative">
                     <img
                       src={img}
                       alt=""
-                      className="w-24 h-24 object-cover rounded border"
+                      className="w-24 h-24 object-cover rounded-xl border border-gray-200"
                     />
                     <button
                       type="button"
                       onClick={() => removeExistingImage(i)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-sm"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
                     >
-                      ×
+                      <X size={14} />
                     </button>
                   </div>
                 ))}
               </div>
             )}
 
-           <input
+            <input
               type="file"
               multiple
               onChange={(e) => setAdditionalImages(Array.from(e.target.files))}
-              className="w-full border p-2"
+              className={inputClass}
             />
           </div>
 
           {/* ---------------- INGREDIENT GALLERY ---------------- */}
-          <div className="mt-6">
-            <h3 className="text-xl font-bold mb-3">Ingredient Gallery</h3>
+          <div>
+            <h3 className={sectionHeading}>Ingredient Gallery</h3>
 
-            {existingIngredients.map((item, index) => (
-              <div key={`existing-${index}`} className="flex items-center gap-3 border rounded-lg p-3 mb-2">
-                <img src={item.image} alt={item.name} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
-                <p className="flex-1 text-sm">{item.name}</p>
-                <button
-                  type="button"
-                  onClick={() => removeExistingIngredient(index)}
-                  className="text-red-500 text-sm flex-shrink-0"
+            <div className="space-y-3 mb-4">
+              {existingIngredients.map((item, index) => (
+                <div
+                  key={`existing-${index}`}
+                  className="flex items-center gap-3 border border-gray-200 rounded-xl p-3"
                 >
-                  Remove
-                </button>
-              </div>
-            ))}
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-14 h-14 rounded-full object-cover shrink-0"
+                  />
+                  <p className="flex-1 font-body text-sm">{item.name}</p>
+                  <button
+                    type="button"
+                    onClick={() => removeExistingIngredient(index)}
+                    className={`${removeButtonClass} shrink-0`}
+                  >
+                    <Trash2 size={14} /> Remove
+                  </button>
+                </div>
+              ))}
 
-            {newIngredients.map((item, index) => (
-              <div key={`new-${index}`} className="flex items-center gap-3 border rounded-lg p-3 mb-2">
-                {item.preview && (
-                  <img src={item.preview} alt="" className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => updateNewIngredientImage(index, e.target.files[0])}
-                  className="text-sm flex-shrink-0"
-                />
-                <input
-                  placeholder="Ingredient name"
-                  value={item.name}
-                  onChange={(e) => updateNewIngredientName(index, e.target.value)}
-                  className="flex-1 border rounded-lg px-3 py-2 text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeNewIngredient(index)}
-                  className="text-red-500 text-sm flex-shrink-0"
+              {newIngredients.map((item, index) => (
+                <div
+                  key={`new-${index}`}
+                  className="flex items-center gap-3 border border-gray-200 rounded-xl p-3"
                 >
-                  Remove
-                </button>
-              </div>
-            ))}
+                  {item.preview && (
+                    <img
+                      src={item.preview}
+                      alt=""
+                      className="w-14 h-14 rounded-full object-cover shrink-0"
+                    />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      updateNewIngredientImage(index, e.target.files[0])
+                    }
+                    className="font-body text-sm shrink-0"
+                  />
+                  <input
+                    placeholder="Ingredient name"
+                    value={item.name}
+                    onChange={(e) =>
+                      updateNewIngredientName(index, e.target.value)
+                    }
+                    className={`${inputClass} flex-1`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeNewIngredient(index)}
+                    className={`${removeButtonClass} shrink-0`}
+                  >
+                    <Trash2 size={14} /> Remove
+                  </button>
+                </div>
+              ))}
+            </div>
 
-            <button
-              type="button"
-              onClick={addNewIngredient}
-              className="bg-gray-800 text-white px-4 py-2 rounded"
-            >
-              Add Ingredient
+            <button type="button" onClick={addNewIngredient} className={addButtonClass}>
+              Add Ingredient <Plus size={15} />
             </button>
           </div>
 
           {/* ---------------- FAQs ---------------- */}
-          <div className="mt-6">
-            <h3 className="text-xl font-bold mb-3">
-              FAQs
-            </h3>
+          <div>
+            <h3 className={sectionHeading}>FAQs</h3>
 
-            {form.faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="border p-3 mb-3 rounded"
-              >
-                <input
-                  placeholder="Question"
-                  value={faq.question}
-                  onChange={(e) => {
-                    const updated = [...form.faqs];
-                    updated[index].question =
-                      e.target.value;
-                    setForm({
-                      ...form,
-                      faqs: updated
-                    });
-                  }}
-                  className="w-full border p-2 mb-2"
-                />
+            <div className="space-y-3 mb-4">
+              {form.faqs.map((faq, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-2"
+                >
+                  <input
+                    placeholder="Question"
+                    value={faq.question}
+                    onChange={(e) => {
+                      const updated = [...form.faqs];
+                      updated[index].question = e.target.value;
+                      setForm({ ...form, faqs: updated });
+                    }}
+                    className={inputClass}
+                  />
 
-                <input
-                  placeholder="Answer"
-                  value={faq.answer}
-                  onChange={(e) => {
-                    const updated = [...form.faqs];
-                    updated[index].answer =
-                      e.target.value;
-                    setForm({
-                      ...form,
-                      faqs: updated
-                    });
-                  }}
-                  className="w-full border p-2"
-                />
-              </div>
-            ))}
+                  <input
+                    placeholder="Answer"
+                    value={faq.answer}
+                    onChange={(e) => {
+                      const updated = [...form.faqs];
+                      updated[index].answer = e.target.value;
+                      setForm({ ...form, faqs: updated });
+                    }}
+                    className={inputClass}
+                  />
+                </div>
+              ))}
+            </div>
 
             <button
               type="button"
               onClick={() =>
                 setForm({
                   ...form,
-                  faqs: [
-                    ...form.faqs,
-                    { question: "", answer: "" }
-                  ]
+                  faqs: [...form.faqs, { question: "", answer: "" }]
                 })
               }
-              className="bg-black text-white px-3 py-2 rounded"
+              className={addButtonClass}
             >
-              + Add FAQ
+              Add FAQ <Plus size={15} />
             </button>
           </div>
 
           {/* ---------------- HOW TO ENJOY ---------------- */}
-          <div className="mt-6">
-            <h3 className="text-xl font-bold mb-3">
-              How To Enjoy
-            </h3>
+          <div>
+            <h3 className={sectionHeading}>How To Enjoy</h3>
 
-            {howToEnjoy.map((item, index) => (
-              <div
-                key={index}
-                className="border p-4 mb-3 rounded"
-              >
-                <input
-                  placeholder="Title"
-                  value={item.title}
-                  onChange={(e) => {
-                    const updated = [...howToEnjoy];
-                    updated[index].title =
-                      e.target.value;
-                    setHowToEnjoy(updated);
-                  }}
-                  className="w-full border p-2 mb-2"
-                />
-
-                <textarea
-                  placeholder="Description"
-                  value={item.description}
-                  onChange={(e) => {
-                    const updated = [...howToEnjoy];
-                    updated[index].description =
-                      e.target.value;
-                    setHowToEnjoy(updated);
-                  }}
-                  className="w-full border p-2 mb-2"
-                />
-
-                <select
-                  value={item.icon}
-                  onChange={(e) => {
-                    const updated = [...howToEnjoy];
-                    updated[index].icon =
-                      e.target.value;
-                    setHowToEnjoy(updated);
-                  }}
-                  className="w-full border p-2"
+            <div className="space-y-3 mb-4">
+              {howToEnjoy.map((item, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-2"
                 >
-                  <option value="glass">Glass</option>
-                  <option value="coffee">Coffee</option>
-                  <option value="moon">Moon</option>
-                  <option value="snowflake">
-                    Snowflake
-                  </option>
-                  <option value="blender">
-                    Blender
-                  </option>
-                </select>
-              </div>
-            ))}
+                  <input
+                    placeholder="Title"
+                    value={item.title}
+                    onChange={(e) => {
+                      const updated = [...howToEnjoy];
+                      updated[index].title = e.target.value;
+                      setHowToEnjoy(updated);
+                    }}
+                    className={inputClass}
+                  />
+
+                  <textarea
+                    placeholder="Description"
+                    value={item.description}
+                    onChange={(e) => {
+                      const updated = [...howToEnjoy];
+                      updated[index].description = e.target.value;
+                      setHowToEnjoy(updated);
+                    }}
+                    className={inputClass}
+                  />
+
+                  <select
+                    value={item.icon}
+                    onChange={(e) => {
+                      const updated = [...howToEnjoy];
+                      updated[index].icon = e.target.value;
+                      setHowToEnjoy(updated);
+                    }}
+                    className={inputClass}
+                  >
+                    <option value="glass">Glass</option>
+                    <option value="coffee">Coffee</option>
+                    <option value="moon">Moon</option>
+                    <option value="snowflake">Snowflake</option>
+                    <option value="blender">Blender</option>
+                  </select>
+                </div>
+              ))}
+            </div>
 
             <button
               type="button"
               onClick={() =>
                 setHowToEnjoy([
                   ...howToEnjoy,
-                  {
-                    title: "",
-                    description: "",
-                    icon: "glass"
-                  }
+                  { title: "", description: "", icon: "glass" }
                 ])
               }
-              className="bg-black text-white px-3 py-2 rounded"
+              className={addButtonClass}
             >
-              + Add Method
+              Add Method <Plus size={15} />
             </button>
           </div>
 
           {/* ---------------- SUBMIT ---------------- */}
-          <div className="mt-8">
-            <button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold"
-            >
-              Update Product
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full bg-brand-orange text-white font-heading text-lg py-3 rounded-full cursor-pointer hover:bg-brand-orange-dark transition-colors"
+          >
+            UPDATE PRODUCT
+          </button>
         </form>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

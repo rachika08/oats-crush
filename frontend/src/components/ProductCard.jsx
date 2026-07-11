@@ -16,7 +16,7 @@ const ProductCard = ({ product }) => {
       </h2>
 
       <p className="text-gray-600 mt-1">
-        ₹{product.price}
+        ₹{product.packSizes?.find((p) => p.units === 1)?.price ?? "N/A"}
       </p>
 
       <button

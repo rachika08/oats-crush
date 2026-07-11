@@ -4,6 +4,7 @@ import {getAllOrders,getOrderByIdAdmin,updateOrderStatus} from "../controllers/a
 
 import {protect} from '../midleware/protect.js';
 import {admin} from '../midleware/adminOnly.js'
+import { getDashboardStats } from "../controllers/adminDashboardController.js";
 
 const router = express.Router();
 
@@ -25,6 +26,13 @@ router.patch(
     "/orders/:id/status",
     protect,admin,
     updateOrderStatus
+);
+
+router.get(
+    "/dashboard-stats",
+    protect,
+    admin,
+    getDashboardStats
 );
 
 export default router;
